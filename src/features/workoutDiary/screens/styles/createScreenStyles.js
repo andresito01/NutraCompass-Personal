@@ -1,0 +1,45 @@
+import { StyleSheet } from "react-native";
+import { useThemeContext } from "../../../../context/ThemeContext.js";
+
+const createScreenStyles = () => {
+  const { theme } = useThemeContext();
+  return StyleSheet.create({
+    formContainer: {
+      padding: 16,
+      backgroundColor: theme.colors.sectionBackgroundColor,
+    },
+    row: {
+      flex: 1,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 10,
+    },
+    bottom: { flex: 1 },
+    label: {
+      fontSize: 16,
+      color: theme.colors.cardHeaderTextColor,
+      marginBottom: 5,
+    },
+    requiredLabel: {
+      fontSize: 12,
+      color: theme.colors.primary,
+    },
+    input: {
+      width: "100%",
+      marginBottom: 16,
+      padding: 10,
+      color: theme.colors.cardHeaderTextColor,
+      backgroundColor: theme.colors.cardBackgroundColor,
+    },
+    button: {
+      backgroundColor: theme.colors.primary,
+      padding: 3,
+    },
+    customExerciseListContainer: {
+      flex: 1,
+      marginTop: 16,
+    },
+  });
+};
+
+export default createScreenStyles;
