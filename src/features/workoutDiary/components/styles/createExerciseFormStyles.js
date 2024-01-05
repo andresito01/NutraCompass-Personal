@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
 import { useThemeContext } from "../../../../context/ThemeContext.js";
 
-const createScreenStyles = () => {
+const createExerciseFormStyles = () => {
   const { theme } = useThemeContext();
   return StyleSheet.create({
     formContainer: {
@@ -40,4 +40,4 @@ const createScreenStyles = () => {
   });
 };
 
-export default createScreenStyles;
+export default createExerciseFormStyles;

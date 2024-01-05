@@ -2,28 +2,36 @@ import React from "react";
 import { ScrollView, View } from "react-native";
 import { Card, Title } from "react-native-paper";
 import {
-  Theme1,
-  Theme2,
-  Theme3,
-  Theme4,
-  Theme5,
-  Theme6,
-  Theme7,
-  Theme8,
-  Theme9,
+  Default,
+  Gold,
+  Blue,
+  Green,
+  Red,
+  HotPink,
+  Orange,
+  Teal,
+  Silver,
+  Purple,
+  AllPink,
+  AllPurple,
+  AllTeal,
 } from "../../../../themes.js";
 import { useThemeContext } from "../../../context/ThemeContext.js";
 
 const themes = [
-  Theme1,
-  Theme2,
-  Theme3,
-  Theme4,
-  Theme5,
-  Theme6,
-  Theme7,
-  Theme8,
-  Theme9,
+  Default,
+  Gold,
+  Blue,
+  Green,
+  Red,
+  HotPink,
+  Orange,
+  Teal,
+  Silver,
+  Purple,
+  AllPink,
+  AllPurple,
+  AllTeal,
 ];
 
 const ThemeSelector = () => {
@@ -52,7 +60,7 @@ const ThemeSelector = () => {
                   : selectedTheme.light.colors.cardHeaderTextColor,
             }}
           >
-            Theme {index + 1}
+            {selectedTheme.name} Theme
           </Title>
           <View
             style={{

@@ -9,7 +9,7 @@
     "splash": {
       "image": "./assets/brandmark-design.png",
       "resizeMode": "contain",
-      "backgroundColor": "rgba(30, 30, 30, 0.9)"
+      "backgroundColor": "#1E1E1E"
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {

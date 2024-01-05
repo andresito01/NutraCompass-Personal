@@ -40,8 +40,8 @@ const dateSelectorStyles = () => {
       alignItems: "center",
     },
     section: {
-      marginHorizontal: 5,
-      borderRadius: theme.dimensions.sectionBorderRadius,
+      // marginHorizontal: 5,
+      // borderRadius: theme.dimensions.sectionBorderRadius,
       backgroundColor: theme.colors.screenBackground, // Change to surface color for cards
       elevation: 2, // Add elevation for a card-like effect
     },

@@ -7,6 +7,7 @@ import {
   Portal,
   Dialog,
 } from "react-native-paper";
+import * as Haptics from "expo-haptics";
 import Feather from "react-native-vector-icons/Feather";
 import notesScreenStyles from "./styles/notesScreenStyles.js";
 import NoteEditorModal from "../components/NoteEditorModal.js";
@@ -51,6 +52,7 @@ const NotesScreen = () => {
   const handleDeleteNoteConfirm = () => {
     deleteNote();
     setShowDeleteNoteDialog(false);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
   };
 
   const handleDeleteNoteCancel = () => {

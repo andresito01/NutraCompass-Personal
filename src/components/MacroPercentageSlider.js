@@ -1,13 +1,12 @@
 import React from "react";
 import { View, Text } from "react-native";
-import { useTheme } from "react-native-paper";
+//import {} from "react-native-paper";
 import Slider from "@react-native-community/slider";
 import { useUserSettings } from "../features/userSettings/context/UserSettingsContext.js";
 import { useThemeContext } from "../context/ThemeContext.js";
 
 const MacroPercentageSlider = ({ selectedValues, onSelect, calories }) => {
   const { theme } = useThemeContext();
-  const paperTheme = useTheme();
 
   const {
     calculateProteinDailyGrams,
@@ -31,7 +30,7 @@ const MacroPercentageSlider = ({ selectedValues, onSelect, calories }) => {
     <View
       style={{
         flex: 1,
-        backgroundColor: theme.colors.sectionBackgroundColor,
+        backgroundColor: theme.colors.cardBackgroundColor,
         alignItems: "center",
         justifyContent: "center",
       }}
@@ -41,7 +40,7 @@ const MacroPercentageSlider = ({ selectedValues, onSelect, calories }) => {
           flex: 1,
           width: "100%",
           justifyContent: "flex-start",
-          gap: 30,
+          gap: 15,
           paddingTop: 20,
         }}
       >
@@ -175,8 +174,10 @@ const MacroPercentageSlider = ({ selectedValues, onSelect, calories }) => {
             backgroundColor: theme.colors.cardBackgroundColor,
             flex: 1,
             flexDirection: "row",
-            paddingTop: 20,
+            paddingTop: 10,
             paddingLeft: 25,
+            borderTopWidth: 1,
+            borderTopColor: theme.colors.cardBorderColor,
           }}
         >
           <View>

@@ -18,8 +18,7 @@ import { useThemeContext } from "../context/ThemeContext.js";
 
 export default function FoodDiaryScreen() {
   const styles = foodDiaryScreenStyles(); // Use the imported styles
-  const paperTheme = useTheme();
-  const { theme } = useThemeContext();
+  const { theme, mode } = useThemeContext();
   const { mealSections, foodEntries, saveFoodLogEntry } = useFoodLog();
 
   const { getNutritionalGoals } = useUserSettings();
@@ -295,12 +294,19 @@ export default function FoodDiaryScreen() {
                 key={section.id}
               >
                 <LinearGradient
-                  colors={[theme.colors.cardBackgroundColor, "#B2B2B2"]} // Adjust the colors as needed
+                  // colors={[
+                  //   theme.colors.cardBackgroundColor,
+                  //   mode === "dark" ? "#B2B2B2" : theme.colors.primary,
+                  // ]} // Adjust the colors as needed
+                  colors={[
+                    theme.colors.cardBackgroundColorLowOpacity,
+                    mode === "dark" ? "transparent" : theme.colors.primary,
+                  ]}
                   style={styles.mealSection}
                   start={{ x: 0.0, y: 0.0 }} // Top left corner
                   end={{ x: 0.0, y: 2.5 }} // Bottom right corner
                 >
-                  <Card.Content>
+                  <Card.Content style={{ paddingHorizontal: 0 }}>
                     <View style={styles.mealSectionHeaderContainer}>
                       <Text style={styles.sectionTitle}>{section.name}</Text>
                       <Text style={styles.totalMealSectionCalories}>

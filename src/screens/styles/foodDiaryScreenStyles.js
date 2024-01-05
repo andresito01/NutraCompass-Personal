@@ -20,8 +20,8 @@ const foodDiaryScreenStyles = () => {
     scrollViewContainer: {
       flex: 1,
       padding: 5,
-      marginBottom: 5,
-      backgroundColor: theme.colors.screenBackground,
+      paddingBottom: 10,
+      backgroundColor: "transparent",
     },
     scrollViewContainerContent: {
       flexGrow: 1,
@@ -84,7 +84,6 @@ const foodDiaryScreenStyles = () => {
     mealSection: {
       marginBottom: 0, // Reduce marginBottom for smaller sections
       paddingVertical: 10,
-      paddingHorizontal: 0,
       backgroundColor: "transparent", // Change to surface color for cards
       borderRadius: theme.dimensions.cardBorderRadius,
       borderColor: theme.colors.cardBorderColor,
@@ -117,6 +116,7 @@ const foodDiaryScreenStyles = () => {
       alignItems: "center",
       justifyContent: "space-between",
       paddingBottom: 5,
+      paddingHorizontal: 16,
       padding: 2, // Reduce padding for smaller header
       borderBottomWidth: 5,
       borderBottomLeftRadius: 10,
@@ -131,6 +131,7 @@ const foodDiaryScreenStyles = () => {
     addButton: {
       alignSelf: "flex-start",
       marginTop: 15,
+      marginHorizontal: 16,
     },
     totalMealSectionCalories: {
       marginTop: 4, // Reduce marginTop for total calories

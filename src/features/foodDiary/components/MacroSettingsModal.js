@@ -59,7 +59,7 @@ const MacroSettingsModal = ({
       isVisible={isVisible}
       style={{
         width: "100%",
-        top: "50%",
+        top: "58%",
         bottom: 0,
         margin: 0,
         backgroundColor: "red",

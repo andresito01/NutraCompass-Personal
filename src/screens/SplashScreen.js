@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
+import { View, ActivityIndicator, Image } from "react-native";
+import logo from "../../assets/brandmark-design.png";
 import { useThemeContext } from "../context/ThemeContext.js";
 import { useNavigation } from "@react-navigation/native"; // Import useNavigation
 
@@ -16,7 +17,7 @@ const SplashScreen = () => {
 
       // Navigate to the DashboardScreen after 4 seconds
       navigation.navigate("MainTabs");
-    }, 4000);
+    }, 3000);
 
     return () => {
       console.log("SplashScreen cleanup");
@@ -33,16 +34,19 @@ const SplashScreen = () => {
         backgroundColor: theme.colors.screenBackground,
       }}
     >
-      <Text
+      <Image
+        source={logo}
         style={{
-          fontSize: 24,
-          color: theme.colors.cardHeaderTextColor,
+          width: 360,
+          height: 100,
+          alignSelf: "center",
           marginBottom: 20,
         }}
-      >
-        NutraCompass
-      </Text>
-      <ActivityIndicator size="large" color="#fff" />
+      />
+      <ActivityIndicator
+        size="large"
+        color={theme.colors.cardHeaderTextColor}
+      />
     </View>
   );
 };

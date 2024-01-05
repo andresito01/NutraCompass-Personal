@@ -1,8 +1,10 @@
 import { StyleSheet } from "react-native";
 import { useTheme } from "react-native-paper";
+import { useThemeContext } from "../../context/ThemeContext.js";
 
 const signupScreenStyles = () => {
   const paperTheme = useTheme();
+  const { theme } = useThemeContext();
 
   return StyleSheet.create({
     container: {
@@ -13,18 +15,19 @@ const signupScreenStyles = () => {
       flex: 1,
     },
     contentContainer: {
-      margin: 20,
+      marginTop: 0,
+      paddingBottom: 20,
+      paddingHorizontal: 20,
       flex: 1,
-      justifyContent: "top",
-      marginVertical: 80,
       alignItems: "center",
       flexDirection: "column",
     },
     logo: {
-      width: 360,
-      height: 100,
+      position: "absolute",
+      top: 5,
       alignSelf: "center",
-      marginBottom: 20,
+      width: 195,
+      height: 54,
     },
     title: {
       fontSize: 28,
@@ -40,12 +43,21 @@ const signupScreenStyles = () => {
       width: "100%",
     },
     input: {
-      backgroundColor: "#f0f0f0", // Grayish background for text inputs
-      borderRadius: 8,
-      marginBottom: 4,
+      backgroundColor: "transparent", // Grayish background for text inputs
       paddingHorizontal: 16,
       color: paperTheme.colors.text, // Text color from the theme
     },
+    selectInput: {
+      borderWidth: 1,
+      borderColor: "rgba(169, 169, 169, 0.7)",
+      borderRadius: 14,
+      padding: 10,
+      marginBottom: 10, // Adjust as needed
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+
     icon: {
       padding: 10,
     },

@@ -19,7 +19,7 @@ const CollapsibleSection = ({ title, children }) => {
 
   useEffect(() => {
     // Trigger LayoutAnimation when expanded changes
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.linear);
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
   }, [expanded]);
 
   return (
@@ -38,15 +38,11 @@ const CollapsibleSection = ({ title, children }) => {
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",
-            padding: 10,
-            marginBottom: 5,
+            paddingHorizontal: 10,
+            marginBottom: 10,
             borderRightWidth: 1,
             borderLeftWidth: 1,
             borderColor: "gray",
-            backgroundColor:
-              mode === "dark"
-                ? "rgba(255, 255, 255, 0)"
-                : "rgba(255, 255, 255, 0.9)",
           }}
         >
           <Title

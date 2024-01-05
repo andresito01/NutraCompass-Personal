@@ -38,14 +38,6 @@ const mealSectionCustomizationModalStyles = () => {
       justifyContent: "space-between",
       alignItems: "center",
     },
-    modalTitle: {
-      marginTop: 20,
-      marginBottom: 16,
-      fontSize: 24,
-      color: theme.colors.sectionHeaderTextColor, // Use theme text color
-      fontWeight: "bold",
-      alignSelf: "center",
-    },
     sectionRow: {
       backgroundColor: "transparent",
       flex: 1,

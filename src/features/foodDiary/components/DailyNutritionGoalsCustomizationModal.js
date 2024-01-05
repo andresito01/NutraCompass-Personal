@@ -8,7 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { Button, Title, useTheme } from "react-native-paper";
+import { Button, Title, Card } from "react-native-paper";
 import Modal from "react-native-modal";
 import dailyNutritionGoalsCustomizationModalStyles from "./styles/dailyNutritionGoalsCustomizationModalStyles.js";
 import Feather from "react-native-vector-icons/Feather";
@@ -18,7 +18,6 @@ import { useThemeContext } from "../../../context/ThemeContext.js";
 
 const DailyNutritionGoalsCustomizationModal = ({ isVisible, closeModal }) => {
   const styles = dailyNutritionGoalsCustomizationModalStyles();
-  const paperTheme = useTheme();
   const { theme } = useThemeContext();
 
   const {
@@ -134,8 +133,8 @@ const DailyNutritionGoalsCustomizationModal = ({ isVisible, closeModal }) => {
       isVisible={isVisible}
       style={{ flex: 1, height: "100%", width: "100%", margin: 0 }}
       avoidKeyboard={true}
-      onSwipeComplete={!activeField ? closeModal : null}
-      swipeDirection={!activeField ? "down" : null}
+      // onSwipeComplete={!activeField ? closeModal : null}
+      // swipeDirection={!activeField ? "down" : null}
       animationIn="slideInUp"
       animationOut="slideOutDown"
     >
@@ -161,113 +160,123 @@ const DailyNutritionGoalsCustomizationModal = ({ isVisible, closeModal }) => {
             />
           </TouchableOpacity>
         </View>
-        <View style={styles.formContainer}>
-          <Title style={{ textAlign: "center", marginBottom: 10 }}>
-            Customize Daily Nutrition Goals
-          </Title>
 
-          <View style={styles.inputRow}>
-            <Text style={styles.label}>Calories</Text>
-            <TextInput
-              value={
-                tempChanges.calories !== undefined
-                  ? tempChanges.calories
-                  : calories.toString()
-              }
-              keyboardType="numeric"
-              style={styles.input}
-              onFocus={() => setActiveField("calories")}
-              onChangeText={(text) => handleInputChange("calories", text)}
-            />
-          </View>
-
-          <View style={styles.inputRow}>
-            <View
+        <Card style={styles.formContainer}>
+          <Card.Content>
+            <Title
               style={{
-                flexDirection: "row",
-                flex: 1,
-                justifyContent: "space-between",
-                paddingRight: 30,
+                marginTop: 20,
+                marginBottom: 16,
+                fontSize: 18,
+                alignSelf: "center",
               }}
             >
-              <Text style={styles.label}>Protein</Text>
-              <Text style={{ color: "gray" }}>{proteinDailyGrams} g</Text>
-            </View>
-            <TextInput
-              value={`${protein.toString()}%`}
-              inputMode="none"
-              style={styles.input}
-              onFocus={() => {
-                setActiveField("protein");
-                toggleMacroSettingsModal();
-              }}
-              onChangeText={(text) => {
-                // Extract numeric value by removing '%' symbol
-                const numericValue = text.replace("%", "");
-                handleInputChange("protein", numericValue);
-              }}
-              caretHidden={true}
-            />
-          </View>
+              Customize Daily Nutrition Goals
+            </Title>
 
-          <View style={styles.inputRow}>
-            <View
-              style={{
-                flexDirection: "row",
-                flex: 1,
-                justifyContent: "space-between",
-                paddingRight: 30,
-              }}
-            >
-              <Text style={styles.label}>Carbs</Text>
-              <Text style={{ color: "gray" }}>{carbDailyGrams} g</Text>
+            <View style={styles.inputRow}>
+              <Text style={styles.label}>Calories</Text>
+              <TextInput
+                value={
+                  tempChanges.calories !== undefined
+                    ? tempChanges.calories
+                    : calories.toString()
+                }
+                keyboardType="numeric"
+                style={styles.input}
+                onFocus={() => setActiveField("calories")}
+                onChangeText={(text) => handleInputChange("calories", text)}
+              />
             </View>
-            <TextInput
-              value={`${carb.toString()}%`}
-              inputMode="none"
-              style={styles.input}
-              onFocus={() => {
-                setActiveField("carb");
-                toggleMacroSettingsModal();
-              }}
-              onChangeText={(text) => {
-                // Extract numeric value by removing '%' symbol
-                const numericValue = text.replace("%", "");
-                handleInputChange("carb", numericValue);
-              }}
-              caretHidden={true}
-            />
-          </View>
 
-          <View style={styles.inputRow}>
-            <View
-              style={{
-                flexDirection: "row",
-                flex: 1,
-                justifyContent: "space-between",
-                paddingRight: 30,
-              }}
-            >
-              <Text style={styles.label}>Fats </Text>
-              <Text style={{ color: "gray" }}>{fatDailyGrams} g</Text>
+            <View style={styles.inputRow}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  flex: 1,
+                  justifyContent: "space-between",
+                  paddingRight: 30,
+                }}
+              >
+                <Text style={styles.label}>Protein</Text>
+                <Text style={{ color: "gray" }}>{proteinDailyGrams} g</Text>
+              </View>
+              <TextInput
+                value={`${protein.toString()}%`}
+                inputMode="none"
+                style={styles.input}
+                onFocus={() => {
+                  setActiveField("protein");
+                  toggleMacroSettingsModal();
+                }}
+                onChangeText={(text) => {
+                  // Extract numeric value by removing '%' symbol
+                  const numericValue = text.replace("%", "");
+                  handleInputChange("protein", numericValue);
+                }}
+                caretHidden={true}
+              />
             </View>
-            <TextInput
-              value={`${fat.toString()}%`}
-              inputMode="none"
-              style={styles.input}
-              onFocus={() => {
-                setActiveField("fat");
-                toggleMacroSettingsModal();
-              }}
-              onChangeText={(text) => {
-                // Extract numeric value by removing '%' symbol
-                const numericValue = text.replace("%", "");
-                handleInputChange("fat", numericValue);
-              }}
-              caretHidden={true}
-            />
-          </View>
-        </View>
+
+            <View style={styles.inputRow}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  flex: 1,
+                  justifyContent: "space-between",
+                  paddingRight: 30,
+                }}
+              >
+                <Text style={styles.label}>Carbs</Text>
+                <Text style={{ color: "gray" }}>{carbDailyGrams} g</Text>
+              </View>
+              <TextInput
+                value={`${carb.toString()}%`}
+                inputMode="none"
+                style={styles.input}
+                onFocus={() => {
+                  setActiveField("carb");
+                  toggleMacroSettingsModal();
+                }}
+                onChangeText={(text) => {
+                  // Extract numeric value by removing '%' symbol
+                  const numericValue = text.replace("%", "");
+                  handleInputChange("carb", numericValue);
+                }}
+                caretHidden={true}
+              />
+            </View>
+
+            <View style={styles.inputRow}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  flex: 1,
+                  justifyContent: "space-between",
+                  paddingRight: 30,
+                }}
+              >
+                <Text style={styles.label}>Fats </Text>
+                <Text style={{ color: "gray" }}>{fatDailyGrams} g</Text>
+              </View>
+              <TextInput
+                value={`${fat.toString()}%`}
+                inputMode="none"
+                style={styles.input}
+                onFocus={() => {
+                  setActiveField("fat");
+                  toggleMacroSettingsModal();
+                }}
+                onChangeText={(text) => {
+                  // Extract numeric value by removing '%' symbol
+                  const numericValue = text.replace("%", "");
+                  handleInputChange("fat", numericValue);
+                }}
+                caretHidden={true}
+              />
+            </View>
+          </Card.Content>
+        </Card>
 
         {activeField === "calories" && (
           <View

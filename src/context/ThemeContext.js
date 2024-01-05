@@ -4,7 +4,7 @@ import {
   MD3LightTheme as DefaultTheme,
   MD3DarkTheme as DarkTheme,
 } from "react-native-paper";
-import { Theme1 } from "../../themes"; // Import Themes 1 - 5
+import { Default } from "../../themes"; // Import Themes 1 - 5
 
 // Create a theme context
 export const ThemeContext = createContext();
@@ -16,7 +16,7 @@ export function useThemeContext() {
 export function ThemeProvider({ children }) {
   const [darkMode, setDarkMode] = useState(true); // Set default dark mode
   const mode = darkMode ? "dark" : "light";
-  const [selectedTheme, setSelectedTheme] = useState(Theme1); // Use Theme1 as the default
+  const [selectedTheme, setSelectedTheme] = useState(Default); // Use Theme1 as the default
   const [theme, setTheme] = useState(
     mode === "dark" ? selectedTheme.dark : selectedTheme.light
   );

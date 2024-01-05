@@ -13,17 +13,17 @@ const signinScreenStyles = () => {
       flex: 1,
     },
     contentContainer: {
-      margin: 20,
+      paddingTop: 40,
+      paddingHorizontal: 20,
       flex: 1,
-      justifyContent: "top",
-      marginVertical: 80,
       alignItems: "center",
       flexDirection: "column",
     },
     logo: {
+      alignSelf: "center",
       width: 360,
       height: 100,
-      alignSelf: "center",
+      marginTop: 10,
       marginBottom: 20,
     },
     title: {
@@ -51,9 +51,7 @@ const signinScreenStyles = () => {
       padding: 10,
     },
     input: {
-      backgroundColor: "#f0f0f0", // Grayish background for text inputs
-      borderRadius: 8,
-      marginBottom: 4,
+      backgroundColor: "transparent", // Grayish background for text inputs
       paddingHorizontal: 16,
       color: paperTheme.colors.text, // Text color from the theme
     },

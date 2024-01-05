@@ -5,12 +5,15 @@ import {
   Image,
   Text,
   View,
+  TouchableOpacity,
   Alert,
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-// Firebase API method imports
+import Feather from "react-native-vector-icons/Feather";
+import * as Haptics from "expo-haptics";
+import { useThemeContext } from "../context/ThemeContext.js";
 import { useTheme, TextInput, Button } from "react-native-paper";
 import signinScreenStyles from "./styles/signinScreenStyles.js";
 import { signIn } from "../authentication/api/FirebaseAPI/authenticationMethods.js";
@@ -19,6 +22,7 @@ import ThemeChanger from "../components/ThemeChanger.js";
 function SignInScreen({ navigation }) {
   const styles = signinScreenStyles(); // Use the imported styles
   const paperTheme = useTheme();
+  const { theme } = useThemeContext();
 
   const [value, setValue] = React.useState({
     email: "",
@@ -51,8 +55,35 @@ function SignInScreen({ navigation }) {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        <ThemeChanger />
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: theme.colors.screenBackground,
+        }}
+      >
+        <View
+          style={{
+            height: 85,
+            minWidth: "100%",
+            justifyContent: "center",
+          }}
+        >
+          <TouchableOpacity
+            style={{ alignSelf: "flex-start", padding: 15 }}
+            onPress={() => {
+              navigation.navigate("Welcome");
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            }}
+          >
+            <Feather
+              name="arrow-left"
+              color={theme.colors.sectionHeaderTextColor}
+              size={38}
+              style={{ fontSize: 38 }}
+            />
+          </TouchableOpacity>
+        </View>
+
         <LinearGradient
           colors={[
             paperTheme.colors.gradientStart,
@@ -61,54 +92,88 @@ function SignInScreen({ navigation }) {
           locations={[0.5, 1]} // Control the position of the gradient colors
           style={styles.gradientContainer}
         >
+          <Image source={logo} style={styles.logo} />
           <View style={styles.contentContainer}>
-            <Image source={logo} style={styles.logo} />
-            <Text style={styles.title}>Sign In</Text>
-            <View style={styles.inputContainer}>
+            <View style={{ justifyContent: "center", width: "100%", gap: 20 }}>
               <TextInput
                 label="Email"
                 value={value.email}
                 style={styles.input}
+                outlineStyle={{ borderRadius: 14 }}
                 onChangeText={(text) => setValue({ ...value, email: text })}
                 autoCapitalize="none"
-                textColor="black"
+                mode="outlined"
+                onFocus={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                }}
               />
               <TextInput
                 label="Password"
                 value={value.password}
                 style={styles.input}
+                outlineStyle={{ borderRadius: 14 }}
                 onChangeText={(text) => setValue({ ...value, password: text })}
                 secureTextEntry={true}
                 autoCapitalize="none"
-                textColor="black"
+                mode="outlined"
+                onFocus={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                }}
               />
             </View>
             <Button
               mode="contained"
-              style={styles.button}
+              style={{
+                backgroundColor: theme.colors.primary,
+                borderRadius: 30, // Increased border radius for buttons
+                paddingVertical: 2, // Adjusted padding for buttons
+                marginVertical: 15,
+                width: "80%", // Adjusted button width
+              }}
               labelStyle={{
-                color: "white",
+                color: theme.colors.darkGrayBackgroundColor,
                 fontSize: 18,
                 fontWeight: "bold",
               }}
-              onPress={handleSignIn}
+              onPress={() => {
+                handleSignIn();
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              }}
             >
-              Sign In
+              LOG IN
             </Button>
-            <Text style={styles.signupText}>
-              Don't Have an account?{" "}
-              <Text
-                style={styles.signupLink}
-                onPress={() => navigation.navigate("Sign Up")}
-              >
-                Sign Up
-              </Text>
+            <Text
+              style={{
+                color: theme.colors.secondary,
+                marginTop: 5,
+                marginBottom: 15,
+              }}
+              onPress={() => {
+                navigation.navigate("Welcome");
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              }}
+            >
+              Forgot your password?
             </Text>
             <Text
-              style={styles.link}
-              onPress={() => navigation.navigate("Welcome")}
+              style={{
+                color: theme.colors.cardHeaderTextColor,
+                fontSize: 16,
+                marginTop: 20,
+                textAlign: "center",
+                marginBottom: 20,
+              }}
             >
-              Go to Welcome Screen
+              Don't Have an account?{" "}
+              <Text
+                style={{ color: theme.colors.secondary }}
+                onPress={() => {
+                  navigation.navigate("Sign Up");
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                }}
+              >
+                SIGN UP
+              </Text>
             </Text>
           </View>
         </LinearGradient>

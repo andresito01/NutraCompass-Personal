@@ -1,10 +1,13 @@
-import { StyleSheet } from "react-native";
+import { Dimensions, StyleSheet } from "react-native";
 import { useTheme } from "react-native-paper";
 import { useThemeContext } from "../../../../context/ThemeContext.js";
 
 const dailyNutritionGoalsCustomizationModalStyles = () => {
   const paperTheme = useTheme();
   const { theme } = useThemeContext();
+  // Get the screen height
+  const screenHeight = Dimensions.get("window").height;
+
   return StyleSheet.create({
     header: {
       height: 65,
@@ -17,11 +20,13 @@ const dailyNutritionGoalsCustomizationModalStyles = () => {
       marginTop: 20,
     },
     formContainer: {
-      top: 30,
+      position: "absolute",
+      top: screenHeight * 0.1, // Set top to about 20% below the height
       width: "80%",
-      backgroundColor: theme.colors.sectionBackgroundColor,
-      padding: 20,
-      borderRadius: 8,
+      padding: 10,
+      elevation: 4,
+      borderColor: theme.colors.cardBorderColor,
+      borderBottomWidth: 1,
       justifyContent: "center",
     },
     inputRow: {

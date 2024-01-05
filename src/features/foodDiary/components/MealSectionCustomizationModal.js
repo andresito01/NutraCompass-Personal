@@ -8,11 +8,10 @@ import {
   Keyboard,
   Animated,
   Easing,
-  Dimensions,
 } from "react-native";
 import Modal from "react-native-modal";
 import { useFoodLog } from "../context/FoodLogContext.js";
-import { Card } from "react-native-paper";
+import { Card, Title } from "react-native-paper";
 import mealSectionCustomizationModalStyles from "./styles/mealSectionCustomizationModalStyles.js";
 import Feather from "react-native-vector-icons/Feather";
 import { useThemeContext } from "../../../context/ThemeContext.js";
@@ -24,7 +23,6 @@ const MealSectionCustomizationModal = ({ isVisible, closeModal }) => {
   const { theme } = useThemeContext();
   const {
     mealSections,
-    setMealSections,
     loadMealSectionCustomizations,
     updateMealSectionNames,
   } = useFoodLog();
@@ -259,7 +257,16 @@ const MealSectionCustomizationModal = ({ isVisible, closeModal }) => {
             }}
           >
             <Card.Content>
-              <Text style={styles.modalTitle}>Customize Meal Names</Text>
+              <Title
+                style={{
+                  marginTop: 20,
+                  marginBottom: 16,
+                  fontSize: 18,
+                  alignSelf: "center",
+                }}
+              >
+                Customize Meal Names
+              </Title>
               {renderMealSectionItems()}
             </Card.Content>
           </Card>

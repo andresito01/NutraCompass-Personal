@@ -2,12 +2,11 @@
 
 import React from "react";
 import { View, Text, Image } from "react-native";
-import { Card, useTheme } from "react-native-paper";
+import { Card } from "react-native-paper";
 import { useThemeContext } from "../../../context/ThemeContext.js";
 
 const CustomExerciseCard = ({ exercise }) => {
   const { theme } = useThemeContext();
-  const paperTheme = useTheme();
 
   return (
     <Card

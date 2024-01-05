@@ -11,7 +11,7 @@ const swipeableFoodEntryItemStyles = (SCREEN_WIDTH) => {
       flex: 1,
       flexDirection: "row",
       marginBottom: 1,
-      marginHorizontal: 5,
+      marginHorizontal: 0,
       marginTop: 0,
       elevation: 3,
     },
@@ -20,7 +20,7 @@ const swipeableFoodEntryItemStyles = (SCREEN_WIDTH) => {
       paddingVertical: 10,
       //width: SCREEN_WIDTH / 1.2,
       flex: 1,
-      borderRadius: theme.dimensions.cardBorderRadius,
+      // borderRadius: theme.dimensions.cardBorderRadius,
       //backgroundColor: theme.colors.screenBackground,
       backgroundColor: theme.colors.cardBackgroundColorLowOpacity, // Matte Gray background color
       elevation: 3,

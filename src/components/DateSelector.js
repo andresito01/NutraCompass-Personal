@@ -86,7 +86,7 @@ export default function DateSelector({ selectedDate, setSelectedDate }) {
   return (
     <View style={{ marginBottom: 5 }}>
       <LinearGradient
-        colors={[theme.colors.primary, "black"]} // Adjust the colors as needed
+        colors={[theme.colors.primary, theme.colors.cardBackgroundColor]} // Adjust the colors as needed
         style={{ ...styles.section }}
         start={{ x: 1, y: 0.5 }} // Top left corner
         end={{ x: 0, y: 1 }} // Bottom right corner

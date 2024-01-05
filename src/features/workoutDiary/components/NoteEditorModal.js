@@ -14,18 +14,17 @@ import {
 } from "react-native";
 import {
   Button as PaperButton,
-  useTheme,
   ToggleButton,
   Portal,
   Dialog,
 } from "react-native-paper";
+import * as Haptics from "expo-haptics";
 import Feather from "react-native-vector-icons/Feather";
 import noteEditorModalStyles from "./styles/noteEditorModalStyles.js";
 import { useThemeContext } from "../../../context/ThemeContext.js";
 
 const ToggleButtonRow = ({ textStyle, handleTextStyleChange }) => {
   const { theme } = useThemeContext();
-  const paperTheme = useTheme();
 
   return (
     <KeyboardAvoidingView
@@ -76,7 +75,6 @@ const NoteEditorModal = ({
 }) => {
   const styles = noteEditorModalStyles();
   const { theme } = useThemeContext();
-  const paperTheme = useTheme();
   const [isTextInputActive, setIsTextInputActive] = useState(false);
   const [textStyle, setTextStyle] = useState({});
   const [editableTitle, setEditableTitle] = useState(note?.title);
@@ -145,6 +143,7 @@ const NoteEditorModal = ({
     deleteNote();
     setShowDeleteNoteDialog(false);
     handleCloseNoteEditorModal();
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
   };
 
   const handleDeleteNoteCancel = () => {
@@ -195,11 +194,13 @@ const NoteEditorModal = ({
                 </TouchableOpacity>
                 <TextInput
                   style={{
-                    fontSize: 20,
+                    fontSize: 18,
                     color: theme.colors.cardHeaderTextColor,
-                    backgroundColor: theme.colors.sectionBackgroundColor,
+                    backgroundColor: theme.colors.cardBackgroundColor,
                     padding: 10,
+                    borderRadius: 8,
                   }}
+                  maxLength={20}
                   value={editableTitle}
                   onChangeText={handleTitleChange}
                   onFocus={handleTextInputFocus}
@@ -227,7 +228,7 @@ const NoteEditorModal = ({
                   flex: 1,
                   minHeight: "73%",
                   color: theme.colors.cardHeaderTextColor,
-                  backgroundColor: theme.colors.sectionBackgroundColor,
+                  backgroundColor: theme.colors.surface,
                   marginTop: 10,
                   padding: 10,
                   borderWidth: 1,

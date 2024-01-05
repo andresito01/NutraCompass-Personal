@@ -3334,10 +3334,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-community/slider@npm:4.4.2":
-  version: 4.4.2
-  resolution: "@react-native-community/slider@npm:4.4.2"
-  checksum: 1ae613f594a8ea9d7243b3125d26b36aab4e4c2dd9eba1bf66c4f31878e74fae055cd35a1babc46b262240885bb61fa321610417bb2a6d9f77a330136ff33293
+"@react-native-community/slider@npm:^4.5.0":
+  version: 4.5.0
+  resolution: "@react-native-community/slider@npm:4.5.0"
+  checksum: 65f0399ab0b3a052b257ae4004364cb0ea01a0e8749c7547dcf24d7f2f448a807a49eb6c1daaa3b0037b2ac576d86372a7818ffe8b4421cddf3d307c3744d709
+  languageName: node
+  linkType: hard
+
+"@react-native-picker/picker@npm:^2.6.1":
+  version: 2.6.1
+  resolution: "@react-native-picker/picker@npm:2.6.1"
+  peerDependencies:
+    react: ">=16"
+    react-native: ">=0.57"
+  checksum: a8c58d5d945350b70fd8b5d66dfe97dd04641277db7c702912d8c41ae4da94cfef8b0b73bfa493adfdee8f089af6e0316872c3ee61a4efc18528e6e25a5452bc
   languageName: node
   linkType: hard
 
@@ -7038,7 +7048,8 @@ __metadata:
     "@babel/core": ^7.20.0
     "@react-native-async-storage/async-storage": 1.18.2
     "@react-native-community/datetimepicker": 7.2.0
-    "@react-native-community/slider": 4.4.2
+    "@react-native-community/slider": ^4.5.0
+    "@react-native-picker/picker": ^2.6.1
     "@react-navigation/bottom-tabs": ^6.5.8
     "@react-navigation/material-top-tabs": ^6.6.4
     "@react-navigation/native": ^6.1.7
