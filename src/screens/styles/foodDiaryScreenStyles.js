@@ -66,7 +66,7 @@ const foodDiaryScreenStyles = () => {
       alignItems: "center",
     },
     totalDayCalories: {
-      fontSize: 18,
+      fontSize: 16,
       paddingTop: 12, // Increase padding for better spacing
       color: theme.colors.cardHeaderTextColor,
     },
@@ -93,48 +93,46 @@ const foodDiaryScreenStyles = () => {
     calorieSection: {
       flex: 3,
       height: "100%",
-      alignSelf: "flex-start",
       justifyContent: "center",
       borderRadius: theme.dimensions.sectionBorderRadius,
-      //backgroundColor: theme.colors.sectionBackgroundColor, // Change to surface color for cards
       backgroundColor: theme.colors.cardDarkGrayBackground,
       borderColor: theme.colors.sectionBorderColor,
-      //borderWidth: 1,
       borderRightWidth: 1,
       borderLeftWidth: 1,
-      elevation: 4, // Add elevation for a card-like effect
+      elevation: 4,
     },
     fabMenuSection: {},
     sectionHeaderContainer: {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-      padding: 0, // Reduce padding for smaller header
+      padding: 0,
     },
     mealSectionHeaderContainer: {
+      borderBottomWidth: 2,
+      borderBottomColor: theme.colors.cardBorderColor, // Use divider color for separation
+      backgroundColor: theme.colors.cardDarkGrayBackground,
+    },
+    mealSectionFooterContainer: {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
       paddingBottom: 5,
-      paddingHorizontal: 16,
-      padding: 2, // Reduce padding for smaller header
-      borderBottomWidth: 5,
-      borderBottomLeftRadius: 10,
-      borderBottomRightRadius: 10,
+      marginBottom: 10,
       borderBottomColor: theme.colors.cardBorderColor, // Use divider color for separation
+      backgroundColor: theme.colors.surface,
     },
     sectionTitle: {
-      fontSize: 18, // Reduce fontSize for the section title
+      fontSize: 16, // Reduce fontSize for the section title
       fontWeight: "bold",
       color: theme.colors.cardHeaderTextColor,
     },
-    addButton: {
+    footerButton: {
       alignSelf: "flex-start",
       marginTop: 15,
       marginHorizontal: 16,
     },
     totalMealSectionCalories: {
-      marginTop: 4, // Reduce marginTop for total calories
       fontSize: 18,
       color: theme.colors.sectionHeaderTextColor,
     },
@@ -143,6 +141,14 @@ const foodDiaryScreenStyles = () => {
       marginTop: 4, // Reduce marginTop for date info
       fontWeight: "bold",
       color: theme.colors.sectionHeaderTextColor,
+    },
+    sliderSectionContainer: {
+      marginVertical: 20,
+      flexDirection: "row",
+      minHeight: "22%",
+      maxHeight: "30%",
+      gap: 10,
+      padding: 5,
     },
   });
 };

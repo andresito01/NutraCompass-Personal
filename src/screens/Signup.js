@@ -181,10 +181,9 @@ function SignUpScreen({ navigation }) {
             }}
           >
             <Feather
-              name="arrow-left"
+              name="chevron-left"
               color={theme.colors.sectionHeaderTextColor}
               size={38}
-              style={{ fontSize: 38 }}
             />
           </TouchableOpacity>
         </View>

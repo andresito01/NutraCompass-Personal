@@ -10,7 +10,7 @@ import {
   deleteDoc,
   collection,
   doc,
-  updateDoc,
+  getDoc,
   getDocs,
   setDoc,
   serverTimestamp,
@@ -21,7 +21,7 @@ import {
 import { onAuthStateChanged } from "firebase/auth";
 import { useAuth } from "../../../authentication/context/AuthContext.js";
 import { db } from "../../../config/firebase.js";
-// import uuid from "react-native-uuid";
+import uuid from "react-native-uuid";
 
 const FoodLogContext = createContext();
 
@@ -35,14 +35,19 @@ export function FoodLogProvider({ children }) {
 
   const [mealSections, setMealSections] = useState([]);
   const [foodEntries, setFoodEntries] = useState({});
-  const customMealSectionsCollectionRef = collection(
-    db,
-    `users/${userId}/customMealSections`
+  const customMealSectionsCollectionRef = useMemo(
+    () => collection(db, `users/${userId}/customMealSections`),
+    [userId]
+  );
+
+  const foodLogEntriesCollectionRef = useMemo(
+    () => collection(db, `users/${userId}/foodLogEntries`),
+    [userId]
   );
 
   /** Note: These console logs are being executed everytime I change the theme of the app */
-  console.log("Meal Sections: ", mealSections);
-  console.log("Food Entries: ", foodEntries);
+  // console.log("Meal Sections: ", mealSections);
+  // console.log("Food Entries: ", foodEntries);
 
   useEffect(() => {
     const initializeData = async () => {
@@ -153,11 +158,6 @@ export function FoodLogProvider({ children }) {
       return;
     }
 
-    const foodLogEntriesCollectionRef = collection(
-      db,
-      `users/${userId}/foodLogEntries`
-    );
-
     try {
       const updatedEntries = {};
 
@@ -195,11 +195,6 @@ export function FoodLogProvider({ children }) {
       return;
     }
 
-    const foodLogEntriesCollectionRef = collection(
-      db,
-      `users/${userId}/foodLogEntries`
-    );
-
     try {
       const querySnapshot = await getDocs(
         query(foodLogEntriesCollectionRef, where("mealType", "==", mealType))
@@ -233,45 +228,54 @@ export function FoodLogProvider({ children }) {
   };
 
   // Function to save a food log entry
-  const saveFoodLogEntry = async (
-    mealType,
-    newFoodName,
-    newFoodCalories,
-    selectedDate
-  ) => {
+  const saveFoodLogEntry = async (mealType, selectedFood, selectedDate) => {
     // Ensure that the meal section is valid
     if (mealSections.some((section) => section.id === mealType)) {
       try {
+        // Generate a unique identifier for the document
+        const uniqueId = uuid.v4();
+
+        // Reference to the new document with the unique ID
+        const entryDocRef = doc(foodLogEntriesCollectionRef, uniqueId);
+
         // Create a new entry object
         const newEntry = {
-          foodName: newFoodName,
-          foodCalories: newFoodCalories,
+          id: uniqueId,
+          foodId: selectedFood.foodId,
+          foodLabel: selectedFood.foodLabel,
+          foodCategory: selectedFood?.foodCategory || "",
+          foodBrand: selectedFood?.foodBrand || "",
+          numberOfServings: selectedFood?.numberOfServings,
+          activeMeasure: selectedFood?.activeMeasure,
+          measures: selectedFood.measures,
+          nutrients: selectedFood.nutrients,
           mealType: mealType,
           date: selectedDate,
           timestamp: serverTimestamp(),
         };
 
-        const foodLogEntriesCollectionRef = collection(
-          db,
-          "users/" + userId + "/foodLogEntries"
-        );
+        // Save the entry to Firestore
+        await setDoc(entryDocRef, newEntry);
 
-        // Add the entry to firestore
-        const docRef = await addDoc(foodLogEntriesCollectionRef, newEntry);
-
-        // Update the local state with the new entry
+        // Update the local state
         setFoodEntries((prevEntries) => {
-          // Create a shallow copy of the previous state
           const updatedEntries = { ...prevEntries };
 
-          // Check if the mealType exists in the previous state; if not, initialize it as an empty array
-          if (!updatedEntries[mealType]) {
-            updatedEntries[mealType] = [];
+          // Add the entry to the updated mealType
+          if (mealType in updatedEntries) {
+            updatedEntries[mealType] = [
+              ...updatedEntries[mealType],
+              { ...newEntry },
+            ];
+            console.log("Entry added to the meal type array.");
+          } else {
+            console.log("Meal type does not exist. Entry not added.");
           }
 
-          // Add the new entry to the mealType array
-          updatedEntries[mealType].push({ id: docRef.id, ...newEntry });
-
+          // console.log(
+          //   "Updated Entries:",
+          //   JSON.stringify(updatedEntries, null, 1)
+          // );
           return updatedEntries;
         });
       } catch (error) {
@@ -280,51 +284,134 @@ export function FoodLogProvider({ children }) {
     }
   };
 
-  // Function to delete a food entry
   const deleteFoodEntry = async (mealType, entryId) => {
     try {
-      const foodLogEntriesCollectionRef = collection(
-        db,
-        "users/" + userId + "/foodLogEntries"
-      );
+      console.log(entryId);
       const entryDocRef = doc(foodLogEntriesCollectionRef, entryId);
 
       // Delete the entry from Firestore
       await deleteDoc(entryDocRef);
 
       // Update the local state
-      const updatedEntries = { ...foodEntries };
-      updatedEntries[mealType] = updatedEntries[mealType].filter(
-        (entry) => entry.id !== entryId
-      );
-      setFoodEntries(updatedEntries);
+      setFoodEntries((prevEntries) => {
+        const updatedEntries = { ...prevEntries };
+
+        // Find the meal section based on the id property
+        const mealSection = mealSections.find(
+          (section) => section.id === mealType
+        );
+
+        // Check if the meal section is found
+        if (mealSection) {
+          updatedEntries[mealSection.id] = updatedEntries[
+            mealSection.id
+          ].filter((entry) => entry.id !== entryId);
+          console.log("Entry removed from the meal type array.");
+        } else {
+          console.warn(`Meal section with id ${mealType} not found.`);
+        }
+
+        // console.log(
+        //   "Updated Entries:",
+        //   JSON.stringify(updatedEntries, null, 1)
+        // );
+        return updatedEntries;
+      });
     } catch (error) {
       console.error("Error deleting food log entry:", error);
     }
   };
 
-  // Function to edit a food entry
-  // const editFoodEntry = async (mealType, entryId, updatedEntry) => {
-  //   try {
-  //     const foodLogEntriesCollectionRef = collection(
-  //       db,
-  //       "users/" + userId + "/foodLogEntries"
-  //     );
-  //     const entryDocRef = doc(foodLogEntriesCollectionRef, entryId);
+  const editFoodEntry = async (
+    mealType,
+    entryId,
+    updatedEntry,
+    selectedDate
+  ) => {
+    try {
+      // Create a new entry object
+      const editedEntry = {
+        id: entryId, // Use the existing entryId as Firestore document ID
+        foodId: updatedEntry.foodId, // Use the foodId for Edamam API calls
+        foodLabel: updatedEntry.foodLabel,
+        foodCategory: updatedEntry?.foodCategory || "",
+        foodBrand: updatedEntry?.foodBrand || "",
+        numberOfServings: updatedEntry?.numberOfServings,
+        activeMeasure: updatedEntry?.activeMeasure,
+        measures: updatedEntry.measures,
+        nutrients: updatedEntry.nutrients,
+        mealType: mealType,
+        date: selectedDate,
+        timestamp: serverTimestamp(),
+      };
 
-  //     // Update the entry in Firestore
-  //     await setDoc(entryDocRef, updatedEntry, { merge: true });
+      if (entryId) {
+        // Check if the entryId exists in Firestore
+        const entryDocRef = doc(foodLogEntriesCollectionRef, entryId);
+        const entryDoc = await getDoc(entryDocRef);
 
-  //     // Update the local state
-  //     const updatedEntries = { ...foodEntries };
-  //     updatedEntries[mealType] = updatedEntries[mealType].map((entry) =>
-  //       entry.id === entryId ? { ...entry, ...updatedEntry } : entry
-  //     );
-  //     setFoodEntries(updatedEntries);
-  //   } catch (error) {
-  //     console.error("Error editing food log entry:", error);
-  //   }
-  // };
+        if (entryDoc.exists()) {
+          // Entry exists in Firestore, update the entry
+          await setDoc(entryDocRef, editedEntry, { merge: true });
+
+          // Update the local state
+          setFoodEntries((prevEntries) => {
+            const updatedEntries = { ...prevEntries };
+
+            // Remove the entry from its current mealType
+            for (const [
+              currentMealType,
+              currentMealTypeArray,
+            ] of Object.entries(updatedEntries)) {
+              const entryIndex = currentMealTypeArray.findIndex(
+                (entry) => entry.id === entryId
+              );
+
+              if (entryIndex !== -1) {
+                console.log(
+                  `Removing entry from ${currentMealType} meal type array.`
+                );
+                const updatedMealTypeArray = [...currentMealTypeArray];
+                updatedMealTypeArray.splice(entryIndex, 1);
+                updatedEntries[currentMealType] = updatedMealTypeArray;
+                break; // Stop after removing from the first occurrence
+              }
+            }
+
+            // Add the entry to the updated mealType, only if mealType exists
+            if (mealType in updatedEntries) {
+              updatedEntries[mealType] = [
+                ...updatedEntries[mealType],
+                { ...editedEntry },
+              ];
+              console.log("Entry added to the meal type array.");
+            } else {
+              console.log("Meal type does not exist. Entry not updated.");
+            }
+
+            // console.log(
+            //   "Updated Entries:",
+            //   JSON.stringify(updatedEntries, null, 1)
+            // );
+            return updatedEntries;
+          });
+        } else {
+          console.log(
+            "Entry id exists but an entry doc with this id does not exist."
+          );
+        }
+      } else {
+        // Entry doesn't exist in Firestore, generate a unique id
+        const uniqueId = uuid.v4();
+        const editedEntryWithIdAdded = { ...editedEntry, id: uniqueId };
+
+        // Call saveFoodLogEntry to add a new entry
+        saveFoodLogEntry(mealType, editedEntryWithIdAdded, selectedDate);
+      }
+    } catch (error) {
+      console.error("Error editing food log entry:", error);
+    }
+  };
 
   const contextValue = useMemo(() => {
     return {
@@ -336,7 +423,7 @@ export function FoodLogProvider({ children }) {
       updateMealSectionNames,
       saveFoodLogEntry,
       deleteFoodEntry,
-      //editFoodEntry,
+      editFoodEntry,
     };
   }, [
     mealSections,
@@ -347,7 +434,7 @@ export function FoodLogProvider({ children }) {
     updateMealSectionNames,
     saveFoodLogEntry,
     deleteFoodEntry,
-    //editFoodEntry,
+    editFoodEntry,
   ]);
 
   return (

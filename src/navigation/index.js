@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Text, SafeAreaView, Platform, StatusBar } from "react-native";
+import { Text, View, SafeAreaView, Platform, StatusBar } from "react-native";
 import { useAuth } from "../authentication/context/AuthContext.js";
 import UserStack from "./userStack";
 import AuthStack from "./authStack";
@@ -21,7 +21,7 @@ export default function RootNavigation() {
 
   return (
     <PaperProvider theme={theme}>
-      <SafeAreaView
+      <View
         style={{
           flex: 1,
           backgroundColor: theme.colors.screenBackground, // Set the background color
@@ -41,7 +41,7 @@ export default function RootNavigation() {
         ) : (
           <Text>Loading ...</Text>
         )}
-      </SafeAreaView>
+      </View>
     </PaperProvider>
   );
 }

@@ -47,7 +47,7 @@ function MoreScreen() {
         <Text style={styles.text}>Goals</Text>
         <Feather
           style={{ position: "absolute", right: 10 }}
-          name="arrow-right"
+          name="chevron-right"
           color={theme.colors.cardHeaderTextColor}
           size={24}
         />
@@ -67,7 +67,7 @@ function MoreScreen() {
         <Text style={styles.text}>Theme Palette</Text>
         <Feather
           style={{ position: "absolute", right: 10 }}
-          name="arrow-right"
+          name="chevron-right"
           color={theme.colors.cardHeaderTextColor}
           size={24}
         />

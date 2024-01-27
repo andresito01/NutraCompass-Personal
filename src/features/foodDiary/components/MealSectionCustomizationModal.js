@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -9,14 +9,13 @@ import {
   Animated,
   Easing,
 } from "react-native";
+import * as Haptics from "expo-haptics";
 import Modal from "react-native-modal";
 import { useFoodLog } from "../context/FoodLogContext.js";
 import { Card, Title } from "react-native-paper";
 import mealSectionCustomizationModalStyles from "./styles/mealSectionCustomizationModalStyles.js";
 import Feather from "react-native-vector-icons/Feather";
 import { useThemeContext } from "../../../context/ThemeContext.js";
-
-const AnimatedView = Animated.createAnimatedComponent(View);
 
 const MealSectionCustomizationModal = ({ isVisible, closeModal }) => {
   const styles = mealSectionCustomizationModalStyles();
@@ -33,71 +32,71 @@ const MealSectionCustomizationModal = ({ isVisible, closeModal }) => {
     localMealSections.map(() => false)
   );
 
-  const [animation] = useState(new Animated.Value(0));
+  // const [animation] = useState(new Animated.Value(0));
 
-  useEffect(() => {
-    // Start the animation when the modal opens
-    let animationInstance;
-    if (isVisible) {
-      animationInstance = Animated.loop(
-        Animated.timing(animation, {
-          toValue: 1,
-          duration: 3000,
-          easing: Easing.linear,
-          useNativeDriver: false,
-        })
-      );
-      animationInstance.start();
-    }
+  // useEffect(() => {
+  //   // Start the animation when the modal opens
+  //   let animationInstance;
+  //   if (isVisible) {
+  //     animationInstance = Animated.loop(
+  //       Animated.timing(animation, {
+  //         toValue: 1,
+  //         duration: 3000,
+  //         easing: Easing.linear,
+  //         useNativeDriver: false,
+  //       })
+  //     );
+  //     animationInstance.start();
+  //   }
 
-    // Stop the animation when the modal closes
-    return () => {
-      if (animationInstance) {
-        animationInstance.stop();
-      }
-    };
-  }, [isVisible, animation]);
+  //   // Stop the animation when the modal closes
+  //   return () => {
+  //     if (animationInstance) {
+  //       animationInstance.stop();
+  //     }
+  //   };
+  // }, [isVisible, animation]);
 
-  const renderAnimatedBorders = () => {
-    const numLines = 14; // Adjust the number of lines as needed
-    const spacing = 1; // Adjust the spacing between lines as needed
-    const lines = [];
+  // const renderAnimatedBorders = () => {
+  //   const numLines = 14; // Adjust the number of lines as needed
+  //   const spacing = 1; // Adjust the spacing between lines as needed
+  //   const lines = [];
 
-    for (let i = 0; i < numLines; i++) {
-      const direction = i % 2 === 0 ? 1 : -1; // Alternate the direction of movement
-      const initialOffset = direction * 400 * 1;
-      const translateY = i * (20 + spacing);
+  //   for (let i = 0; i < numLines; i++) {
+  //     const direction = i % 2 === 0 ? 1 : -1; // Alternate the direction of movement
+  //     const initialOffset = direction * 400 * 1;
+  //     const translateY = i * (20 + spacing);
 
-      lines.push(
-        <Animated.View
-          key={i}
-          style={{
-            backgroundColor:
-              i % 2 === 0 ? theme.colors.primary : theme.colors.cardBorderColor,
-            height: 1,
-            opacity: animation.interpolate({
-              inputRange: [0, 0.4, 0.6, 1],
-              outputRange: [0, 1, 1, 0], // Gradual increase and decrease in opacity
-            }),
-            transform: [
-              { translateY },
-              {
-                translateX: animation.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [initialOffset, -initialOffset], // Constant back-and-forth motion
-                }),
-              },
-            ], // Adjust the vertical spacing and horizontal movement
-          }}
-        />
-      );
+  //     lines.push(
+  //       <Animated.View
+  //         key={i}
+  //         style={{
+  //           backgroundColor:
+  //             i % 2 === 0 ? theme.colors.primary : theme.colors.cardBorderColor,
+  //           height: 1,
+  //           opacity: animation.interpolate({
+  //             inputRange: [0, 0.4, 0.6, 1],
+  //             outputRange: [0, 1, 1, 0], // Gradual increase and decrease in opacity
+  //           }),
+  //           transform: [
+  //             { translateY },
+  //             {
+  //               translateX: animation.interpolate({
+  //                 inputRange: [0, 1],
+  //                 outputRange: [initialOffset, -initialOffset], // Constant back-and-forth motion
+  //               }),
+  //             },
+  //           ], // Adjust the vertical spacing and horizontal movement
+  //         }}
+  //       />
+  //     );
 
-      // Add spacing between lines
-      lines.push(<View key={`space-${i}`} style={{ height: spacing }} />);
-    }
+  //     // Add spacing between lines
+  //     lines.push(<View key={`space-${i}`} style={{ height: spacing }} />);
+  //   }
 
-    return <View style={{ flex: 1, overflow: "hidden" }}>{lines}</View>;
-  };
+  //   return <View style={{ flex: 1, overflow: "hidden" }}>{lines}</View>;
+  // };
 
   useEffect(() => {
     console.log("Meal Customization Modal Effect executed");
@@ -112,6 +111,8 @@ const MealSectionCustomizationModal = ({ isVisible, closeModal }) => {
   }, [isVisible]);
 
   const handleCloseModal = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
     setTempMealSections([...localMealSections]); // Reset temp state to local state
     closeModal();
   };
@@ -127,6 +128,8 @@ const MealSectionCustomizationModal = ({ isVisible, closeModal }) => {
   };
 
   const handleSaveCustomizations = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
     // Create an array of objects with updates
     const mealSectionUpdates = localMealSections.map((section, index) => ({
       mealSectionId: section.id,
@@ -146,20 +149,23 @@ const MealSectionCustomizationModal = ({ isVisible, closeModal }) => {
       const editedName = tempMealSections[index].name;
       const placeholderText = "New Meal";
 
-      const handleNameClick = () => {
+      const handleNameClick = useCallback(() => {
         const newEditingStates = [...editingStates];
         newEditingStates[index] = true;
         setEditingStates(newEditingStates);
-      };
+      }, [editingStates, index]);
 
-      const handleNameChange = (newName) => {
-        // Update the name in the temporary state
-        const updatedSections = [...tempMealSections];
-        updatedSections[index] = { ...item, name: newName };
-        setTempMealSections(updatedSections);
-      };
+      const handleNameChange = useCallback(
+        (newName) => {
+          // Update the name in the temporary state
+          const updatedSections = [...tempMealSections];
+          updatedSections[index] = { ...item, name: newName };
+          setTempMealSections(updatedSections);
+        },
+        [index, item, tempMealSections]
+      );
 
-      const handleNameBlur = () => {
+      const handleNameBlur = useCallback(() => {
         const newEditingStates = [...editingStates];
         newEditingStates[index] = false;
         setEditingStates(newEditingStates);
@@ -168,7 +174,7 @@ const MealSectionCustomizationModal = ({ isVisible, closeModal }) => {
           // Save the updated name locally
           updateTempMealName(item.id, editedName);
         }
-      };
+      }, [index, item, editedName, editingStates]);
 
       return (
         <TouchableWithoutFeedback key={item.id}>
@@ -230,9 +236,9 @@ const MealSectionCustomizationModal = ({ isVisible, closeModal }) => {
               onPress={handleCloseModal}
             >
               <Feather
-                name="arrow-left"
+                name="chevron-left"
                 color={theme.colors.cardHeaderTextColor}
-                size={28}
+                size={38}
               />
             </TouchableOpacity>
             <TouchableOpacity
@@ -270,7 +276,7 @@ const MealSectionCustomizationModal = ({ isVisible, closeModal }) => {
               {renderMealSectionItems()}
             </Card.Content>
           </Card>
-          {renderAnimatedBorders()}
+          {/* {renderAnimatedBorders()} */}
         </View>
       </TouchableWithoutFeedback>
     </Modal>

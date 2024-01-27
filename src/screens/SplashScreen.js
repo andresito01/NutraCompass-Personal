@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, ActivityIndicator, Image } from "react-native";
-import logo from "../../assets/brandmark-design.png";
+import logo from "../../assets/brandmark-design-2.png";
 import { useThemeContext } from "../context/ThemeContext.js";
 import { useNavigation } from "@react-navigation/native"; // Import useNavigation
 

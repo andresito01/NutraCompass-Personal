@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 import { useTheme } from "react-native-paper";
 import { useThemeContext } from "../../../../context/ThemeContext.js";
 
-const swipeableFoodEntryItemStyles = (SCREEN_WIDTH) => {
+const swipeableFoodEntryItemStyles = () => {
   const paperTheme = useTheme();
   const { theme } = useThemeContext();
 
@@ -16,13 +16,11 @@ const swipeableFoodEntryItemStyles = (SCREEN_WIDTH) => {
       elevation: 3,
     },
     textContainer: {
-      paddingHorizontal: 10,
-      paddingVertical: 10,
       //width: SCREEN_WIDTH / 1.2,
       flex: 1,
       // borderRadius: theme.dimensions.cardBorderRadius,
       //backgroundColor: theme.colors.screenBackground,
-      backgroundColor: theme.colors.cardBackgroundColorLowOpacity, // Matte Gray background color
+      backgroundColor: theme.colors.surface, // Matte Gray background color
       elevation: 3,
       zIndex: 2,
     },
@@ -34,6 +32,7 @@ const swipeableFoodEntryItemStyles = (SCREEN_WIDTH) => {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
+      padding: 10,
     },
     entryFoodNameText: {
       color: theme.colors.cardHeaderTextColor,
@@ -46,7 +45,8 @@ const swipeableFoodEntryItemStyles = (SCREEN_WIDTH) => {
     },
     rightButtonContainer: {
       position: "absolute",
-      left: SCREEN_WIDTH / 1.24,
+      left: null,
+      right: 0,
       alignItems: "center",
       justifyContent: "center",
       marginRight: 5,

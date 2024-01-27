@@ -57,7 +57,7 @@ const MacroPercentageSlider = ({ selectedValues, onSelect, calories }) => {
               style={{
                 fontSize: 20,
                 fontWeight: "bold",
-                color: "blue",
+                color: theme.colors.cardHeaderTextColor,
               }}
             >
               Protein
@@ -99,7 +99,7 @@ const MacroPercentageSlider = ({ selectedValues, onSelect, calories }) => {
               style={{
                 fontSize: 20,
                 fontWeight: "bold",
-                color: "orange",
+                color: theme.colors.cardHeaderTextColor,
               }}
             >
               Carb
@@ -141,7 +141,7 @@ const MacroPercentageSlider = ({ selectedValues, onSelect, calories }) => {
               style={{
                 fontSize: 20,
                 fontWeight: "bold",
-                color: "red",
+                color: theme.colors.cardHeaderTextColor,
               }}
             >
               Fat
@@ -198,7 +198,7 @@ const MacroPercentageSlider = ({ selectedValues, onSelect, calories }) => {
           >
             <Text
               style={{
-                color: isSum100Percent ? theme.colors.primary : "red",
+                color: isSum100Percent ? "green" : "red",
                 fontSize: 24,
               }}
             >

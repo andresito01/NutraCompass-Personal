@@ -41,13 +41,14 @@ const ThemeScreen = () => {
           width: "100%",
           justifyContent: "space-between",
           padding: 10,
+          paddingTop: 30,
         }}
       >
         <TouchableOpacity onPress={navigateToMore}>
           <Feather
-            name="arrow-left"
+            name="chevron-left"
             color={theme.colors.sectionHeaderTextColor}
-            size={28}
+            size={38}
           />
         </TouchableOpacity>
 

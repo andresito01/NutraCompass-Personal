@@ -71,7 +71,7 @@ export default function DateSelector({ selectedDate, setSelectedDate }) {
     } else if (date === subtractDay(currentDate)) {
       return "Yesterday";
     } else {
-      return "";
+      return " ";
     }
   };
 
@@ -84,66 +84,92 @@ export default function DateSelector({ selectedDate, setSelectedDate }) {
   };
 
   return (
-    <View style={{ marginBottom: 5 }}>
-      <LinearGradient
-        colors={[theme.colors.primary, theme.colors.cardBackgroundColor]} // Adjust the colors as needed
-        style={{ ...styles.section }}
-        start={{ x: 1, y: 0.5 }} // Top left corner
-        end={{ x: 0, y: 1 }} // Bottom right corner
+    <LinearGradient
+      style={{
+        height: "18%",
+        justifyContent: "flex-end",
+        paddingVertical: 10,
+        borderBottomLeftRadius: 60,
+        borderBottomRightRadius: 60,
+        borderColor: theme.colors.sectionBorderColor,
+        borderLeftWidth: 1,
+        borderRightWidth: 1,
+        borderBottomWidth: 1,
+        elevation: 4,
+      }}
+      colors={[
+        `${theme.colors.primary}99`, // Adding "99" for 0.99 opacity
+        `${theme.colors.secondary}99`, // Adding "99" for 0.99 opacity
+      ]}
+      start={{ x: 0, y: 1.5 }} // Top left corner
+      end={{ x: 1, y: 2 }} // Bottom right corner
+    >
+      <Card
+        style={{
+          ...styles.section,
+          backgroundColor: "transparent",
+        }}
       >
-        <Card
-          style={{
-            ...styles.section,
-            backgroundColor: "transparent",
-          }}
-        >
-          <Card.Content>
-            <View style={styles.headerDateContainer}>
-              <TouchableOpacity
-                style={{ padding: 10 }}
-                onPress={() => {
-                  handlePrevDay();
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                }}
-              >
-                <Feather
-                  name="chevron-left"
-                  size={28}
-                  color={theme.colors.cardHeaderTextColor}
-                />
+        <Card.Content style={{ paddingHorizontal: 15, paddingVertical: 0 }}>
+          <View style={styles.headerDateContainer}>
+            <TouchableOpacity
+              style={{
+                borderRadius: 30,
+                padding: 10,
+                backgroundColor: "rgba(255, 255, 255, 0.1)",
+              }}
+              onPress={() => {
+                handlePrevDay();
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              }}
+            >
+              <Feather
+                name="chevron-left"
+                size={28}
+                color={theme.colors.cardHeaderTextColor}
+              />
+            </TouchableOpacity>
+            <View
+              style={{
+                backgroundColor: "rgba(255, 255, 255, 0.1)",
+                padding: 15,
+                borderRadius: 16,
+              }}
+            >
+              <TouchableOpacity onPress={handleCalendarToggle}>
+                <View style={styles.calendarModalButton}>
+                  <Feather
+                    name="calendar"
+                    size={24}
+                    color={theme.colors.cardHeaderTextColor}
+                  />
+                  <Text style={styles.date}>
+                    {getCurrentDate(selectedDate)}
+                  </Text>
+                </View>
               </TouchableOpacity>
-              <View>
-                <TouchableOpacity onPress={handleCalendarToggle}>
-                  <View style={styles.calendarModalButton}>
-                    <Feather
-                      name="calendar"
-                      size={24}
-                      color={theme.colors.cardHeaderTextColor}
-                    />
-                    <Text style={styles.date}>
-                      {getCurrentDate(selectedDate)}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-                <Text style={styles.dateInfo}>{getDateInfo(selectedDate)}</Text>
-              </View>
-              <TouchableOpacity
-                style={{ padding: 10 }}
-                onPress={() => {
-                  handleNextDay();
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                }}
-              >
-                <Feather
-                  name="chevron-right"
-                  size={28}
-                  color={theme.colors.cardHeaderTextColor}
-                />
-              </TouchableOpacity>
+              <Text style={styles.dateInfo}>{getDateInfo(selectedDate)}</Text>
             </View>
-          </Card.Content>
-        </Card>
-      </LinearGradient>
+            <TouchableOpacity
+              style={{
+                borderRadius: 30,
+                padding: 10,
+                backgroundColor: "rgba(255, 255, 255, 0.1)",
+              }}
+              onPress={() => {
+                handleNextDay();
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              }}
+            >
+              <Feather
+                name="chevron-right"
+                size={28}
+                color={theme.colors.cardHeaderTextColor}
+              />
+            </TouchableOpacity>
+          </View>
+        </Card.Content>
+      </Card>
 
       {/* Calendar Modal */}
       <Modal
@@ -157,13 +183,13 @@ export default function DateSelector({ selectedDate, setSelectedDate }) {
               style={{
                 height: "auto",
                 width: "100%",
-                backgroundColor: theme.colors.cardBackgroundColor,
+                backgroundColor: theme.colors.cardDarkGrayBackgroundColor,
               }}
               current={selectedDate.toString()}
               onDayPress={handleDateChange}
               hideExtraDays
               theme={{
-                calendarBackground: theme.colors.screenBackground,
+                calendarBackground: theme.colors.cardBackgroundColor,
                 selectedDayBackgroundColor: theme.colors.primary,
                 selectedDayTextColor: theme.colors.cardHeaderTextColor,
                 todayTextColor: theme.colors.cardHeaderTextColor,
@@ -218,7 +244,7 @@ export default function DateSelector({ selectedDate, setSelectedDate }) {
             <View
               style={{
                 flexDirection: "row",
-                backgroundColor: "rgba(0, 0, 0, 0.3)",
+                backgroundColor: theme.colors.cardDarkGrayBackgroundColor,
                 justifyContent: "flex-end",
               }}
             >
@@ -238,6 +264,6 @@ export default function DateSelector({ selectedDate, setSelectedDate }) {
           </View>
         </View>
       </Modal>
-    </View>
+    </LinearGradient>
   );
 }

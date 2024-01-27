@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import {
   View,
   Text,
@@ -9,12 +9,14 @@ import {
   Platform,
 } from "react-native";
 import { Button, Title, Card } from "react-native-paper";
+import * as Haptics from "expo-haptics";
 import Modal from "react-native-modal";
 import dailyNutritionGoalsCustomizationModalStyles from "./styles/dailyNutritionGoalsCustomizationModalStyles.js";
 import Feather from "react-native-vector-icons/Feather";
-import MacroSettingsModal from "./MacroSettingsModal.js";
 import { useUserSettings } from "../../userSettings/context/UserSettingsContext.js";
 import { useThemeContext } from "../../../context/ThemeContext.js";
+import MacroSettingsModal from "./MacroSettingsModal.js";
+//const MacroSettingsModal = React.lazy(() => import("./MacroSettingsModal.js"));
 
 const DailyNutritionGoalsCustomizationModal = ({ isVisible, closeModal }) => {
   const styles = dailyNutritionGoalsCustomizationModalStyles();
@@ -31,10 +33,14 @@ const DailyNutritionGoalsCustomizationModal = ({ isVisible, closeModal }) => {
 
   const [calories, setCalories] = useState(calorieGoal);
   const [protein, setProtein] = useState(
-    macroGoals.protein.dailyPercentage * 100
+    Math.round(macroGoals.protein.dailyPercentage * 100)
   );
-  const [carb, setCarb] = useState(macroGoals.carb.dailyPercentage * 100);
-  const [fat, setFat] = useState(macroGoals.fat.dailyPercentage * 100);
+  const [carb, setCarb] = useState(
+    Math.round(macroGoals.carb.dailyPercentage * 100)
+  );
+  const [fat, setFat] = useState(
+    Math.round(macroGoals.fat.dailyPercentage * 100)
+  );
   const [isMacroSettingsModalVisible, setIsMacroSettingsModalVisible] =
     useState(false);
 
@@ -109,11 +115,6 @@ const DailyNutritionGoalsCustomizationModal = ({ isVisible, closeModal }) => {
   const carbDailyGrams = calculateCarbDailyGrams(calories, carb);
   const fatDailyGrams = calculateFatDailyGrams(calories, fat);
 
-  // console.log("Calorie: " + calories + " , " + typeof calories);
-  // console.log("Protein: " + protein + " , " + typeof protein);
-  // console.log("Carb: " + carb + " , " + typeof carb);
-  // console.log("Fat: " + fat + " , " + typeof fat);
-
   useEffect(() => {
     try {
       setNutritionalGoals({
@@ -150,13 +151,16 @@ const DailyNutritionGoalsCustomizationModal = ({ isVisible, closeModal }) => {
         <View style={styles.header}>
           <TouchableOpacity
             style={styles.closeModalButton}
-            onPress={closeModal}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              closeModal();
+            }}
             disabled={activeField ? true : false}
           >
             <Feather
-              name="arrow-left"
+              name="chevron-left"
               color={theme.colors.sectionHeaderTextColor}
-              size={28}
+              size={38}
             />
           </TouchableOpacity>
         </View>
@@ -325,20 +329,22 @@ const DailyNutritionGoalsCustomizationModal = ({ isVisible, closeModal }) => {
           </View>
         )}
 
-        <MacroSettingsModal
-          isVisible={isMacroSettingsModalVisible}
-          closeModal={toggleMacroSettingsModal}
-          tempChanges={tempChanges}
-          activeField={activeField}
-          setTempChanges={setTempChanges}
-          setActiveField={setActiveField}
-          handleInputChange={handleInputChange}
-          handleInputUpdate={handleInputUpdate}
-          calories={calories}
-          protein={protein}
-          carb={carb}
-          fat={fat}
-        />
+        <Suspense fallback={null}>
+          <MacroSettingsModal
+            isVisible={isMacroSettingsModalVisible}
+            closeModal={toggleMacroSettingsModal}
+            tempChanges={tempChanges}
+            activeField={activeField}
+            setTempChanges={setTempChanges}
+            setActiveField={setActiveField}
+            handleInputChange={handleInputChange}
+            handleInputUpdate={handleInputUpdate}
+            calories={calories}
+            protein={protein}
+            carb={carb}
+            fat={fat}
+          />
+        </Suspense>
       </KeyboardAvoidingView>
     </Modal>
   );

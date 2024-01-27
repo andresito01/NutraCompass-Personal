@@ -1,5 +1,4 @@
-// FoodNutrientModal.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   ScrollView,
@@ -10,21 +9,217 @@ import {
   Dimensions,
   TouchableOpacity,
 } from "react-native";
-import { TextInput, useTheme, Appbar, ProgressBar } from "react-native-paper";
+import { TextInput, Appbar, ProgressBar, IconButton } from "react-native-paper";
+import * as Haptics from "expo-haptics";
 import Modal from "react-native-modal";
 import Feather from "react-native-vector-icons/Feather";
 import foodNutrientModalStyles from "./styles/foodNutrientModalStyles.js";
 import Svg, { Circle, G, Text as SvgText, Path } from "react-native-svg";
 import { useThemeContext } from "../../../context/ThemeContext.js";
+import { useUserSettings } from "../../userSettings/context/UserSettingsContext.js";
+import { useFoodLog } from "../context/FoodLogContext.js";
+import {
+  searchForFoodItemNutrients,
+  processCoreNutrients,
+  processVitamins,
+  processMinerals,
+  processActiveFoodItemNumberOfServingsUpdate,
+} from "../api/EdamamFoodDB/edamamMethods.js";
 
-const FoodNutrientModal = ({ isVisible, closeModal }) => {
+const NutritionFactsRow = ({
+  label,
+  quantity,
+  unit,
+  totalDaily,
+
+  color,
+}) => {
+  const styles = foodNutrientModalStyles();
+
+  return (
+    <View style={styles.nutritionFactsRow}>
+      <View style={styles.nutritionalFactsLabelContainer}>
+        <Text style={styles.nutritionFactsLabel}>{label}</Text>
+      </View>
+      <View style={styles.nutritionalFactsValuesContainer}>
+        <Text style={{ ...styles.nutritionFactsValue, color: color }}>
+          {quantity} {unit}
+        </Text>
+        <Text style={{ ...styles.nutritionFactsDailyValue, color: color }}>
+          {totalDaily}%
+        </Text>
+      </View>
+    </View>
+  );
+};
+
+const NutritionFactsIndentedRow = ({
+  label,
+  quantity,
+  unit,
+  totalDaily,
+
+  color,
+}) => {
+  const styles = foodNutrientModalStyles();
+
+  return (
+    <View style={styles.nutritionFactsRow}>
+      <View style={styles.nutritionalFactsLabelContainer}>
+        <Text style={styles.nutritionFactsIndentLabel}>{label}</Text>
+      </View>
+      <View style={styles.nutritionalFactsValuesContainer}>
+        <Text style={{ ...styles.nutritionFactsIndentValue, color: color }}>
+          {quantity} {unit}
+        </Text>
+        <Text
+          style={{ ...styles.nutritionFactsIndentDailyValue, color: color }}
+        >
+          {totalDaily}%
+        </Text>
+      </View>
+    </View>
+  );
+};
+
+const ServingSizeRow = ({
+  isVisible,
+  toggleSelectServing,
+  label,
+  selectedServing,
+}) => {
+  const { theme } = useThemeContext();
+  const styles = foodNutrientModalStyles();
+
+  return (
+    <View style={styles.rowContainer}>
+      <Text style={styles.inputLabel}>{label}</Text>
+      <TouchableOpacity
+        style={{
+          borderWidth: 1,
+          borderColor: isVisible ? theme.colors.primary : "gray",
+          borderRadius: 8,
+          paddingVertical: 10,
+          paddingHorizontal: 20,
+        }}
+        onPress={toggleSelectServing}
+      >
+        <Text style={{ color: theme.colors.cardHeaderTextColor }}>
+          {Math.round(parseFloat(selectedServing?.weight))}g{" "}
+          {selectedServing?.label}
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+const NumberOfServingsRow = ({
+  label,
+  keyboardType,
+  numberOfServings,
+  updateNumberOfServings,
+  hideSelectServingAndSelectMealOnTextInputFocus,
+}) => {
+  const styles = foodNutrientModalStyles();
+
+  // Convert NaN or null to an empty string for better user experience
+  const formattedNumberOfServings =
+    numberOfServings !== null && !isNaN(numberOfServings)
+      ? numberOfServings.toString()
+      : "";
+
+  return (
+    <View style={styles.rowContainer}>
+      <Text style={styles.inputLabel}>{label}</Text>
+      <TextInput
+        onFocus={hideSelectServingAndSelectMealOnTextInputFocus}
+        mode="flat"
+        keyboardType={keyboardType}
+        style={styles.textInput}
+        value={formattedNumberOfServings}
+        onChangeText={(newNumberOfServings) =>
+          updateNumberOfServings(newNumberOfServings)
+        }
+      />
+    </View>
+  );
+};
+
+const MealRow = ({
+  isVisible,
+  toggleSelectMeal,
+  label,
+  selectedMealOption,
+}) => {
+  const { theme } = useThemeContext();
+  const styles = foodNutrientModalStyles();
+
+  return (
+    <View style={styles.rowContainer}>
+      <Text style={styles.inputLabel}>{label}</Text>
+      <TouchableOpacity
+        style={{
+          borderWidth: 1,
+          borderColor: isVisible ? theme.colors.primary : "gray",
+          borderRadius: 8,
+          paddingVertical: 10,
+          paddingHorizontal: 20,
+        }}
+        onPress={toggleSelectMeal}
+      >
+        <Text style={{ color: theme.colors.cardHeaderTextColor }}>
+          {selectedMealOption?.name}
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+const FoodNutrientModal = ({
+  isVisible,
+  closeModal,
+  activeFoodItem,
+  setActiveFoodItem,
+  foodNutrientModalType,
+  activeMealSection,
+  selectedDate,
+}) => {
   const styles = foodNutrientModalStyles();
   const { theme } = useThemeContext();
-  const paperTheme = useTheme();
 
+  const { getNutritionalGoals } = useUserSettings();
+  const { calorieGoal, macroGoals } = getNutritionalGoals();
+
+  const { mealSections, editFoodEntry } = useFoodLog();
   const [showNutritionFactsList, setShowNutritionFactsList] = useState(false);
   const [showVitaminList, setShowVitaminList] = useState(false);
   const [showMineralList, setShowMineralList] = useState(false);
+
+  // State to store the nutrient data for a single serving
+  const [activeFoodItemOneServing, setActiveFoodItemOneServing] = useState({});
+
+  // State for selected serving size
+  const [selectedServing, setSelectedServing] = useState(
+    activeFoodItem?.activeMeasure
+  );
+
+  // State for the number of servings
+  const [numberOfServings, setNumberOfServings] = useState(
+    activeFoodItem?.numberOfServings || 1
+  );
+
+  // State for select/change meal section the food item is to be added to.
+  const [selectedMealSection, setSelectedMealSection] = useState(
+    activeFoodItem?.mealType ||
+      mealSections.filter((mealOption) => mealOption.id === activeMealSection)
+  );
+
+  // State for select serving modal visibility
+  const [isSelectServingSizeVisible, setIsSelectServingSizeVisible] =
+    useState(false);
+
+  // State for select meal modal visibility
+  const [isSelectMealVisible, setIsSelectMealVisible] = useState(false);
 
   // Get screen width
   const screenWidth = Dimensions.get("window").width;
@@ -34,11 +229,169 @@ const FoodNutrientModal = ({ isVisible, closeModal }) => {
   proteinColor = "green";
   fatColor = "red";
 
-  // Example daily goals, replace with actual values from UserSettingsContext
-  const dailyGoals = {
-    carbs: 300,
-    protein: 150,
-    fat: 70,
+  // Effect to update selectedServing and numberOfServings when isVisible changes
+  useEffect(() => {
+    if (isVisible === true) {
+      setSelectedServing(activeFoodItem?.activeMeasure);
+      setNumberOfServings(activeFoodItem?.numberOfServings || 1);
+
+      const activeMealSectionFromDiary = mealSections.filter(
+        (mealOption) => mealOption.id === activeFoodItem?.mealType
+      );
+
+      setSelectedMealSection(
+        activeMealSection || activeMealSectionFromDiary[0]
+      );
+
+      // Check if activeFoodItemOneServing is empty
+      if (
+        !activeFoodItemOneServing ||
+        Object.keys(activeFoodItemOneServing).length === 0
+      ) {
+        // Fetch nutrients based on the selected serving size
+        const ingredientsParam = {
+          ingredients: [
+            {
+              quantity: 1, // Use numberOfServings instead of 1
+              measureURI: activeFoodItem?.activeMeasure?.uri || "",
+              foodId: activeFoodItem?.foodId || "",
+            },
+          ],
+        };
+
+        searchForFoodItemNutrients(ingredientsParam).then((nutrients) => {
+          const oneServingNutrientData = {
+            ...activeFoodItem,
+            activeMeasure: activeFoodItem?.activeMeasure,
+            nutrients: {
+              ...processCoreNutrients(nutrients, 1),
+              vitamins: processVitamins(nutrients, 1),
+              minerals: processMinerals(nutrients, 1),
+            },
+          };
+
+          setActiveFoodItemOneServing(oneServingNutrientData);
+        });
+      }
+    } else {
+      setSelectedServing(null);
+      setNumberOfServings(null);
+      setSelectedMealSection(null);
+      setActiveFoodItemOneServing(null);
+    }
+  }, [isVisible]);
+
+  const toggleSelectServing = () => {
+    if (isSelectMealVisible) {
+      toggleSelectMeal();
+    }
+
+    setIsSelectServingSizeVisible(!isSelectServingSizeVisible);
+  };
+
+  const toggleSelectMeal = () => {
+    if (isSelectServingSizeVisible) {
+      toggleSelectServing();
+    }
+
+    setIsSelectMealVisible(!isSelectMealVisible);
+  };
+
+  const hideSelectServingAndSelectMealOnTextInputFocus = () => {
+    if (isSelectServingSizeVisible) setIsSelectServingSizeVisible(false);
+
+    if (isSelectMealVisible) setIsSelectMealVisible(false);
+  };
+
+  const handleSelectMeal = (mealOption) => {
+    if (isSelectMealVisible) {
+      toggleSelectMeal(); // Close the meal options modal
+    }
+    setSelectedMealSection(mealOption);
+  };
+
+  // Function to handle serving size selection
+  const handleSelectServing = async (servingSizeOption) => {
+    if (isSelectServingSizeVisible) {
+      toggleSelectServing(); // Close the serving size options modal
+    }
+
+    // Fetch nutrients based on the selected serving size
+    const ingredientsParam = {
+      ingredients: [
+        {
+          quantity: 1, // Use numberOfServings instead of 1
+          measureURI: servingSizeOption?.uri || "",
+          foodId: activeFoodItem.foodId || "",
+        },
+      ],
+    };
+
+    const nutrients = await searchForFoodItemNutrients(ingredientsParam);
+
+    const oneServingdNutrientData = {
+      ...activeFoodItem,
+      activeMeasure: servingSizeOption,
+      nutrients: {
+        ...processCoreNutrients(nutrients, 1),
+        vitamins: processVitamins(nutrients, 1),
+        minerals: processMinerals(nutrients, 1),
+      },
+    };
+
+    const numberOfServingsNutrientData =
+      processActiveFoodItemNumberOfServingsUpdate(
+        oneServingdNutrientData,
+        numberOfServings
+      );
+
+    setActiveFoodItemOneServing(oneServingdNutrientData);
+    setSelectedServing(servingSizeOption);
+    setActiveFoodItem((prevActiveFoodItem) => ({
+      ...prevActiveFoodItem,
+      activeMeasure: servingSizeOption,
+      nutrients: numberOfServingsNutrientData,
+    }));
+  };
+
+  // Function to update the number of servings
+  const updateNumberOfServings = async (newNumberOfServings) => {
+    // Check if activeFoodItemOneServing is empty
+    if (
+      !activeFoodItemOneServing ||
+      Object.keys(activeFoodItemOneServing).length === 0
+    ) {
+      console.log(
+        "Cannot update nutrients based on number of serving changes, without activeFoodItemOneServing."
+      );
+      return;
+    }
+
+    const servings = parseFloat(newNumberOfServings);
+    setNumberOfServings(servings);
+
+    const updatedActiveItemNutrients =
+      processActiveFoodItemNumberOfServingsUpdate(
+        activeFoodItemOneServing,
+        servings
+      );
+
+    setActiveFoodItem((prevActiveFoodItem) => ({
+      ...prevActiveFoodItem,
+      numberOfServings: servings,
+      nutrients: updatedActiveItemNutrients,
+    }));
+  };
+
+  const handleCloseModal = () => {
+    setShowMineralList(false);
+    setShowVitaminList(false);
+    setShowNutritionFactsList(false);
+    setActiveFoodItem(null);
+    setIsSelectServingSizeVisible(false);
+    setIsSelectMealVisible(false);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    closeModal();
   };
 
   const toggleNutritionFactsList = () => {
@@ -52,6 +405,101 @@ const FoodNutrientModal = ({ isVisible, closeModal }) => {
   const toggleMineralList = () => {
     setShowMineralList(!showMineralList);
   };
+
+  const calculateMacroPercentages = (
+    totalCalories,
+    gramsOfCarbs,
+    gramsOfProtein,
+    gramsOfFat
+  ) => {
+    // Ensure valid numeric inputs
+    if (
+      isNaN(totalCalories) ||
+      isNaN(gramsOfCarbs) ||
+      isNaN(gramsOfProtein) ||
+      isNaN(gramsOfFat) ||
+      totalCalories <= 0
+    ) {
+      // Handle invalid or missing data
+      return {
+        percentageOfCarbs: 0,
+        percentageOfProtein: 0,
+        percentageOfFat: 0,
+      };
+    }
+
+    // Calculate calories from each macronutrient
+    const caloriesFromCarbs = gramsOfCarbs * 4;
+    const caloriesFromProtein = gramsOfProtein * 4;
+    const caloriesFromFat = gramsOfFat * 9;
+
+    // Calculate total calories and adjust percentages if they surpass 100
+    const totalCaloriesFloat = parseFloat(totalCalories); // Convert to float for precision
+    let totalPercentage = 0;
+
+    const calculatePercentage = (calories) => {
+      return ((calories / totalCaloriesFloat) * 100).toFixed(2);
+    };
+
+    const percentageOfCarbs = calculatePercentage(caloriesFromCarbs);
+    totalPercentage += parseFloat(percentageOfCarbs);
+
+    const percentageOfProtein = calculatePercentage(caloriesFromProtein);
+    totalPercentage += parseFloat(percentageOfProtein);
+
+    const percentageOfFat = calculatePercentage(caloriesFromFat);
+    totalPercentage += parseFloat(percentageOfFat);
+
+    // Adjust percentages if they surpass 100
+    if (totalPercentage > 100) {
+      const adjustmentFactor = 100 / totalPercentage;
+      totalPercentage = 0;
+
+      return {
+        percentageOfCarbs: (
+          parseFloat(percentageOfCarbs) * adjustmentFactor
+        ).toFixed(2),
+        percentageOfProtein: (
+          parseFloat(percentageOfProtein) * adjustmentFactor
+        ).toFixed(2),
+        percentageOfFat: (
+          parseFloat(percentageOfFat) * adjustmentFactor
+        ).toFixed(2),
+      };
+    }
+
+    return {
+      percentageOfCarbs: parseFloat(percentageOfCarbs),
+      percentageOfProtein: parseFloat(percentageOfProtein),
+      percentageOfFat: parseFloat(percentageOfFat),
+    };
+  };
+
+  // Extract nutrient values
+  const totalCalories = activeFoodItem?.nutrients?.ENERC_KCAL?.quantity || 0;
+  const gramsOfCarbs = activeFoodItem?.nutrients?.CHOCDF?.quantity || 0;
+  const gramsOfProtein = activeFoodItem?.nutrients?.PROCNT?.quantity || 0;
+  const gramsOfFat = activeFoodItem?.nutrients?.FAT?.quantity || 0;
+
+  // Calculate macro percentages
+  const macroPercentagesInRelationToItemCalories = calculateMacroPercentages(
+    totalCalories,
+    gramsOfCarbs,
+    gramsOfProtein,
+    gramsOfFat
+  );
+
+  // Calculate percentages of daily goals
+  const caloriesPercentageOfGoal = (totalCalories / calorieGoal).toFixed(2);
+  const carbsPercentageOfGoal = (
+    gramsOfCarbs / macroGoals.carb.dailyGrams
+  ).toFixed(2);
+  const proteinPercentageOfGoal = (
+    gramsOfProtein / macroGoals.protein.dailyGrams
+  ).toFixed(2);
+  const fatPercentageOfGoal = (gramsOfFat / macroGoals.fat.dailyGrams).toFixed(
+    2
+  );
 
   const renderCircularChart = (
     carbsPercentage,
@@ -86,17 +534,17 @@ const FoodNutrientModal = ({ isVisible, closeModal }) => {
 
             return <Path key={index} d={path} fill={segment.color} />;
           })}
-          <Circle r={radius - 10} fill={theme.colors.cardBackgroundColor} />
+          <Circle r={radius - 10} fill={theme.colors.surface} />
 
           <SvgText
             fill={theme.colors.cardHeaderTextColor}
-            fontSize="20"
+            fontSize="16"
             fontWeight="bold"
             textAnchor="middle"
             alignmentBaseline="middle"
             transform="translate(0, -6)"
           >
-            {calories}
+            {Math.round(calories)}
           </SvgText>
           <SvgText
             fill={theme.colors.cardHeaderTextColor}
@@ -112,11 +560,112 @@ const FoodNutrientModal = ({ isVisible, closeModal }) => {
     );
   };
 
-  const handleCloseModal = () => {
-    setShowMineralList(false);
-    setShowVitaminList(false);
-    setShowNutritionFactsList(false);
-    closeModal();
+  const renderNutrientRows = (nutrientKeysOrder, isIndented = false) => {
+    if (!Array.isArray(nutrientKeysOrder)) return;
+
+    const NutrientComponent = isIndented
+      ? NutritionFactsIndentedRow
+      : NutritionFactsRow;
+
+    return nutrientKeysOrder.map((nutrientKey) => (
+      <NutrientComponent
+        key={nutrientKey}
+        label={activeFoodItem?.nutrients?.[nutrientKey]?.label}
+        quantity={activeFoodItem?.nutrients?.[nutrientKey]?.quantity}
+        unit={
+          nutrientKey === "ENERC_KCAL"
+            ? ""
+            : activeFoodItem?.nutrients?.[nutrientKey]?.unit
+        }
+        totalDaily={
+          activeFoodItem?.nutrients?.[nutrientKey]?.totalDaily?.quantity
+        }
+        totalDailyUnit={
+          activeFoodItem?.nutrients?.[nutrientKey]?.totalDaily?.unit
+        }
+        color={theme.colors.cardHeaderTextColor}
+      />
+    ));
+  };
+
+  const renderVitaminNutrientRows = (nutrientKeysOrder, isIndented = false) => {
+    if (!Array.isArray(nutrientKeysOrder)) return;
+
+    const NutrientComponent = isIndented
+      ? NutritionFactsIndentedRow
+      : NutritionFactsRow;
+
+    return nutrientKeysOrder.map((nutrientKey) => (
+      <NutrientComponent
+        key={nutrientKey}
+        label={activeFoodItem?.nutrients?.vitamins?.[nutrientKey]?.label}
+        quantity={activeFoodItem?.nutrients?.vitamins?.[nutrientKey]?.quantity}
+        unit={activeFoodItem?.nutrients?.vitamins?.[nutrientKey]?.unit}
+        totalDaily={
+          activeFoodItem?.nutrients?.vitamins?.[nutrientKey]?.totalDaily
+            ?.quantity
+        }
+        totalDailyUnit={
+          activeFoodItem?.nutrients?.vitamins?.[nutrientKey]?.totalDaily?.unit
+        }
+        color={theme.colors.cardHeaderTextColor}
+      />
+    ));
+  };
+
+  const renderMineralNutrientRows = (nutrientKeysOrder, isIndented = false) => {
+    if (!Array.isArray(nutrientKeysOrder)) return;
+
+    const NutrientComponent = isIndented
+      ? NutritionFactsIndentedRow
+      : NutritionFactsRow;
+
+    return nutrientKeysOrder.map((nutrientKey) => (
+      <NutrientComponent
+        key={nutrientKey}
+        label={activeFoodItem?.nutrients?.minerals?.[nutrientKey]?.label}
+        quantity={activeFoodItem?.nutrients?.minerals?.[nutrientKey]?.quantity}
+        unit={activeFoodItem?.nutrients?.minerals?.[nutrientKey]?.unit}
+        totalDaily={
+          activeFoodItem?.nutrients?.minerals?.[nutrientKey]?.totalDaily
+            ?.quantity
+        }
+        totalDailyUnit={
+          activeFoodItem?.nutrients?.minerals?.[nutrientKey]?.totalDaily?.unit
+        }
+        color={theme.colors.cardHeaderTextColor}
+      />
+    ));
+  };
+
+  const vitaminKeys = [
+    "VITA_RAE",
+    "VITC",
+    "VITD",
+    "TOCPHA",
+    "VITK1",
+    "THIA",
+    "RIBF",
+    "NIA",
+    "VITB6A",
+    "FOLDFE",
+    "VITB12",
+  ];
+  const mineralKeys = ["CA", "FE", "MG", "P", "K", "NA", "ZN"];
+
+  const handleEditFoodEntryAndSave = () => {
+    if (selectedMealSection && activeFoodItem) {
+      editFoodEntry(
+        selectedMealSection.id,
+        activeFoodItem?.id || null,
+        activeFoodItem,
+        selectedDate
+      );
+    } else {
+      console.error("Invalid selectedMealSection or activeFoodItem");
+    }
+
+    handleCloseModal();
   };
 
   return (
@@ -135,46 +684,96 @@ const FoodNutrientModal = ({ isVisible, closeModal }) => {
           {/* Header */}
           <Appbar.Header style={styles.header}>
             <Appbar.Action
-              icon="arrow-left"
+              icon="chevron-left"
+              size={32}
               onPress={handleCloseModal}
               color={theme.colors.cardHeaderTextColor}
             />
-            <Appbar.Content title="Edit Entry" titleStyle={styles.title} />
+            <Appbar.Content
+              title={foodNutrientModalType}
+              titleStyle={styles.title}
+            />
             <Appbar.Action
               icon="check"
-              onPress={closeModal}
-              color={theme.colors.cardHeaderTextColor}
+              size={32}
+              onPress={() => handleEditFoodEntryAndSave()}
+              color={theme.colors.primary}
             />
           </Appbar.Header>
-          <ScrollView>
-            <TouchableOpacity
-              activeOpacity={1}
-              style={{
-                backgroundColor: theme.colors.SectionBackgroundColor,
-              }}
-            >
-              {/* Food Item Section */}
-              <View style={styles.sectionContainer}>
-                <Text style={styles.foodItemName}>Medium Grade A Eggs</Text>
-                <Text style={styles.brandCompany}>Sun Valley</Text>
-              </View>
-              {/* Input Fields Section */}
-              <View style={styles.sectionContainer}>
-                <Row label="Serving Size" />
-                <Row label="Number of Servings" keyboardType="numeric" />
-                <Row label="Meal" />
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  {/* Macronutrient Content: Carbs, Protein, Fat */}
-                  {/* Example data, replace with actual values */}
-                  {/* Circular Chart that shows calorie and macronutrient breakdown */}
-                  {renderCircularChart(40, 30, 30, 500)}
-                  <View style={styles.macroNutrientContainer}>
+
+          {activeFoodItem && (
+            <ScrollView>
+              <TouchableOpacity
+                onPress={() => {
+                  if (isSelectServingSizeVisible) {
+                    toggleSelectServing();
+                  }
+                  if (isSelectMealVisible) {
+                    toggleSelectMeal();
+                  }
+                }}
+                activeOpacity={1}
+                style={{
+                  gap: 10,
+                }}
+              >
+                {/* Food Item Section */}
+                <View style={styles.sectionContainer}>
+                  <Text style={styles.foodItemName}>
+                    {activeFoodItem?.foodLabel}
+                  </Text>
+                  <Text style={styles.brandCompany}>
+                    {activeFoodItem?.foodBrand || activeFoodItem?.foodCategory}
+                  </Text>
+                </View>
+                {/* Input Fields Section */}
+                <View style={styles.sectionContainer}>
+                  <View style={{ marginBottom: 16 }}>
+                    <ServingSizeRow
+                      isVisible={isSelectServingSizeVisible}
+                      toggleSelectServing={toggleSelectServing}
+                      label="Serving Size"
+                      selectedServing={selectedServing}
+                    />
+                  </View>
+                  <View style={{ marginBottom: 16 }}>
+                    <NumberOfServingsRow
+                      label="Number of Servings"
+                      keyboardType="numeric"
+                      numberOfServings={numberOfServings}
+                      updateNumberOfServings={updateNumberOfServings}
+                      hideSelectServingAndSelectMealOnTextInputFocus={
+                        hideSelectServingAndSelectMealOnTextInputFocus
+                      }
+                    />
+                  </View>
+                  <View style={{ marginBottom: 16 }}>
+                    <MealRow
+                      isVisible={isSelectMealVisible}
+                      toggleSelectMeal={toggleSelectMeal}
+                      label="Meal"
+                      selectedMealOption={selectedMealSection}
+                    />
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    {/* Macronutrient Content: Carbs, Protein, Fat */}
+                    {/* Example data, replace with actual values */}
+                    {/* Circular Chart that shows calorie and macronutrient breakdown */}
+                    <View style={styles.macroNutrientColumn}>
+                      {renderCircularChart(
+                        macroPercentagesInRelationToItemCalories.percentageOfCarbs,
+                        macroPercentagesInRelationToItemCalories.percentageOfFat,
+                        macroPercentagesInRelationToItemCalories.percentageOfProtein,
+                        totalCalories
+                      )}
+                    </View>
+
                     <View style={styles.macroNutrientColumn}>
                       <Text
                         style={{
@@ -182,9 +781,15 @@ const FoodNutrientModal = ({ isVisible, closeModal }) => {
                           color: carbColor,
                         }}
                       >
-                        0%
+                        {Math.round(
+                          macroPercentagesInRelationToItemCalories.percentageOfCarbs
+                        )}
+                        %
                       </Text>
-                      <Text style={styles.macroNutrientValue}>0 g</Text>
+                      <Text style={styles.macroNutrientValue}>
+                        {Math.round(gramsOfCarbs)}{" "}
+                        {activeFoodItem?.nutrients?.CHOCDF?.unit}
+                      </Text>
                       <Text style={styles.macroNutrientLabel}>Carbs</Text>
                     </View>
                     <View style={styles.macroNutrientColumn}>
@@ -194,9 +799,15 @@ const FoodNutrientModal = ({ isVisible, closeModal }) => {
                           color: proteinColor,
                         }}
                       >
-                        60%
+                        {Math.round(
+                          macroPercentagesInRelationToItemCalories.percentageOfProtein
+                        )}
+                        %
                       </Text>
-                      <Text style={styles.macroNutrientValue}>8 g</Text>
+                      <Text style={styles.macroNutrientValue}>
+                        {Math.round(gramsOfProtein)}{" "}
+                        {activeFoodItem?.nutrients?.PROCNT?.unit}
+                      </Text>
                       <Text style={styles.macroNutrientLabel}>Protein</Text>
                     </View>
                     <View style={styles.macroNutrientColumn}>
@@ -206,880 +817,513 @@ const FoodNutrientModal = ({ isVisible, closeModal }) => {
                           color: fatColor,
                         }}
                       >
-                        40%
+                        {Math.round(
+                          macroPercentagesInRelationToItemCalories.percentageOfFat
+                        )}
+                        %
                       </Text>
-                      <Text style={styles.macroNutrientValue}>12 g</Text>
+                      <Text style={styles.macroNutrientValue}>
+                        {Math.round(gramsOfFat)}{" "}
+                        {activeFoodItem?.nutrients?.FAT?.unit}
+                      </Text>
                       <Text style={styles.macroNutrientLabel}>Fat</Text>
                     </View>
                   </View>
                 </View>
-              </View>
-              {/* Calorie and Macronutrient Percent of Daily Goals */}
-              <View style={styles.sectionContainer}>
-                <Text style={styles.nutritionFactsLabel}>
-                  Percent of Daily Goals
-                </Text>
-                <View style={styles.progressContainer}>
-                  {/* Progress bar for Calories */}
-                  <View style={styles.progressItem}>
-                    <ProgressBar
-                      progress={0.25} // Replace with actual progress value
-                      color={calorieColor}
-                      style={{
-                        height: 10,
-                        width: screenWidth * 0.22,
-                        borderRadius: 5,
-                      }}
-                    />
-                    <Text
-                      style={{
-                        fontSize: 12,
-                        color: theme.colors.cardHeaderTextColor,
-                      }}
-                    >
-                      25%
-                    </Text>
-                    <Text
-                      style={{
-                        fontSize: 12,
-                        fontWeight: "bold",
-                        color: theme.colors.cardHeaderTextColor,
-                      }}
-                    >
-                      Calories
-                    </Text>
-                  </View>
-                  {/* Progress bar for Carbs */}
-                  <View style={styles.progressItem}>
-                    <ProgressBar
-                      progress={0.3} // Replace with actual progress value
-                      color={carbColor}
-                      style={{
-                        height: 10,
-                        width: screenWidth * 0.22,
-                        borderRadius: 5,
-                      }}
-                    />
-                    <Text
-                      style={{
-                        fontSize: 12,
-                        color: theme.colors.cardHeaderTextColor,
-                      }}
-                    >
-                      30%
-                    </Text>
-                    <Text
-                      style={{
-                        fontSize: 12,
-                        fontWeight: "bold",
-                        color: theme.colors.cardHeaderTextColor,
-                      }}
-                    >
-                      Carbs
-                    </Text>
-                  </View>
-                  {/* Progress bar for Protein */}
-                  <View style={styles.progressItem}>
-                    <ProgressBar
-                      progress={0.6} // Replace with actual progress value
-                      color={proteinColor}
-                      style={{
-                        height: 10,
-                        width: screenWidth * 0.22,
-                        borderRadius: 5,
-                      }}
-                    />
-                    <Text
-                      style={{
-                        fontSize: 12,
-                        color: theme.colors.cardHeaderTextColor,
-                      }}
-                    >
-                      60%
-                    </Text>
-                    <Text
-                      style={{
-                        fontSize: 12,
-                        fontWeight: "bold",
-                        color: theme.colors.cardHeaderTextColor,
-                      }}
-                    >
-                      Protein
-                    </Text>
-                  </View>
-                  {/* Progress bar for Fat */}
-                  <View style={styles.progressItem}>
-                    <ProgressBar
-                      progress={0.4} // Replace with actual progress value
-                      color={fatColor}
-                      style={{
-                        height: 10,
-                        width: screenWidth * 0.22,
-                        borderRadius: 5,
-                      }}
-                    />
-                    <Text
-                      style={{
-                        fontSize: 12,
-                        color: theme.colors.cardHeaderTextColor,
-                      }}
-                    >
-                      40%
-                    </Text>
-                    <Text
-                      style={{
-                        fontSize: 12,
-                        fontWeight: "bold",
-                        color: theme.colors.cardHeaderTextColor,
-                      }}
-                    >
-                      Fat
-                    </Text>
+                {/* Calorie and Macronutrient Percent of Daily Goals */}
+                <View style={styles.sectionContainer}>
+                  <Text style={styles.nutritionFactsLabel}>
+                    Percent of Daily Goals
+                  </Text>
+                  <View style={styles.progressContainer}>
+                    {/* Progress bar for Calories */}
+                    <View style={styles.progressItem}>
+                      <ProgressBar
+                        progress={caloriesPercentageOfGoal} // Replace with actual progress value
+                        color={calorieColor}
+                        style={{
+                          height: 10,
+                          width: screenWidth * 0.22,
+                          borderRadius: 5,
+                        }}
+                      />
+                      <Text
+                        style={{
+                          fontSize: 12,
+                          color: theme.colors.cardHeaderTextColor,
+                        }}
+                      >
+                        {Math.round(caloriesPercentageOfGoal * 100)}%
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 12,
+                          fontWeight: "bold",
+                          color: theme.colors.cardHeaderTextColor,
+                        }}
+                      >
+                        Calories
+                      </Text>
+                    </View>
+                    {/* Progress bar for Carbs */}
+                    <View style={styles.progressItem}>
+                      <ProgressBar
+                        progress={carbsPercentageOfGoal} // Replace with actual progress value
+                        color={carbColor}
+                        style={{
+                          height: 10,
+                          width: screenWidth * 0.22,
+                          borderRadius: 5,
+                        }}
+                      />
+                      <Text
+                        style={{
+                          fontSize: 12,
+                          color: theme.colors.cardHeaderTextColor,
+                        }}
+                      >
+                        {Math.round(carbsPercentageOfGoal * 100)}%
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 12,
+                          fontWeight: "bold",
+                          color: theme.colors.cardHeaderTextColor,
+                        }}
+                      >
+                        Carbs
+                      </Text>
+                    </View>
+                    {/* Progress bar for Protein */}
+                    <View style={styles.progressItem}>
+                      <ProgressBar
+                        progress={proteinPercentageOfGoal} // Replace with actual progress value
+                        color={proteinColor}
+                        style={{
+                          height: 10,
+                          width: screenWidth * 0.22,
+                          borderRadius: 5,
+                        }}
+                      />
+                      <Text
+                        style={{
+                          fontSize: 12,
+                          color: theme.colors.cardHeaderTextColor,
+                        }}
+                      >
+                        {Math.round(proteinPercentageOfGoal * 100)}%
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 12,
+                          fontWeight: "bold",
+                          color: theme.colors.cardHeaderTextColor,
+                        }}
+                      >
+                        Protein
+                      </Text>
+                    </View>
+                    {/* Progress bar for Fat */}
+                    <View style={styles.progressItem}>
+                      <ProgressBar
+                        progress={fatPercentageOfGoal} // Replace with actual progress value
+                        color={fatColor}
+                        style={{
+                          height: 10,
+                          width: screenWidth * 0.22,
+                          borderRadius: 5,
+                        }}
+                      />
+                      <Text
+                        style={{
+                          fontSize: 12,
+                          color: theme.colors.cardHeaderTextColor,
+                        }}
+                      >
+                        {Math.round(fatPercentageOfGoal * 100)}%
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 12,
+                          fontWeight: "bold",
+                          color: theme.colors.cardHeaderTextColor,
+                        }}
+                      >
+                        Fat
+                      </Text>
+                    </View>
                   </View>
                 </View>
-              </View>
-              {/* Nutritional Information List Toggle */}
-              <View style={styles.sectionContainer}>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <Text style={styles.nutritionFactsLabel}>
-                    Nutrition Facts
-                  </Text>
-                  <TouchableOpacity
-                    onPress={toggleNutritionFactsList}
+                {/* Nutritional Information List Toggle */}
+                <View style={styles.sectionContainer}>
+                  <View
                     style={{
                       flexDirection: "row",
-                      gap: 5,
-                      alignItems: "center",
-                      justifyContent: "center",
+                      justifyContent: "space-between",
                     }}
+                  >
+                    <Text style={styles.nutritionFactsLabel}>
+                      Nutrition Facts
+                    </Text>
+                    <TouchableOpacity
+                      onPress={toggleNutritionFactsList}
+                      style={{
+                        flexDirection: "row",
+                        gap: 5,
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: theme.colors.primary,
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {showNutritionFactsList ? "Hide" : "Show"}
+                      </Text>
+                      <Feather
+                        name={
+                          showNutritionFactsList ? "arrow-up" : "arrow-down"
+                        }
+                        color={theme.colors.primary}
+                        size={20}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+                {showNutritionFactsList && (
+                  <View
+                    style={{ ...styles.sectionContainer, paddingHorizontal: 0 }}
                   >
                     <Text
                       style={{
-                        color: theme.colors.primary,
-                        fontWeight: "bold",
+                        fontSize: 14,
+                        color: theme.colors.cardHeaderTextColor,
+                        alignSelf: "flex-end",
+                        marginBottom: 10,
+                        paddingHorizontal: 16,
                       }}
                     >
-                      {showNutritionFactsList ? "Hide" : "Show"}
+                      % Daily Value
                     </Text>
-                    <Feather
-                      name={showNutritionFactsList ? "arrow-up" : "arrow-down"}
-                      color={theme.colors.primary}
-                      size={20}
-                    />
-                  </TouchableOpacity>
-                </View>
-              </View>
-              {showNutritionFactsList && (
+                    {renderNutrientRows(["ENERC_KCAL"], false)}
+
+                    <View style={styles.nutritionFactsSeparator} />
+
+                    <View style={styles.nutritionFactsSection}>
+                      {renderNutrientRows(["FAT"], false)}
+                    </View>
+
+                    {renderNutrientRows(
+                      ["FASAT", "FATRN", "FAPU", "FAMS"],
+                      true
+                    )}
+
+                    <View style={styles.nutritionFactsSeparator} />
+
+                    <View style={styles.nutritionFactsSection}>
+                      {renderNutrientRows(["CHOLE"], false)}
+                    </View>
+
+                    <View style={styles.nutritionFactsSeparator} />
+
+                    <View style={styles.nutritionFactsSection}>
+                      {renderMineralNutrientRows(["NA"], false)}
+                    </View>
+
+                    <View style={styles.nutritionFactsSeparator} />
+
+                    <View style={styles.nutritionFactsSection}>
+                      {renderNutrientRows(["CHOCDF"], false)}
+
+                      {renderNutrientRows(["FIBTG"], true)}
+
+                      {renderNutrientRows(["SUGAR"], true)}
+                    </View>
+
+                    <View style={styles.nutritionFactsSeparator} />
+
+                    <View style={styles.nutritionFactsSection}>
+                      {renderNutrientRows(["PROCNT"], false)}
+                    </View>
+
+                    <View style={styles.nutritionFactsSeparator} />
+
+                    <View style={styles.nutritionFactsSection}>
+                      <View style={styles.nutritionFactsRow}>
+                        <Text style={styles.nutritionFactsLabel}>Vitamins</Text>
+                        <TouchableOpacity
+                          onPress={toggleVitaminList}
+                          style={{
+                            flexDirection: "row",
+                            gap: 5,
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <Text
+                            style={{
+                              color: theme.colors.primary,
+                              fontWeight: "bold",
+                            }}
+                          >
+                            {showVitaminList ? "Hide" : "Show"}
+                          </Text>
+                          <Feather
+                            name={showVitaminList ? "arrow-up" : "arrow-down"}
+                            color={theme.colors.primary}
+                            size={20}
+                          />
+                        </TouchableOpacity>
+                      </View>
+                      <View style={{ paddingTop: 10 }}>
+                        {showVitaminList &&
+                          renderVitaminNutrientRows(vitaminKeys, true)}
+                      </View>
+                    </View>
+
+                    <View style={styles.nutritionFactsSeparator} />
+
+                    <View style={styles.nutritionFactsSection}>
+                      <View style={styles.nutritionFactsRow}>
+                        <Text style={styles.nutritionFactsLabel}>Minerals</Text>
+                        <TouchableOpacity
+                          onPress={toggleMineralList}
+                          style={{
+                            flexDirection: "row",
+                            gap: 5,
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <Text
+                            style={{
+                              color: theme.colors.primary,
+                              fontWeight: "bold",
+                            }}
+                          >
+                            {showMineralList ? "Hide" : "Show"}
+                          </Text>
+                          <Feather
+                            name={showMineralList ? "arrow-up" : "arrow-down"}
+                            color={theme.colors.primary}
+                            size={20}
+                          />
+                        </TouchableOpacity>
+                      </View>
+                      <View style={{ paddingTop: 10 }}>
+                        {showMineralList &&
+                          renderMineralNutrientRows(mineralKeys, true)}
+                      </View>
+                    </View>
+                  </View>
+                )}
+              </TouchableOpacity>
+            </ScrollView>
+          )}
+          {isSelectServingSizeVisible && (
+            <View
+              style={{
+                position: "absolute",
+                bottom: 0,
+                right: 0,
+                left: 0,
+                top: "70%",
+                backgroundColor: theme.colors.screenBackground,
+                zIndex: 2,
+              }}
+            >
+              <View style={{ flex: 1 }}>
                 <View
-                  style={{ ...styles.sectionContainer, paddingHorizontal: 0 }}
+                  style={{
+                    height: "20%",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    paddingHorizontal: 10,
+                    borderBottomWidth: 1,
+                    borderBottomColor: "gray",
+                  }}
                 >
                   <Text
                     style={{
-                      fontSize: 14,
                       color: theme.colors.cardHeaderTextColor,
-                      alignSelf: "flex-end",
-                      marginBottom: 10,
-                      paddingHorizontal: 16,
+                      fontSize: 20,
                     }}
                   >
-                    % Daily Value
+                    Select Unit
                   </Text>
-                  <View style={styles.nutritionFactsRow}>
-                    <View style={styles.nutritionalFactsLabelContainer}>
-                      <Text style={styles.nutritionFactsLabel}>Calories</Text>
-                    </View>
-                    <View style={styles.nutritionalFactsValuesContainer}>
-                      <Text
-                        style={{
-                          ...styles.nutritionFactsDailyValue,
-                          color: calorieColor,
-                        }}
-                      >
-                        150
-                      </Text>
-                      <Text
-                        style={{
-                          ...styles.nutritionFactsDailyValue,
-                          color: calorieColor,
-                        }}
-                      >
-                        5%
-                      </Text>
-                    </View>
-                  </View>
-
-                  <View style={styles.nutritionFactsSeparator} />
-
-                  <View style={styles.nutritionFactsSection}>
-                    <View style={styles.nutritionFactsRow}>
-                      <View style={styles.nutritionalFactsLabelContainer}>
-                        <Text style={styles.nutritionFactsLabel}>
-                          Total Fat
-                        </Text>
-                      </View>
-                      <View style={styles.nutritionalFactsValuesContainer}>
-                        <Text
-                          style={{
-                            ...styles.nutritionFactsDailyValue,
-                            color: fatColor,
-                          }}
-                        >
-                          10 g
-                        </Text>
-                        <Text
-                          style={{
-                            ...styles.nutritionFactsDailyValue,
-                            color: fatColor,
-                          }}
-                        >
-                          15%
-                        </Text>
-                      </View>
-                    </View>
-
-                    <View style={styles.nutritionFactsRow}>
-                      <View style={styles.nutritionalFactsLabelContainer}>
-                        <Text style={styles.nutritionFactsIndentLabel}>
-                          Saturated
-                        </Text>
-                      </View>
-                      <View style={styles.nutritionalFactsValuesContainer}>
-                        <Text style={styles.nutritionFactsIndentValue}>
-                          3 g
-                        </Text>
-                        <Text style={styles.nutritionFactsIndentDailyValue}>
-                          15%
-                        </Text>
-                      </View>
-                    </View>
-
-                    <View style={styles.nutritionFactsRow}>
-                      <View style={styles.nutritionalFactsLabelContainer}>
-                        <Text style={styles.nutritionFactsIndentLabel}>
-                          Trans
-                        </Text>
-                      </View>
-                      <View style={styles.nutritionalFactsValuesContainer}>
-                        <Text style={styles.nutritionFactsIndentValue}>
-                          0 g
-                        </Text>
-                        <Text style={styles.nutritionFactsIndentDailyValue}>
-                          0%
-                        </Text>
-                      </View>
-                    </View>
-
-                    <View style={styles.nutritionFactsRow}>
-                      <View style={styles.nutritionalFactsLabelContainer}>
-                        <Text style={styles.nutritionFactsIndentLabel}>
-                          Polyunsaturated
-                        </Text>
-                      </View>
-                      <View style={styles.nutritionalFactsValuesContainer}>
-                        <Text style={styles.nutritionFactsIndentValue}>
-                          0 g
-                        </Text>
-                        <Text style={styles.nutritionFactsIndentDailyValue}>
-                          0%
-                        </Text>
-                      </View>
-                    </View>
-
-                    <View style={styles.nutritionFactsRow}>
-                      <View style={styles.nutritionalFactsLabelContainer}>
-                        <Text style={styles.nutritionFactsIndentLabel}>
-                          Monounsaturated
-                        </Text>
-                      </View>
-                      <View style={styles.nutritionalFactsValuesContainer}>
-                        <Text style={styles.nutritionFactsIndentValue}>
-                          0 g
-                        </Text>
-                        <Text style={styles.nutritionFactsIndentDailyValue}>
-                          0%
-                        </Text>
-                      </View>
-                    </View>
-                  </View>
-
-                  <View style={styles.nutritionFactsSeparator} />
-
-                  <View style={styles.nutritionFactsSection}>
-                    <View style={styles.nutritionFactsRow}>
-                      <View style={styles.nutritionalFactsLabelContainer}>
-                        <Text style={styles.nutritionFactsLabel}>
-                          Cholesterol
-                        </Text>
-                      </View>
-                      <View style={styles.nutritionalFactsValuesContainer}>
-                        <Text style={styles.nutritionFactsValue}>0 mg</Text>
-                        <Text style={styles.nutritionFactsDailyValue}>0%</Text>
-                      </View>
-                    </View>
-                  </View>
-
-                  <View style={styles.nutritionFactsSeparator} />
-
-                  <View style={styles.nutritionFactsSection}>
-                    <View style={styles.nutritionFactsRow}>
-                      <View style={styles.nutritionalFactsLabelContainer}>
-                        <Text style={styles.nutritionFactsLabel}>Sodium</Text>
-                      </View>
-                      <View style={styles.nutritionalFactsValuesContainer}>
-                        <Text style={styles.nutritionFactsValue}>160 mg</Text>
-                        <Text style={styles.nutritionFactsDailyValue}>7%</Text>
-                      </View>
-                    </View>
-                  </View>
-
-                  <View style={styles.nutritionFactsSeparator} />
-
-                  <View style={styles.nutritionFactsSection}>
-                    <View style={styles.nutritionFactsRow}>
-                      <View style={styles.nutritionalFactsLabelContainer}>
-                        <Text style={styles.nutritionFactsLabel}>
-                          Total Carbohydrate
-                        </Text>
-                      </View>
-                      <View style={styles.nutritionalFactsValuesContainer}>
-                        <Text
-                          style={{
-                            ...styles.nutritionFactsDailyValue,
-                            color: carbColor,
-                          }}
-                        >
-                          37 g
-                        </Text>
-                        <Text
-                          style={{
-                            ...styles.nutritionFactsDailyValue,
-                            color: carbColor,
-                          }}
-                        >
-                          13%
-                        </Text>
-                      </View>
-                    </View>
-
-                    <View style={styles.nutritionFactsRow}>
-                      <View style={styles.nutritionalFactsLabelContainer}>
-                        <Text style={styles.nutritionFactsIndentLabel}>
-                          Dietary Fiber
-                        </Text>
-                      </View>
-                      <View style={styles.nutritionalFactsValuesContainer}>
-                        <Text style={styles.nutritionFactsIndentValue}>
-                          4 g
-                        </Text>
-                        <Text style={styles.nutritionFactsIndentDailyValue}>
-                          14%
-                        </Text>
-                      </View>
-                    </View>
-
-                    <View style={styles.nutritionFactsRow}>
-                      <View style={styles.nutritionalFactsLabelContainer}>
-                        <Text style={styles.nutritionFactsIndentLabel}>
-                          Total Sugars
-                        </Text>
-                      </View>
-                      <View style={styles.nutritionalFactsValuesContainer}>
-                        <Text style={styles.nutritionFactsIndentValue}>
-                          12 g
-                        </Text>
-                        <Text style={styles.nutritionFactsIndentDailyValue}>
-                          -
-                        </Text>
-                      </View>
-                    </View>
-                  </View>
-
-                  <View style={styles.nutritionFactsSeparator} />
-
-                  <View style={styles.nutritionFactsSection}>
-                    <View style={styles.nutritionFactsRow}>
-                      <View style={styles.nutritionalFactsLabelContainer}>
-                        <Text style={styles.nutritionFactsLabel}>Protein</Text>
-                      </View>
-                      <View style={styles.nutritionalFactsValuesContainer}>
-                        <Text
-                          style={{
-                            ...styles.nutritionFactsDailyValue,
-                            color: proteinColor,
-                          }}
-                        >
-                          7 g
-                        </Text>
-                        <Text
-                          style={{
-                            ...styles.nutritionFactsDailyValue,
-                            color: proteinColor,
-                          }}
-                        >
-                          5%
-                        </Text>
-                      </View>
-                    </View>
-                  </View>
-
-                  <View style={styles.nutritionFactsSeparator} />
-
-                  <View style={styles.nutritionFactsSection}>
-                    <View style={styles.nutritionFactsRow}>
-                      <Text style={styles.nutritionFactsLabel}>Vitamins</Text>
-                      <TouchableOpacity
-                        onPress={toggleVitaminList}
-                        style={{
-                          flexDirection: "row",
-                          gap: 5,
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <Text
-                          style={{
-                            color: theme.colors.primary,
-                            fontWeight: "bold",
-                          }}
-                        >
-                          {showVitaminList ? "Hide" : "Show"}
-                        </Text>
-                        <Feather
-                          name={showVitaminList ? "arrow-up" : "arrow-down"}
-                          color={theme.colors.primary}
-                          size={20}
-                        />
-                      </TouchableOpacity>
-                    </View>
-                    {showVitaminList && (
-                      <View style={{ paddingTop: 10 }}>
-                        <View style={styles.nutritionFactsRow}>
-                          <View style={styles.nutritionalFactsLabelContainer}>
-                            <Text style={styles.nutritionFactsIndentLabel}>
-                              Vitamin A
-                            </Text>
-                          </View>
-                          <View style={styles.nutritionalFactsValuesContainer}>
-                            <Text style={styles.nutritionFactsIndentValue}>
-                              900 mcg
-                            </Text>
-                            <Text style={styles.nutritionFactsIndentDailyValue}>
-                              100%
-                            </Text>
-                          </View>
-                        </View>
-                        <View style={styles.nutritionFactsRow}>
-                          <View style={styles.nutritionalFactsLabelContainer}>
-                            <Text style={styles.nutritionFactsIndentLabel}>
-                              Vitamin C
-                            </Text>
-                          </View>
-                          <View style={styles.nutritionalFactsValuesContainer}>
-                            <Text style={styles.nutritionFactsIndentValue}>
-                              90 mg
-                            </Text>
-                            <Text style={styles.nutritionFactsIndentDailyValue}>
-                              100%
-                            </Text>
-                          </View>
-                        </View>
-                        <View style={styles.nutritionFactsRow}>
-                          <View style={styles.nutritionalFactsLabelContainer}>
-                            <Text style={styles.nutritionFactsIndentLabel}>
-                              Vitamin D
-                            </Text>
-                          </View>
-                          <View style={styles.nutritionalFactsValuesContainer}>
-                            <Text style={styles.nutritionFactsIndentValue}>
-                              20 mcg
-                            </Text>
-                            <Text style={styles.nutritionFactsIndentDailyValue}>
-                              100%
-                            </Text>
-                          </View>
-                        </View>
-                        <View style={styles.nutritionFactsRow}>
-                          <View style={styles.nutritionalFactsLabelContainer}>
-                            <Text style={styles.nutritionFactsIndentLabel}>
-                              Vitamin E
-                            </Text>
-                          </View>
-                          <View style={styles.nutritionalFactsValuesContainer}>
-                            <Text style={styles.nutritionFactsIndentValue}>
-                              15 mg
-                            </Text>
-                            <Text style={styles.nutritionFactsIndentDailyValue}>
-                              100%
-                            </Text>
-                          </View>
-                        </View>
-                        <View style={styles.nutritionFactsRow}>
-                          <View style={styles.nutritionalFactsLabelContainer}>
-                            <Text style={styles.nutritionFactsIndentLabel}>
-                              Vitamin K
-                            </Text>
-                          </View>
-                          <View style={styles.nutritionalFactsValuesContainer}>
-                            <Text style={styles.nutritionFactsIndentValue}>
-                              120 mcg
-                            </Text>
-                            <Text style={styles.nutritionFactsIndentDailyValue}>
-                              100%
-                            </Text>
-                          </View>
-                        </View>
-                        <View style={styles.nutritionFactsRow}>
-                          <View style={styles.nutritionalFactsLabelContainer}>
-                            <Text style={styles.nutritionFactsIndentLabel}>
-                              B1 (Thiamine)
-                            </Text>
-                          </View>
-                          <View style={styles.nutritionalFactsValuesContainer}>
-                            <Text style={styles.nutritionFactsIndentValue}>
-                              1.2 mg
-                            </Text>
-                            <Text style={styles.nutritionFactsIndentDailyValue}>
-                              100%
-                            </Text>
-                          </View>
-                        </View>
-                        <View style={styles.nutritionFactsRow}>
-                          <View style={styles.nutritionalFactsLabelContainer}>
-                            <Text style={styles.nutritionFactsIndentLabel}>
-                              B2 (Riboflavin)
-                            </Text>
-                          </View>
-                          <View style={styles.nutritionalFactsValuesContainer}>
-                            <Text style={styles.nutritionFactsIndentValue}>
-                              1.3 mg
-                            </Text>
-                            <Text style={styles.nutritionFactsIndentDailyValue}>
-                              100%
-                            </Text>
-                          </View>
-                        </View>
-                        <View style={styles.nutritionFactsRow}>
-                          <View style={styles.nutritionalFactsLabelContainer}>
-                            <Text style={styles.nutritionFactsIndentLabel}>
-                              B3 (Niacin)
-                            </Text>
-                          </View>
-                          <View style={styles.nutritionalFactsValuesContainer}>
-                            <Text style={styles.nutritionFactsIndentValue}>
-                              16 mg
-                            </Text>
-                            <Text style={styles.nutritionFactsIndentDailyValue}>
-                              100%
-                            </Text>
-                          </View>
-                        </View>
-                        <View style={styles.nutritionFactsRow}>
-                          <View style={styles.nutritionalFactsLabelContainer}>
-                            <Text style={styles.nutritionFactsIndentLabel}>
-                              B5 (Pantothenic Acid)
-                            </Text>
-                          </View>
-                          <View style={styles.nutritionalFactsValuesContainer}>
-                            <Text style={styles.nutritionFactsIndentValue}>
-                              5 mg
-                            </Text>
-                            <Text style={styles.nutritionFactsIndentDailyValue}>
-                              100%
-                            </Text>
-                          </View>
-                        </View>
-                        <View style={styles.nutritionFactsRow}>
-                          <View style={styles.nutritionalFactsLabelContainer}>
-                            <Text style={styles.nutritionFactsIndentLabel}>
-                              B6 (Pyridoxine)
-                            </Text>
-                          </View>
-                          <View style={styles.nutritionalFactsValuesContainer}>
-                            <Text style={styles.nutritionFactsIndentValue}>
-                              1.7 mg
-                            </Text>
-                            <Text style={styles.nutritionFactsIndentDailyValue}>
-                              100%
-                            </Text>
-                          </View>
-                        </View>
-                        <View style={styles.nutritionFactsRow}>
-                          <View style={styles.nutritionalFactsLabelContainer}>
-                            <Text style={styles.nutritionFactsIndentLabel}>
-                              B7 (Biotin)
-                            </Text>
-                          </View>
-                          <View style={styles.nutritionalFactsValuesContainer}>
-                            <Text style={styles.nutritionFactsIndentValue}>
-                              30 mcg
-                            </Text>
-                            <Text style={styles.nutritionFactsIndentDailyValue}>
-                              100%
-                            </Text>
-                          </View>
-                        </View>
-                        <View style={styles.nutritionFactsRow}>
-                          <View style={styles.nutritionalFactsLabelContainer}>
-                            <Text style={styles.nutritionFactsIndentLabel}>
-                              B9 (Folate)
-                            </Text>
-                          </View>
-                          <View style={styles.nutritionalFactsValuesContainer}>
-                            <Text style={styles.nutritionFactsIndentValue}>
-                              400 mcg
-                            </Text>
-                            <Text style={styles.nutritionFactsIndentDailyValue}>
-                              100%
-                            </Text>
-                          </View>
-                        </View>
-                        <View style={styles.nutritionFactsRow}>
-                          <View style={styles.nutritionalFactsLabelContainer}>
-                            <Text style={styles.nutritionFactsIndentLabel}>
-                              B12 (Cobalamin)
-                            </Text>
-                          </View>
-                          <View style={styles.nutritionalFactsValuesContainer}>
-                            <Text style={styles.nutritionFactsIndentValue}>
-                              2.4 mcg
-                            </Text>
-                            <Text style={styles.nutritionFactsIndentDailyValue}>
-                              100%
-                            </Text>
-                          </View>
-                        </View>
-                      </View>
-                    )}
-                  </View>
-
-                  <View style={styles.nutritionFactsSeparator} />
-
-                  <View style={styles.nutritionFactsSection}>
-                    <View style={styles.nutritionFactsRow}>
-                      <Text style={styles.nutritionFactsLabel}>Minerals</Text>
-                      <TouchableOpacity
-                        onPress={toggleMineralList}
-                        style={{
-                          flexDirection: "row",
-                          gap: 5,
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <Text
-                          style={{
-                            color: theme.colors.primary,
-                            fontWeight: "bold",
-                          }}
-                        >
-                          {showMineralList ? "Hide" : "Show"}
-                        </Text>
-                        <Feather
-                          name={showMineralList ? "arrow-up" : "arrow-down"}
-                          color={theme.colors.primary}
-                          size={20}
-                        />
-                      </TouchableOpacity>
-                    </View>
-                    {showMineralList && (
-                      <View style={{ paddingTop: 10 }}>
-                        <View style={styles.nutritionFactsRow}>
-                          <View style={styles.nutritionalFactsLabelContainer}>
-                            <Text style={styles.nutritionFactsIndentLabel}>
-                              Calcium
-                            </Text>
-                          </View>
-                          <View style={styles.nutritionalFactsValuesContainer}>
-                            <Text style={styles.nutritionFactsIndentValue}>
-                              1000 mg
-                            </Text>
-                            <Text style={styles.nutritionFactsIndentDailyValue}>
-                              100%
-                            </Text>
-                          </View>
-                        </View>
-                        <View style={styles.nutritionFactsRow}>
-                          <View style={styles.nutritionalFactsLabelContainer}>
-                            <Text style={styles.nutritionFactsIndentLabel}>
-                              Iron
-                            </Text>
-                          </View>
-                          <View style={styles.nutritionalFactsValuesContainer}>
-                            <Text style={styles.nutritionFactsIndentValue}>
-                              18 mg
-                            </Text>
-                            <Text style={styles.nutritionFactsIndentDailyValue}>
-                              100%
-                            </Text>
-                          </View>
-                        </View>
-                        <View style={styles.nutritionFactsRow}>
-                          <View style={styles.nutritionalFactsLabelContainer}>
-                            <Text style={styles.nutritionFactsIndentLabel}>
-                              Magnesium
-                            </Text>
-                          </View>
-                          <View style={styles.nutritionalFactsValuesContainer}>
-                            <Text style={styles.nutritionFactsIndentValue}>
-                              400 mg
-                            </Text>
-                            <Text style={styles.nutritionFactsIndentDailyValue}>
-                              100%
-                            </Text>
-                          </View>
-                        </View>
-                        <View style={styles.nutritionFactsRow}>
-                          <View style={styles.nutritionalFactsLabelContainer}>
-                            <Text style={styles.nutritionFactsIndentLabel}>
-                              Phosphorus
-                            </Text>
-                          </View>
-                          <View style={styles.nutritionalFactsValuesContainer}>
-                            <Text style={styles.nutritionFactsIndentValue}>
-                              1000 mg
-                            </Text>
-                            <Text style={styles.nutritionFactsIndentDailyValue}>
-                              100%
-                            </Text>
-                          </View>
-                        </View>
-                        <View style={styles.nutritionFactsRow}>
-                          <View style={styles.nutritionalFactsLabelContainer}>
-                            <Text style={styles.nutritionFactsIndentLabel}>
-                              Potassium
-                            </Text>
-                          </View>
-                          <View style={styles.nutritionalFactsValuesContainer}>
-                            <Text style={styles.nutritionFactsIndentValue}>
-                              3500 mg
-                            </Text>
-                            <Text style={styles.nutritionFactsIndentDailyValue}>
-                              100%
-                            </Text>
-                          </View>
-                        </View>
-                        <View style={styles.nutritionFactsRow}>
-                          <View style={styles.nutritionalFactsLabelContainer}>
-                            <Text style={styles.nutritionFactsIndentLabel}>
-                              Sodium
-                            </Text>
-                          </View>
-                          <View style={styles.nutritionalFactsValuesContainer}>
-                            <Text style={styles.nutritionFactsIndentValue}>
-                              2300 mg
-                            </Text>
-                            <Text style={styles.nutritionFactsIndentDailyValue}>
-                              100%
-                            </Text>
-                          </View>
-                        </View>
-                        <View style={styles.nutritionFactsRow}>
-                          <View style={styles.nutritionalFactsLabelContainer}>
-                            <Text style={styles.nutritionFactsIndentLabel}>
-                              Zinc
-                            </Text>
-                          </View>
-                          <View style={styles.nutritionalFactsValuesContainer}>
-                            <Text style={styles.nutritionFactsIndentValue}>
-                              11 mg
-                            </Text>
-                            <Text style={styles.nutritionFactsIndentDailyValue}>
-                              100%
-                            </Text>
-                          </View>
-                        </View>
-                        <View style={styles.nutritionFactsRow}>
-                          <View style={styles.nutritionalFactsLabelContainer}>
-                            <Text style={styles.nutritionFactsIndentLabel}>
-                              Copper
-                            </Text>
-                          </View>
-                          <View style={styles.nutritionalFactsValuesContainer}>
-                            <Text style={styles.nutritionFactsIndentValue}>
-                              2 mg
-                            </Text>
-                            <Text style={styles.nutritionFactsIndentDailyValue}>
-                              100%
-                            </Text>
-                          </View>
-                        </View>
-                        <View style={styles.nutritionFactsRow}>
-                          <View style={styles.nutritionalFactsLabelContainer}>
-                            <Text style={styles.nutritionFactsIndentLabel}>
-                              Manganese
-                            </Text>
-                          </View>
-                          <View style={styles.nutritionalFactsValuesContainer}>
-                            <Text style={styles.nutritionFactsIndentValue}>
-                              2.3 mg
-                            </Text>
-                            <Text style={styles.nutritionFactsIndentDailyValue}>
-                              100%
-                            </Text>
-                          </View>
-                        </View>
-                        <View style={styles.nutritionFactsRow}>
-                          <View style={styles.nutritionalFactsLabelContainer}>
-                            <Text style={styles.nutritionFactsIndentLabel}>
-                              Selenium
-                            </Text>
-                          </View>
-                          <View style={styles.nutritionalFactsValuesContainer}>
-                            <Text style={styles.nutritionFactsIndentValue}>
-                              55 mcg
-                            </Text>
-                            <Text style={styles.nutritionFactsIndentDailyValue}>
-                              100%
-                            </Text>
-                          </View>
-                        </View>
-                        <View style={styles.nutritionFactsRow}>
-                          <View style={styles.nutritionalFactsLabelContainer}>
-                            <Text style={styles.nutritionFactsIndentLabel}>
-                              Chromium
-                            </Text>
-                          </View>
-                          <View style={styles.nutritionalFactsValuesContainer}>
-                            <Text style={styles.nutritionFactsIndentValue}>
-                              120 mcg
-                            </Text>
-                            <Text style={styles.nutritionFactsIndentDailyValue}>
-                              100%
-                            </Text>
-                          </View>
-                        </View>
-                      </View>
-                    )}
-                  </View>
-
-                  {/* Add more sections for other nutrients */}
+                  <IconButton
+                    icon="close"
+                    iconColor={theme.colors.cardHeaderTextColor}
+                    size={26}
+                    onPress={toggleSelectServing}
+                  />
                 </View>
-              )}
-            </TouchableOpacity>
-          </ScrollView>
+                <ScrollView>
+                  <TouchableOpacity activeOpacity={1}>
+                    {activeFoodItem &&
+                      activeFoodItem?.measures?.map((servingSizeOption) => (
+                        <TouchableOpacity
+                          key={servingSizeOption?.uri}
+                          onPress={() => handleSelectServing(servingSizeOption)}
+                          style={{
+                            width: "100%",
+                            flexDirection: "row",
+                            alignItems: "center",
+                            backgroundColor:
+                              selectedServing === servingSizeOption
+                                ? theme.colors.surface
+                                : "transparent",
+                            marginVertical: 5,
+                            padding: 10,
+                          }}
+                        >
+                          <View
+                            style={{
+                              flex: 1,
+                              alignItems: "flex-end",
+                              paddingRight: 10,
+                            }}
+                          >
+                            <Text
+                              style={{
+                                color: theme.colors.cardHeaderTextColor,
+                                fontSize: 20,
+                              }}
+                            >
+                              {Math.round(servingSizeOption?.weight)}
+                            </Text>
+                          </View>
+                          <View style={{ flex: 2 }}>
+                            <Text
+                              style={{
+                                color: theme.colors.cardHeaderTextColor,
+                                fontSize: 20,
+                              }}
+                            >
+                              {servingSizeOption?.label}
+                            </Text>
+                          </View>
+                          <View
+                            style={{
+                              flex: 1,
+                              alignItems: "flex-end",
+                              paddingRight: 5,
+                            }}
+                          >
+                            {selectedServing === servingSizeOption ? (
+                              <Feather
+                                name="check-square"
+                                size={28}
+                                color={theme.colors.primary}
+                              />
+                            ) : null}
+                          </View>
+                        </TouchableOpacity>
+                      ))}
+                  </TouchableOpacity>
+                </ScrollView>
+              </View>
+            </View>
+          )}
+          {isSelectMealVisible && (
+            <View
+              style={{
+                position: "absolute",
+                bottom: 0,
+                right: 0,
+                left: 0,
+                top: "70%",
+                backgroundColor: theme.colors.screenBackground,
+                zIndex: 2,
+              }}
+            >
+              <View style={{ flex: 1 }}>
+                <View
+                  style={{
+                    height: "20%",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    paddingHorizontal: 10,
+                    borderBottomWidth: 1,
+                    borderBottomColor: "gray",
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: theme.colors.cardHeaderTextColor,
+                      fontSize: 20,
+                    }}
+                  >
+                    Select Meal
+                  </Text>
+                  <IconButton
+                    icon="close"
+                    iconColor={theme.colors.cardHeaderTextColor}
+                    size={26}
+                    onPress={toggleSelectMeal}
+                  />
+                </View>
+                <ScrollView>
+                  <TouchableOpacity activeOpacity={1}>
+                    {activeFoodItem &&
+                      selectedMealSection &&
+                      mealSections
+                        ?.filter((mealOption) => mealOption.name)
+                        .map((mealOption) => (
+                          <TouchableOpacity
+                            key={mealOption?.id}
+                            onPress={() => handleSelectMeal(mealOption)}
+                            style={{
+                              width: "100%",
+                              flexDirection: "row",
+                              alignItems: "center",
+                              backgroundColor:
+                                selectedMealSection?.id === mealOption?.id
+                                  ? theme.colors.surface
+                                  : "transparent",
+                              marginVertical: 5,
+                              padding: 10,
+                            }}
+                          >
+                            <View style={{ flex: 2 }}>
+                              <Text
+                                style={{
+                                  color: theme.colors.cardHeaderTextColor,
+                                  fontSize: 20,
+                                }}
+                              >
+                                {mealOption?.name}
+                              </Text>
+                            </View>
+                            <View
+                              style={{
+                                flex: 1,
+                                alignItems: "flex-end",
+                                paddingRight: 5,
+                              }}
+                            >
+                              {selectedMealSection?.id === mealOption?.id ? (
+                                <Feather
+                                  name="check-square"
+                                  size={28}
+                                  color={theme.colors.primary}
+                                />
+                              ) : null}
+                            </View>
+                          </TouchableOpacity>
+                        ))}
+                  </TouchableOpacity>
+                </ScrollView>
+              </View>
+            </View>
+          )}
         </SafeAreaView>
       </TouchableWithoutFeedback>
     </Modal>
-  );
-};
-
-const Row = ({ label, keyboardType }) => {
-  const styles = foodNutrientModalStyles();
-
-  return (
-    <View style={styles.rowContainer}>
-      <Text style={styles.inputLabel}>{label}</Text>
-      <TextInput
-        caretHidden={true}
-        keyboardType={keyboardType}
-        style={styles.textInput}
-      />
-    </View>
   );
 };
 

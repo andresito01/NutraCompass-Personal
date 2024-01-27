@@ -14,7 +14,7 @@ const foodNutrientModalStyles = () => {
     },
     header: {
       backgroundColor: theme.colors.screenBackground,
-      height: 40,
+      height: 50,
       paddingBottom: 10,
     },
     title: {
@@ -23,7 +23,6 @@ const foodNutrientModalStyles = () => {
     sectionContainer: {
       padding: 16,
       backgroundColor: theme.colors.surface,
-      marginBottom: 10,
     },
     foodItemName: {
       color: theme.colors.cardHeaderTextColor,
@@ -38,22 +37,21 @@ const foodNutrientModalStyles = () => {
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
-      marginBottom: 16,
     },
     inputLabel: {
       color: theme.colors.cardHeaderTextColor,
       fontSize: 16,
-      fontWeight: "bold",
       marginRight: 16,
       flex: 1,
     },
     textInput: {
       flex: 0.5, // Occupies about a quarter of the row width
-      backgroundColor: theme.colors.cardBackgroundColor,
       fontSize: 16,
       height: 40,
       borderWidth: 1,
-      borderColor: theme.colors.cardBorderColor,
+      borderRadius: 8,
+      backgroundColor: theme.colors.surface,
+      borderColor: theme.colors.primary,
     },
     macroNutrientContainer: {
       flexDirection: "row",
@@ -62,6 +60,7 @@ const foodNutrientModalStyles = () => {
       paddingRight: 30,
     },
     macroNutrientColumn: {
+      flex: 1,
       flexDirection: "column",
       gap: 10,
       alignItems: "center",

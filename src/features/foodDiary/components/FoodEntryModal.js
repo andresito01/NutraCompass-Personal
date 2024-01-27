@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import {
   Modal,
   View,
@@ -8,216 +8,281 @@ import {
   SafeAreaView,
   TouchableWithoutFeedback,
   Keyboard,
+  Animated,
 } from "react-native";
-import { useTheme, Appbar, Searchbar, Card, Button } from "react-native-paper";
-// Import for console log readability of fetched data objects
-import prettyFormat from "pretty-format";
-import Feather from "react-native-vector-icons/Feather";
+import * as Haptics from "expo-haptics";
+import {
+  useTheme,
+  Appbar,
+  Searchbar,
+  Card,
+  Button,
+  Snackbar,
+  IconButton,
+} from "react-native-paper";
 import foodEntryModalStyles from "./styles/foodEntryModalStyles.js";
-// Edamam Food Database API Method Imports
 import {
   searchFood,
   searchForFoodItemNutrients,
 } from "../api/EdamamFoodDB/edamamMethods.js";
-// Import Barcode Scanner Component
 import BarcodeScanner from "./BarcodeScanner.js";
 import { useThemeContext } from "../../../context/ThemeContext.js";
+import FoodNutrientModal from "./FoodNutrientModal.js";
 
-const FoodEntryModal = ({
-  isVisible,
-  onSave,
-  onCancel,
-  handleOpenFoodNutrientModal,
-}) => {
-  const { theme } = useThemeContext();
-  const [foodName, setFoodName] = useState("");
-  const foodNameInputRef = useRef(null);
-  const [searchResults, setSearchResults] = useState([]);
-  const [isBarcodeScannerVisible, setIsBarcodeScannerVisible] = useState(false);
+const FoodEntryModal = React.memo(
+  ({
+    isVisible,
+    onSave,
+    onCancel,
+    activeFoodItem,
+    setActiveFoodItem,
+    foodNutrientModalType,
+    setFoodNutrientModalType,
+    activeMealSection,
+    selectedDate,
+  }) => {
+    const { theme } = useThemeContext();
+    const [searchTerm, setSearchTerm] = useState("");
+    const [searchResults, setSearchResults] = useState([]);
+    // useEffect(
+    //   () =>
+    //     console.log(
+    //       "Search Results: " + JSON.stringify(searchResults, null, 1)
+    //     ),
+    //   [searchResults]
+    // );
+    const [isBarcodeScannerVisible, setIsBarcodeScannerVisible] =
+      useState(false);
+    const [isFoodLoggedSnackBarVisible, setIsFoodLoggedSnackBarVisible] =
+      useState(false);
+    const [isFoodNutrientModalVisible, setIsFoodNutrientModalVisible] =
+      useState(false);
 
-  const styles = foodEntryModalStyles();
-  const paperTheme = useTheme(); // Get the current theme
+    const [selectedScale] = useState(new Animated.Value(1));
+    const styles = foodEntryModalStyles();
 
-  // const handleSave = () => {
-  //   onSave(foodName, parseInt(calories));
-  //   setFoodName("");
-  //   setCalories("");
-  // };
+    const handleCloseFoodNutrientModal = () => {
+      setIsFoodNutrientModalVisible(false);
+    };
 
-  const handleBarcodeScanned = (resultsOrErrorMessage) => {
-    if (Array.isArray(resultsOrErrorMessage)) {
-      // Handle successful barcode scanning and set the search results
-      setSearchResults(resultsOrErrorMessage);
-      setIsBarcodeScannerVisible(false);
-    } else {
-      // Handle error from barcode scanning and show the error message
-      console.log("FoodEntryModal: ", resultsOrErrorMessage);
-    }
-  };
+    const handleOpenFoodNutrientModal = (title) => {
+      setFoodNutrientModalType(title);
+      setIsFoodNutrientModalVisible(true);
+    };
 
-  const handleFoodSearch = async () => {
-    Keyboard.dismiss(); // Dismiss the keyboard
-    try {
-      const foodSearchResults = await searchFood(foodName);
+    const handleViewFoodNutrients = (title, selectedFood) => {
+      if (selectedFood) {
+        // No need to format or fetch nutrient data, it's already available
 
-      // Clean foodSearchResults to ensure there are no unique Id duplicates
-      // Create a map to store unique items based on foodId
-      const uniqueResultsMap = new Map();
-      // Iterate through the searchResults and store unique items in the map
-      foodSearchResults.hints.forEach((item) => {
-        if (!uniqueResultsMap.has(item.food.foodId)) {
-          uniqueResultsMap.set(item.food.foodId, item);
-        }
+        setActiveFoodItem(selectedFood);
+
+        handleOpenFoodNutrientModal(title);
+
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      } else {
+        console.error("There is no selected food.");
+      }
+    };
+
+    const onToggleSnackBar = () => setIsFoodLoggedSnackBarVisible(true);
+    const onDismissSnackBar = () => setIsFoodLoggedSnackBarVisible(false);
+
+    const handleBarcodeScanned = (resultsOrErrorMessage) => {
+      console.log(
+        "RESULTS OR ERROR: " + JSON.stringify(resultsOrErrorMessage, null, 2)
+      );
+      if (Array.isArray(resultsOrErrorMessage)) {
+        setSearchResults(resultsOrErrorMessage);
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        setIsBarcodeScannerVisible(false);
+      } else {
+        console.log("FoodEntryModal: ", resultsOrErrorMessage);
+      }
+    };
+
+    const handleFoodSearch = async () => {
+      Keyboard.dismiss();
+      try {
+        const foodSearchResults = await searchFood(searchTerm);
+        setSearchResults(foodSearchResults);
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      } catch (error) {
+        console.error("Data processing error:", error);
+      }
+    };
+
+    const handleSaveFood = async (selectedFood) => {
+      Animated.timing(selectedScale, {
+        toValue: 1,
+        duration: 100,
+        useNativeDriver: false,
+      }).start(() => {
+        onSave(selectedFood);
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        onToggleSnackBar();
+
+        setTimeout(() => {
+          setIsFoodLoggedSnackBarVisible(false);
+          selectedScale.setValue(1); // Reset the scale value
+        }, 2000);
       });
-      // Convert the map values back to an array
-      const uniqueResults = Array.from(uniqueResultsMap.values());
-      // Update the state with the cleaned and unique results
-      setSearchResults(uniqueResults);
-    } catch (error) {
-      console.error("Data processing error:", error);
-      // Handle error (e.g., display an error message)
-    }
-  };
+    };
 
-  const handleSelectFood = async (selectedFood) => {
-    // Process the selected food and add it to the log
-    // For example:
+    const handleCloseModal = () => {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      setSearchResults([]);
+      setSearchTerm("");
+      onCancel();
+    };
 
-    //console.log("Selected Food: \n" + JSON.stringify(selectedFood));
+    const openBarcodeScanner = () => {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      setIsBarcodeScannerVisible(true);
+    };
 
-    onSave(
-      selectedFood.food.label,
-      parseInt(Math.round(selectedFood.food.nutrients.ENERC_KCAL))
-    );
-    setSearchResults([]); // Clear search results
-    setFoodName(""); // Clear input
-    //setCalories(""); // Clear input
-  };
+    const closeBarcodeScanner = () => {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      setIsBarcodeScannerVisible(false);
+    };
 
-  const handleCloseModal = () => {
-    setSearchResults([]); // Clear search results
-    setFoodName(""); // Clear food name input
-    onCancel(); // Close the modal
-  };
-
-  const openBarcodeScanner = () => {
-    setIsBarcodeScannerVisible(true);
-  };
-
-  const closeBarcodeScanner = () => {
-    setIsBarcodeScannerVisible(false);
-  };
-
-  return (
-    <Modal visible={isVisible} animationType="slide" transparent={true}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <SafeAreaView style={styles.modalContainer}>
-          <View style={styles.modalHeader}>
-            <Appbar.Header
-              mode="center-aligned"
-              style={{
-                height: 45,
-                backgroundColor: theme.colors.screenBackground,
-              }}
-            >
-              <Appbar.BackAction
-                color={theme.colors.cardHeaderTextColor}
-                onPress={handleCloseModal}
+    return (
+      <Modal visible={isVisible} animationType="slide" transparent={true}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <SafeAreaView style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <Appbar.Header
+                mode="center-aligned"
+                style={{
+                  height: 40,
+                  backgroundColor: theme.colors.screenBackground,
+                }}
+              >
+                <Appbar.BackAction
+                  color={theme.colors.cardHeaderTextColor}
+                  onPress={handleCloseModal}
+                />
+                <Appbar.Content title="Add Food" />
+              </Appbar.Header>
+            </View>
+            <View style={styles.modalContent}>
+              <Searchbar
+                placeholder="Search for a food"
+                placeholderTextColor={theme.colors.cardHeaderTextColor}
+                value={searchTerm}
+                onChangeText={setSearchTerm}
+                onIconPress={handleFoodSearch}
+                onSubmitEditing={handleFoodSearch}
+                mode="bar"
               />
-              <Appbar.Content title="Add Food" />
-            </Appbar.Header>
-          </View>
-          <View style={styles.modalContent}>
-            <Searchbar
-              ref={foodNameInputRef}
-              placeholder="Search for a food"
-              placeholderTextColor={theme.colors.cardHeaderTextColor}
-              //style={styles.input}
-              value={foodName}
-              onChangeText={setFoodName}
-              onIconPress={handleFoodSearch} // Trigger search on icon press
-              onSubmitEditing={handleFoodSearch}
-              mode="bar"
-            />
-            <Card
-              style={{
-                backgroundColor: "transparent",
-                alignItems: "flex-start",
-              }}
-            >
-              <Card.Actions>
-                <Button>All</Button>
-                <Button>My Meals</Button>
-              </Card.Actions>
-            </Card>
-            <Card
-              style={{
-                backgroundColor: theme.colors.cardBackgroundColor,
-                alignItems: "flex-start",
-                marginBottom: 10,
-              }}
-            >
-              <Card.Actions>
-                <Button onPress={openBarcodeScanner}>Scan a Barcode</Button>
-              </Card.Actions>
-            </Card>
-            {/* <TouchableOpacity
-              style={styles.modalButton}
-              onPress={openBarcodeScanner}
-            >
-              <Text style={styles.modalButtonText}>Open Barcode Scanner</Text>
-            </TouchableOpacity> */}
-            {/* Display Food Search Results */}
-            {/* {console.log("FlatList Data:", prettyFormat(searchResults))} */}
-            <FlatList
-              styles={styles.flatlist}
-              data={searchResults}
-              keyExtractor={(item) => item.food.foodId}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  //onPress={handleOpenFoodNutrientModal}
-                  style={styles.foodItemContainer}
-                >
-                  <View style={styles.foodInfoContainer}>
-                    <Text style={styles.foodLabel}>{item.food.label}</Text>
-                    <Text style={styles.foodLabelCalories}>
-                      Calories: {Math.round(item.food.nutrients.ENERC_KCAL)}
-                    </Text>
-                    <Text style={styles.foodLabelServingSize}>
-                      Serving Size:
-                    </Text>
-                  </View>
+              <Card
+                style={{
+                  backgroundColor: "transparent",
+                  alignItems: "flex-start",
+                }}
+              >
+                <Card.Actions>
+                  <Button>All</Button>
+                  <Button>My Meals</Button>
+                </Card.Actions>
+              </Card>
+              <Card
+                style={{
+                  backgroundColor: theme.colors.cardBackgroundColor,
+                  alignItems: "flex-start",
+                  marginBottom: 10,
+                }}
+              >
+                <Card.Actions>
+                  <Button onPress={openBarcodeScanner}>Scan a Barcode</Button>
+                </Card.Actions>
+              </Card>
+              <FlatList
+                styles={styles.flatlist}
+                data={searchResults}
+                keyExtractor={(item) => item.foodId}
+                renderItem={({ item }) => (
                   <TouchableOpacity
-                    style={styles.selectButton}
-                    onPress={() => handleSelectFood(item)}
+                    onPress={() => handleViewFoodNutrients("Add Food", item)}
+                    style={styles.foodItemContainer}
                   >
-                    {/* <Text style={{ color: paperTheme.colors.text }}>
-                      Select
-                    </Text> */}
-                    <Feather
-                      name="plus-circle"
-                      color={theme.colors.cardHeaderTextColor}
-                      size={24}
-                    />
+                    <View style={styles.foodInfoContainer}>
+                      <Text style={styles.foodLabel}>{item.foodLabel}</Text>
+                      <View style={{ flexDirection: "row", gap: 5 }}>
+                        <Text style={styles.foodLabelCalories}>
+                          {Math.round(
+                            parseFloat(item.nutrients.ENERC_KCAL?.quantity)
+                          )}{" "}
+                          cal,
+                        </Text>
+                        <Text style={styles.foodLabelServingSize}>
+                          {Math.round(item?.activeMeasure?.weight)}{" "}
+                          {item?.activeMeasure?.label}
+                          {item?.foodBrand ? "," : ""}
+                        </Text>
+                        <Text style={styles.foodLabelServingSize}>
+                          {item?.foodBrand}
+                        </Text>
+                      </View>
+                    </View>
+                    <Animated.View
+                      style={{
+                        transform: [{ scale: selectedScale }],
+                      }}
+                    >
+                      <IconButton
+                        iconColor={theme.colors.primary}
+                        containerColor={theme.colors.screenBackground}
+                        icon={isFoodLoggedSnackBarVisible ? "check" : "plus"}
+                        color={theme.colors.cardHeaderTextColor}
+                        size={24}
+                        onPress={() => handleSaveFood(item)}
+                      />
+                    </Animated.View>
                   </TouchableOpacity>
-                </TouchableOpacity>
-              )}
-            />
-          </View>
-
-          {/* Barcode Scanner Modal */}
-          {isBarcodeScannerVisible && (
-            <View style={styles.barcodeScannerContainer}>
-              <BarcodeScanner
-                onBarcodeScanned={handleBarcodeScanned}
-                onClose={closeBarcodeScanner}
+                )}
               />
             </View>
-          )}
-        </SafeAreaView>
-      </TouchableWithoutFeedback>
-    </Modal>
-  );
-};
+
+            {isBarcodeScannerVisible && (
+              <View style={styles.barcodeScannerContainer}>
+                <BarcodeScanner
+                  onBarcodeScanned={handleBarcodeScanned}
+                  onClose={closeBarcodeScanner}
+                />
+              </View>
+            )}
+
+            <Snackbar
+              visible={isFoodLoggedSnackBarVisible}
+              onDismiss={onDismissSnackBar}
+              style={{ backgroundColor: theme.colors.surface }}
+            >
+              <Text
+                style={{
+                  fontSize: 16,
+                  alignSelf: "center",
+                  color: theme.colors.cardHeaderTextColor,
+                }}
+              >
+                Food Logged!
+              </Text>
+            </Snackbar>
+            {/* Food Nutrient Modal */}
+
+            <FoodNutrientModal
+              isVisible={isFoodNutrientModalVisible}
+              closeModal={handleCloseFoodNutrientModal}
+              activeFoodItem={activeFoodItem}
+              setActiveFoodItem={setActiveFoodItem}
+              foodNutrientModalType={foodNutrientModalType}
+              activeMealSection={activeMealSection}
+              selectedDate={selectedDate}
+            />
+          </SafeAreaView>
+        </TouchableWithoutFeedback>
+      </Modal>
+    );
+  }
+);
 
 export default FoodEntryModal;

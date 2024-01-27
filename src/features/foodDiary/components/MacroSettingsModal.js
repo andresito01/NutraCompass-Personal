@@ -62,7 +62,6 @@ const MacroSettingsModal = ({
         top: "58%",
         bottom: 0,
         margin: 0,
-        backgroundColor: "red",
         justifyContent: "center",
       }}
       avoidKeyboard={true}

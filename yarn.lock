@@ -7077,6 +7077,7 @@ __metadata:
     react-native-pager-view: 6.2.0
     react-native-paper: ^5.10.6
     react-native-reanimated: 3.3.0
+    react-native-reanimated-carousel: ^3.5.1
     react-native-safe-area-context: 4.6.3
     react-native-screens: ~3.22.0
     react-native-svg: 13.9.0
@@ -11485,6 +11486,18 @@ __metadata:
     react-native-safe-area-context: "*"
     react-native-vector-icons: "*"
   checksum: 33e6877e8c22f3631de109f31450fe139f2d2d2a088326e57b0cb264ffde99772b30ebbd47451a8bde313a103b5df2bb75dbf0154833475691a65fbe41700b6f
+  languageName: node
+  linkType: hard
+
+"react-native-reanimated-carousel@npm:^3.5.1":
+  version: 3.5.1
+  resolution: "react-native-reanimated-carousel@npm:3.5.1"
+  peerDependencies:
+    react: ">=16.8.0"
+    react-native: ">=0.6.0"
+    react-native-gesture-handler: ">=2.0.0"
+    react-native-reanimated: ">=3.0.0"
+  checksum: a2eb640453fa35f659c1fb5575f903364d513fb7f621104afa14fee2284132674dfaf0d87cb29e8c119f7513094a5967d5193f3dfa24043af167c6f26abcfe73
   languageName: node
   linkType: hard
 

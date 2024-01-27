@@ -10,7 +10,6 @@ const dailyNutritionGoalsCustomizationModalStyles = () => {
 
   return StyleSheet.create({
     header: {
-      height: 65,
       minWidth: "100%",
       padding: 10,
       justifyContent: "flex-end",

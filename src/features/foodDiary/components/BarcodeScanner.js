@@ -8,7 +8,6 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
-  Vibration,
 } from "react-native";
 import { Camera, CameraType } from "expo-camera";
 // Edamam Food Database API Method Imports
@@ -43,8 +42,7 @@ const BarcodeScanner = ({ onBarcodeScanned, onClose }) => {
         setError("Barcode not recognized. Please try again or enter manually.");
       } else {
         // Pass the successfully scanned barcode data to the callback
-        onBarcodeScanned(foodBarcodeResults.hints);
-        Vibration.vibrate();
+        onBarcodeScanned(foodBarcodeResults);
       }
     } catch (error) {
       console.error("Barcode scanner error: ", error);
@@ -68,7 +66,7 @@ const BarcodeScanner = ({ onBarcodeScanned, onClose }) => {
         setError("Barcode not recognized. Please try again.");
       } else {
         // Pass the successfully scanned barcode data to the callback
-        onBarcodeScanned(foodBarcodeResults.hints);
+        onBarcodeScanned(foodBarcodeResults);
       }
     } catch (error) {
       console.error("Manual barcode search error: ", error);

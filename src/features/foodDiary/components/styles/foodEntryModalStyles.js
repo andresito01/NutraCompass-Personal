@@ -68,19 +68,19 @@ const foodEntryModalStyles = () => {
     foodInfoContainer: {
       flex: 1,
       marginRight: 12,
+      gap: 2,
     },
     foodLabel: {
       fontSize: 16,
-      fontWeight: "bold",
       color: theme.colors.cardHeaderTextColor, // Use theme text color
     },
     foodLabelCalories: {
       fontSize: 14,
-      color: theme.colors.cardHeaderTextColor, // Use theme text color
+      color: "gray", // Use theme text color
     },
     foodLabelServingSize: {
       fontSize: 14,
-      color: theme.colors.cardHeaderTextColor, // Use theme text color
+      color: "gray", // Use theme text color
     },
     selectButton: {
       backgroundColor: theme.colors.primary, // Use theme primary color

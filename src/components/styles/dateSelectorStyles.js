@@ -22,7 +22,7 @@ const dateSelectorStyles = () => {
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
-      backgroundColor: theme.colors.cardBackgroundColor,
+      backgroundColor: theme.colors.screenBackground,
     },
     calendarWrapper: {
       width: "85%",

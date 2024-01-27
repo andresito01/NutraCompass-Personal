@@ -6,8 +6,6 @@ const barcodeScannerStyles = () => {
   const paperTheme = useTheme();
   const { theme } = useThemeContext();
 
-  console.log(theme);
-
   return StyleSheet.create({
     container: {
       flex: 1,

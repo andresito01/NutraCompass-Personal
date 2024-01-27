@@ -179,7 +179,7 @@ const NoteEditorModal = ({
                   onPress={handleCloseNoteEditorModal}
                 >
                   <Feather
-                    name="arrow-left"
+                    name="chevron-left"
                     size={24}
                     color={theme.colors.cardHeaderTextColor}
                   />

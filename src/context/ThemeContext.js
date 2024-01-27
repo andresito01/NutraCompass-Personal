@@ -1,10 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { StatusBar } from "react-native";
-import {
-  MD3LightTheme as DefaultTheme,
-  MD3DarkTheme as DarkTheme,
-} from "react-native-paper";
-import { Default } from "../../themes"; // Import Themes 1 - 5
+import { Default } from "../../themes";
 
 // Create a theme context
 export const ThemeContext = createContext();

@@ -24,6 +24,27 @@ const applyTint = (baseColor, isDarkMode) => {
   );
   return hexColor;
 };
+const applyTintWithOpacity = (baseColor, isDarkMode, opacity) => {
+  const tint = isDarkMode ? 0.7 : 1.3; // Adjust the tint factor as needed
+  const hexColor = baseColor.replace(
+    /rgba?\((\d+), (\d+), (\d+)(, [\d.]+)?\)/,
+    (_, r, g, b, a) => {
+      const adjustedBrightness = isDarkMode ? 0 : 255;
+      const adjustedR = Math.round(
+        parseInt(r, 10) * tint + adjustedBrightness * (1 - tint)
+      );
+      const adjustedG = Math.round(
+        parseInt(g, 10) * tint + adjustedBrightness * (1 - tint)
+      );
+      const adjustedB = Math.round(
+        parseInt(b, 10) * tint + adjustedBrightness * (1 - tint)
+      );
+      const newOpacity = opacity;
+      return `rgba(${adjustedR}, ${adjustedG}, ${adjustedB}, ${newOpacity})`;
+    }
+  );
+  return hexColor;
+};
 
 // Default Theme (Matte Gray Screen Background)
 export const Default = {
@@ -35,6 +56,8 @@ export const Default = {
       ...DarkTheme.colors,
       primary: applyTint("#4CAF50", true), // Green color, adjust as needed
       secondary: applyTint("#2196F3", true), // Blue color, adjust as needed
+      primaryLightOpacity: applyTintWithOpacity("#4CAF50", true, 0.05), // Green color, adjust as needed
+      secondaryLightOpacity: applyTintWithOpacity("#2196F3", true, 0.05), // Blue color, adjust as needed
       screenBackground: "#1E1E1E", // Matte black/gray background
       sectionBackgroundColor: applyTint("#333333", true), // Darkened background
       cardBackgroundColor: "#2C2C2C", // Matte black/gray background
@@ -56,7 +79,9 @@ export const Default = {
       ...DefaultTheme.colors,
       primary: applyTint("#4CAF50", false), // Green color, adjust as needed
       secondary: applyTint("#2196F3", false), // Blue color, adjust as needed
-      screenBackground: "#FFFFFF",
+      primaryLightOpacity: applyTintWithOpacity("#4CAF50", false, 0.6), // Green color, adjust as needed
+      secondaryLightOpacity: applyTintWithOpacity("#2196F3", false, 0.6), // Blue color, adjust as needed
+      screenBackground: "#E5E5E5",
       sectionBackgroundColorLowOpacity: "rgba(224, 224, 224, 0.5)", // Lightened background with low opacity
       cardBackgroundColor: "#F5F5F5", // Matte white background
       cardBackgroundColorLowOpacity: "rgba(245, 245, 245, 0.5)", // Lightened background with low opacity
@@ -104,7 +129,7 @@ export const AllPink = {
       ...DefaultTheme.colors,
       primary: applyTint("#FFB6C1", false),
       secondary: applyTint("#FFC0CB", false),
-      screenBackground: "#FFFFFF", // Matte white background
+      screenBackground: "#E5E5E5",
       sectionBackgroundColor: applyTint("#FF69B4", false),
       cardBackgroundColor: "#F2F2F2", // Light gray background
       sectionBackgroundColorLowOpacity: "rgba(255, 192, 203, 0.5)",
@@ -153,7 +178,7 @@ export const AllPurple = {
       ...DefaultTheme.colors,
       primary: applyTint("#9932CC", false),
       secondary: applyTint("#BA55D3", false),
-      screenBackground: "#FFFFFF", // Matte white background
+      screenBackground: "#E5E5E5",
       sectionBackgroundColor: applyTint("#800080", false),
       cardBackgroundColor: "#F2F2F2", // Light gray background
       sectionBackgroundColorLowOpacity: "rgba(128, 0, 128, 0.5)",
@@ -202,7 +227,7 @@ export const AllTeal = {
       ...DefaultTheme.colors,
       primary: applyTint("#20B2AA", false),
       secondary: applyTint("#00FFFF", false),
-      screenBackground: "#FFFFFF", // Matte white background
+      screenBackground: "#E5E5E5",
       sectionBackgroundColor: applyTint("#008080", false),
       cardBackgroundColor: "#F2F2F2", // Light gray background
       sectionBackgroundColorLowOpacity: "rgba(0, 128, 128, 0.5)",
@@ -226,8 +251,10 @@ export const Gold = {
     myOwnProperty: true,
     colors: {
       ...DarkTheme.colors,
-      primary: "#FFD700", // Gold color
-      secondary: "#FFD700", // Gold color
+      primary: applyTint("#FFD700", true), // Gold color
+      secondary: applyTint("#FFD700", true), // Gold color
+      primaryLightOpacity: applyTintWithOpacity("#FFD700", true, 0.2), // Gold color
+      secondaryLightOpacity: applyTintWithOpacity("#FFD700", true, 0.2), // Gold color
       screenBackground: applyTint("#000000", true),
       sectionBackgroundColor: "#FFD700", // Gold color
       sectionBackgroundColorLowOpacity: "rgba(255, 215, 0, 0.5)",
@@ -247,9 +274,11 @@ export const Gold = {
     myOwnProperty: true,
     colors: {
       ...DefaultTheme.colors,
-      primary: "#FFD700", // Gold color
-      secondary: "#FFD700", // Gold color
-      screenBackground: applyTint("#F5F5F5", false),
+      primary: applyTint("#FFD700", false), // Gold color
+      secondary: applyTint("#FFD700", false), // Gold color
+      primaryLightOpacity: applyTintWithOpacity("#FFD700", false, 0.6), // Gold color
+      secondaryLightOpacity: applyTintWithOpacity("#FFD700", false, 0.6), // Gold color
+      screenBackground: "#E5E5E5",
       sectionBackgroundColorLowOpacity: "rgba(255, 215, 0, 0.5)",
       cardBackgroundColor: "#F2F2F2", // Light gray background
       cardBackgroundColorLowOpacity: "rgba(242, 242, 242, 0.5)", // Lightened background with low opacity
@@ -297,7 +326,7 @@ export const Blue = {
       ...DefaultTheme.colors,
       primary: applyTint("#3498db", false),
       secondary: applyTint("#2c3e50", false),
-      screenBackground: "#FFFFFF",
+      screenBackground: "#E5E5E5",
       sectionBackgroundColor: applyTint("#2c3e50", false),
       sectionBackgroundColorLowOpacity: "rgba(44, 62, 80, 0.5)",
       cardBackgroundColor: "#F2F2F2", // Light gray background
@@ -346,7 +375,7 @@ export const Green = {
       ...DefaultTheme.colors,
       primary: applyTint("#00ff00", false),
       secondary: applyTint("#2c3e50", false),
-      screenBackground: "#FFFFFF",
+      screenBackground: "#E5E5E5",
       sectionBackgroundColor: applyTint("#2c3e50", false),
       sectionBackgroundColorLowOpacity: "rgba(44, 62, 80, 0.5)",
       cardBackgroundColor: "#F2F2F2", // Light gray background
@@ -393,7 +422,7 @@ export const Red = {
       ...DefaultTheme.colors,
       primary: applyTint("#FF0000", false),
       secondary: applyTint("#8B0000", false),
-      screenBackground: "#FFFFFF",
+      screenBackground: "#E5E5E5",
       sectionBackgroundColor: applyTint("#8B0000", false),
       sectionBackgroundColorLowOpacity: "rgba(139, 0, 0, 0.5)",
       cardBackgroundColor: "#F2F2F2", // Light gray background
@@ -440,7 +469,7 @@ export const HotPink = {
       ...DefaultTheme.colors,
       primary: applyTint("#FF1493", false),
       secondary: applyTint("#C71585", false),
-      screenBackground: "#FFFFFF",
+      screenBackground: "#E5E5E5",
       sectionBackgroundColor: applyTint("#C71585", false),
       sectionBackgroundColorLowOpacity: "rgba(199, 21, 133, 0.5)",
       cardBackgroundColor: "#F2F2F2", // Light gray background
@@ -487,7 +516,7 @@ export const Orange = {
       ...DefaultTheme.colors,
       primary: applyTint("#FF4500", false),
       secondary: applyTint("#8B2500", false),
-      screenBackground: "#FFFFFF",
+      screenBackground: "#E5E5E5",
       sectionBackgroundColor: applyTint("#FF4500", false),
       sectionBackgroundColorLowOpacity: "rgba(255, 69, 0, 0.5)",
       cardBackgroundColor: "#F2F2F2", // Light gray background
@@ -534,7 +563,7 @@ export const Teal = {
       ...DefaultTheme.colors,
       primary: applyTint("#008080", false),
       secondary: applyTint("#004040", false),
-      screenBackground: "#FFFFFF",
+      screenBackground: "#E5E5E5",
       sectionBackgroundColor: applyTint("#008080", false),
       sectionBackgroundColorLowOpacity: "rgba(0, 128, 128, 0.5)",
       cardBackgroundColor: "#F2F2F2", // Light gray background
@@ -581,7 +610,7 @@ export const Silver = {
       ...DefaultTheme.colors,
       primary: applyTint("#C0C0C0", false),
       secondary: applyTint("#A9A9A9", false),
-      screenBackground: "#FFFFFF",
+      screenBackground: "#E5E5E5",
       sectionBackgroundColor: applyTint("#C0C0C0", false),
       sectionBackgroundColorLowOpacity: "rgba(192, 192, 192, 0.5)",
       cardBackgroundColor: "#F2F2F2", // Light gray background
@@ -628,7 +657,7 @@ export const Purple = {
       ...DefaultTheme.colors,
       primary: applyTint("#800080", false),
       secondary: applyTint("#4B0082", false),
-      screenBackground: "#FFFFFF",
+      screenBackground: "#E5E5E5",
       sectionBackgroundColor: applyTint("#800080", false),
       sectionBackgroundColorLowOpacity: "rgba(128, 0, 128, 0.5)",
       cardBackgroundColor: "#F2F2F2", // Light gray background
@@ -679,7 +708,7 @@ export const Purple = {
 //       ...DefaultTheme.colors,
 //       primary: applyTint("#00AEEF", false),
 //       secondary: applyTint("#00874E", false),
-//       screenBackground: "#FFFFFF", // Matte white background
+//       screenBackground: "#E5E5E5", // Matte white background
 //       sectionBackgroundColor: applyTint("#00AEEF", false),
 //       cardBackgroundColor: applyTint("#CCCCCC", false),
 //       sectionBackgroundColorLowOpacity: "rgba(0, 174, 239, 0.5)",
@@ -728,7 +757,7 @@ export const Purple = {
 //       ...DefaultTheme.colors,
 //       primary: applyTint("#32CD32", false),
 //       secondary: applyTint("#ADFF2F", false),
-//       screenBackground: "#FFFFFF", // Matte white backgroundalse),
+//       screenBackground: "#E5E5E5", // Matte white backgroundalse),
 //       sectionBackgroundColor: applyTint("#008000", false),
 //       cardBackgroundColor: applyTint("#006400", false),
 //       sectionBackgroundColorLowOpacity: "rgba(0, 128, 0, 0.5)",
@@ -778,7 +807,7 @@ export const Purple = {
 //       ...DefaultTheme.colors,
 //       primary: applyTint("#DAA520", false),
 //       secondary: applyTint("#FFD700", false),
-//       screenBackground: "#FFFFFF", // Matte white backgroundalse),
+//       screenBackground: "#E5E5E5", // Matte white backgroundalse),
 //       sectionBackgroundColor: applyTint("#B8860B", false),
 //       cardBackgroundColor: applyTint("#CD853F", false),
 //       sectionBackgroundColorLowOpacity: "rgba(184, 134, 11, 0.5)",
