@@ -10,6 +10,7 @@ web-build/
 
 # Yarn
 .yarn/
+.yarn
 
 # Native
 *.orig.*
