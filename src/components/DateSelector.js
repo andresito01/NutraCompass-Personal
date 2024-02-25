@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Text, View, TouchableOpacity, Modal } from "react-native";
 import * as Haptics from "expo-haptics";
-import { useTheme, Card } from "react-native-paper";
+import { Card } from "react-native-paper";
 import { Feather } from "@expo/vector-icons";
 import { Calendar } from "react-native-calendars";
 import { LinearGradient } from "expo-linear-gradient";
@@ -10,7 +10,6 @@ import { useThemeContext } from "../context/ThemeContext.js";
 
 export default function DateSelector({ selectedDate, setSelectedDate }) {
   const { theme } = useThemeContext();
-  const paperTheme = useTheme();
   const styles = dateSelectorStyles();
 
   const [isCalendarModalVisible, setIsCalendarModalVisible] = useState(false);
@@ -30,22 +29,6 @@ export default function DateSelector({ selectedDate, setSelectedDate }) {
     // You might also want to fetch food logs associated with the new date here
   };
 
-  const subtractDay = (date) => {
-    const newDate = new Date(date);
-    newDate.setDate(newDate.getDate() - 1);
-    const timeZoneOffset = newDate.getTimezoneOffset();
-    newDate.setMinutes(newDate.getMinutes() + timeZoneOffset);
-    return newDate.toISOString().split("T")[0]; // Format the date
-  };
-
-  const addDay = (date) => {
-    const newDate = new Date(date);
-    newDate.setDate(newDate.getDate() + 1);
-    const timeZoneOffset = newDate.getTimezoneOffset();
-    newDate.setMinutes(newDate.getMinutes() + timeZoneOffset);
-    return newDate.toISOString().split("T")[0]; // Format the date
-  };
-
   const getCurrentDate = (date) => {
     const options = { year: "numeric", month: "long", day: "numeric" };
     const selectedDateObj = new Date(date);
@@ -53,22 +36,34 @@ export default function DateSelector({ selectedDate, setSelectedDate }) {
     selectedDateObj.setMinutes(selectedDateObj.getMinutes() + timeZoneOffset);
     return selectedDateObj.toLocaleDateString(undefined, options);
   };
+  const addDay = (date) => {
+    const newDate = new Date(date);
+    newDate.setDate(newDate.getDate() + 1);
+    return newDate.toISOString().split("T")[0];
+  };
+
+  const subtractDay = (date) => {
+    const newDate = new Date(date);
+    newDate.setDate(newDate.getDate() - 1);
+    return newDate.toISOString().split("T")[0];
+  };
 
   const getDateInfo = (date) => {
-    if (typeof date === Date) {
-      date = date.toISOString().split("T")[0];
+    if (!(date instanceof Date)) {
+      date = new Date(date);
     }
 
     const currentDate = new Date();
-    const timeZoneOffset = currentDate.getTimezoneOffset();
-    currentDate.setMinutes(currentDate.getMinutes() + timeZoneOffset);
+    //const timeZoneOffset = currentDate.getTimezoneOffset();
+    //currentDate.setMinutes(currentDate.getMinutes() + timeZoneOffset);
     const currentDateStr = currentDate.toISOString().split("T")[0];
+    const dateString = date.toISOString().split("T")[0];
 
-    if (date === currentDateStr) {
+    if (dateString === currentDateStr) {
       return "Today";
-    } else if (date === addDay(currentDate)) {
+    } else if (dateString === addDay(currentDate)) {
       return "Tomorrow";
-    } else if (date === subtractDay(currentDate)) {
+    } else if (dateString === subtractDay(currentDate)) {
       return "Yesterday";
     } else {
       return " ";
@@ -96,6 +91,7 @@ export default function DateSelector({ selectedDate, setSelectedDate }) {
         borderRightWidth: 1,
         borderBottomWidth: 1,
         elevation: 4,
+        backgroundColor: theme.colors.screenBackground,
       }}
       colors={[
         `${theme.colors.primary}99`, // Adding "99" for 0.99 opacity

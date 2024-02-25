@@ -1,53 +1,58 @@
 import React, { useEffect, useState } from "react";
-import { View, ActivityIndicator, Image } from "react-native";
-import logo from "../../assets/brandmark-design-2.png";
+import {
+  View,
+  ActivityIndicator,
+  Image,
+  Dimensions,
+  SafeAreaView,
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import logo from "../../assets/brandmark-design-logo.png";
 import { useThemeContext } from "../context/ThemeContext.js";
-import { useNavigation } from "@react-navigation/native"; // Import useNavigation
+import { useNavigation } from "@react-navigation/native";
+
+const { height: screenHeight, width: screenWidth } = Dimensions.get("window");
 
 const SplashScreen = () => {
   const { theme } = useThemeContext();
   const [loading, setLoading] = useState(true);
-  const navigation = useNavigation(); // Get navigation object
+  const navigation = useNavigation();
 
   useEffect(() => {
-    console.log("SplashScreen useEffect triggered");
     const timer = setTimeout(() => {
-      console.log("SplashScreen timer expired");
       setLoading(false);
-
-      // Navigate to the DashboardScreen after 4 seconds
       navigation.navigate("MainTabs");
     }, 3000);
 
     return () => {
-      console.log("SplashScreen cleanup");
       clearTimeout(timer);
     };
-  }, [navigation]); // Include navigation in the dependency array
+  }, [navigation]);
 
   return (
-    <View
+    <LinearGradient
+      // colors={[theme.colors.primary, theme.colors.secondary]}
+      colors={["black", "white"]}
       style={{
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: theme.colors.screenBackground,
       }}
+      start={{ x: 0, y: 0.8 }} // Start the gradient from the bottom of the screen
+      end={{ x: 0, y: 0.2 }} // End the gradient at the top of the screen
     >
       <Image
         source={logo}
+        resizeMode="contain"
         style={{
-          width: 360,
-          height: 100,
+          width: screenWidth / 1.1,
+          height: screenHeight / 7,
           alignSelf: "center",
-          marginBottom: 20,
+          marginBottom: 30,
         }}
       />
-      <ActivityIndicator
-        size="large"
-        color={theme.colors.cardHeaderTextColor}
-      />
-    </View>
+      <ActivityIndicator size="large" color={"white"} />
+    </LinearGradient>
   );
 };
 

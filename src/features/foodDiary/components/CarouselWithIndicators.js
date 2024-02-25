@@ -46,8 +46,8 @@ const CarouselWithIndicators = ({
           <View
             key={index}
             style={{
-              height: screenWidth * 0.04,
-              width: screenWidth * 0.04,
+              height: screenWidth * 0.025,
+              width: screenWidth * 0.025,
               borderRadius: 30,
               backgroundColor:
                 index === currentIndex

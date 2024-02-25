@@ -1,5 +1,3 @@
-// UserSettingsContext.js
-
 import React, {
   createContext,
   useContext,
@@ -74,44 +72,45 @@ export function UserSettingsProvider({ children }) {
         if (userSettingsDoc.exists()) {
           setUserSettings(userSettingsDoc.data());
         } else {
-          // If user settings document doesn't exist, initialize with default values
-          const defaultSettings = {
-            profile: {
-              firstName: user?.firstName || "Default First Name",
-              lastName: user?.lastName || "Default Last Name",
-              email: user.email || "Default Email",
-              phoneNumber: user.phoneNumber || "Default Phone Number",
-            },
-            appAppearance: {
-              theme: "dark", // Default to dark theme
-            },
-            nutritionalGoals: {
-              calorieGoal: 2000,
-              macroGoals: {
-                carb: {
-                  dailyPercentage: 0.4,
-                  dailyCalories: calculateCarbDailyCalories(2000, 40),
-                  dailyGrams: calculateCarbDailyGrams(2000, 40),
-                },
-                protein: {
-                  dailyPercentage: 0.3,
-                  dailyCalories: calculateProteinDailyCalories(2000, 30),
-                  dailyGrams: calculateProteinDailyGrams(2000, 30),
-                },
-                fat: {
-                  dailyPercentage: 0.3,
-                  dailyCalories: calculateFatDailyCalories(2000, 30),
-                  dailyGrams: calculateFatDailyGrams(2000, 30),
-                },
-              },
-            },
-            physicalFitnessGoals: {
-              bodyWeightGoal: 0,
-            },
-          };
+          console.log("User settings doc not found");
+          // // If user settings document doesn't exist, initialize with default values
+          // const defaultSettings = {
+          //   profile: {
+          //     firstName: user?.firstName || "Default First Name",
+          //     lastName: user?.lastName || "Default Last Name",
+          //     email: user.email || "Default Email",
+          //     phoneNumber: user.phoneNumber || "Default Phone Number",
+          //   },
+          //   appAppearance: {
+          //     theme: "dark", // Default to dark theme
+          //   },
+          //   nutritionalGoals: {
+          //     calorieGoal: 2000,
+          //     macroGoals: {
+          //       carb: {
+          //         dailyPercentage: 0.4,
+          //         dailyCalories: calculateCarbDailyCalories(2000, 40),
+          //         dailyGrams: calculateCarbDailyGrams(2000, 40),
+          //       },
+          //       protein: {
+          //         dailyPercentage: 0.3,
+          //         dailyCalories: calculateProteinDailyCalories(2000, 30),
+          //         dailyGrams: calculateProteinDailyGrams(2000, 30),
+          //       },
+          //       fat: {
+          //         dailyPercentage: 0.3,
+          //         dailyCalories: calculateFatDailyCalories(2000, 30),
+          //         dailyGrams: calculateFatDailyGrams(2000, 30),
+          //       },
+          //     },
+          //   },
+          //   physicalFitnessGoals: {
+          //     bodyWeightGoal: 0,
+          //   },
+          // };
 
-          await setDoc(userSettingsDocRef, defaultSettings);
-          setUserSettings(defaultSettings);
+          // await setDoc(userSettingsDocRef, defaultSettings);
+          // setUserSettings(defaultSettings);
         }
       }
     };

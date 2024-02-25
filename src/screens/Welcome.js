@@ -1,51 +1,52 @@
-import React from "react";
-import { Text, View, ScrollView, Image } from "react-native";
+import React, { useState } from "react";
+import {
+  Text,
+  View,
+  ScrollView,
+  Image,
+  Dimensions,
+  SafeAreaView,
+} from "react-native";
+import Carousel from "react-native-reanimated-carousel";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { Button, Card } from "react-native-paper"; // Import Button and Carousel components
-import logo from "../../assets/brandmark-design.png";
-import ThemeChanger from "../components/ThemeChanger.js";
+import logo from "../../assets/brandmark-design-logo.png";
 import welcomeScreenStyles from "./styles/welcomeScreenStyles.js";
 import { useThemeContext } from "../context/ThemeContext.js";
+
+const { height: screenHeight, width: screenWidth } = Dimensions.get("window");
 
 function WelcomeScreen({ navigation }) {
   const styles = welcomeScreenStyles(); // Destructure styles
   const { theme } = useThemeContext(); // Use the imported theme
 
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const carouselHeight = screenHeight * 0.5; // Set the height to 22% of the screen height
+  const carouselWidth = screenWidth; // Set the width to 100% of the screen width
+
+  const handleSlideChange = (index) => {
+    setCurrentIndex(index);
+  };
+
   // Array of carousel views
-  const carouselViews = [
-    <Text
-      key={1}
-      style={{ fontSize: 24, color: theme.colors.cardHeaderTextColor }}
-    >
-      View 1 Content
-    </Text>,
-    <Text
-      key={2}
-      style={{ fontSize: 24, color: theme.colors.cardHeaderTextColor }}
-    >
-      View 2 Content
-    </Text>,
-    <Text
-      key={3}
-      style={{ fontSize: 24, color: theme.colors.cardHeaderTextColor }}
-    >
-      View 3 Content
-    </Text>,
-    <Text
-      key={4}
-      style={{ fontSize: 24, color: theme.colors.cardHeaderTextColor }}
-    >
-      View 4 Content
-    </Text>,
+  const carouselSlides = [
+    require("../../assets/welcome/welcome4.png"),
+    require("../../assets/welcome/welcome1.png"),
+    require("../../assets/welcome/welcome3.png"),
+    require("../../assets/welcome/welcome2.png"),
   ];
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <LinearGradient
-        colors={[theme.colors.screenBackground, theme.colors.screenBackground]}
-        locations={[0.5, 1]}
-        style={styles.gradientContainer}
+        colors={["black", "white"]}
+        style={{
+          flex: 1,
+        }}
+        start={{ x: 0, y: 0.6 }}
+        end={{ x: 0, y: 0.2 }}
       >
         <View style={styles.contentContainer}>
           <Image
@@ -58,9 +59,50 @@ function WelcomeScreen({ navigation }) {
             }}
           />
 
-          <Card style={{ flex: 1, width: "100%" }}>
-            <Card.Content></Card.Content>
-          </Card>
+          <View>
+            {/* Indicator */}
+            <View
+              style={{
+                alignSelf: "center",
+                flexDirection: "row",
+                marginVertical: 10,
+              }}
+            >
+              {carouselSlides.map((_, index) => (
+                <View
+                  key={index}
+                  style={{
+                    height: screenWidth * 0.025,
+                    width: screenWidth * 0.025,
+                    borderRadius: 30,
+                    backgroundColor:
+                      index === currentIndex
+                        ? theme.colors.primary
+                        : "rgba(255, 255, 255, 0.5)",
+                    marginHorizontal: 5, // Adjust as needed
+                  }}
+                />
+              ))}
+            </View>
+            <Carousel
+              height={carouselHeight}
+              width={carouselWidth}
+              data={carouselSlides}
+              renderItem={({ item }) => (
+                <View style={{ alignSelf: "center", flex: 1 }}>
+                  <Image
+                    resizeMode="contain"
+                    source={item}
+                    style={{
+                      flex: 1,
+                    }}
+                  />
+                </View>
+              )}
+              onSnapToItem={handleSlideChange}
+              on
+            />
+          </View>
 
           <View
             style={{
@@ -72,14 +114,14 @@ function WelcomeScreen({ navigation }) {
             <Button
               mode="contained"
               style={{
-                backgroundColor: theme.colors.primary,
-                borderRadius: 30, // Increased border radius for buttons
-                paddingVertical: 2, // Adjusted padding for buttons
-                marginVertical: 10,
-                width: "80%", // Adjusted button width
+                backgroundColor: "white",
+                borderRadius: 8,
+                paddingVertical: 2,
+                marginVertical: 15,
+                width: "90%",
               }}
               labelStyle={{
-                color: theme.colors.darkGrayBackgroundColor,
+                color: "black",
                 fontSize: 18,
                 fontWeight: "bold",
               }}
@@ -105,7 +147,7 @@ function WelcomeScreen({ navigation }) {
               <View style={{ alignItems: "center", gap: 5 }}>
                 <Text
                   style={{
-                    color: theme.colors.secondary,
+                    color: "white",
                     fontSize: 18,
                   }}
                 >
@@ -113,7 +155,7 @@ function WelcomeScreen({ navigation }) {
                 </Text>
                 <Text
                   style={{
-                    color: theme.colors.secondary,
+                    color: "white",
                     fontSize: 18,
                   }}
                 >
@@ -124,7 +166,7 @@ function WelcomeScreen({ navigation }) {
           </View>
         </View>
       </LinearGradient>
-    </View>
+    </SafeAreaView>
   );
 }
 

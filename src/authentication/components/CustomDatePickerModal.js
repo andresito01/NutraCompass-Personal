@@ -22,13 +22,7 @@ const CustomDatePickerModal = ({
 
   const handleSave = () => {
     if (temporaryDate instanceof Date && !isNaN(temporaryDate)) {
-      const formattedDate = temporaryDate.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      });
-      console.log("Formatted Date: " + formattedDate);
-      onSelect(formattedDate);
+      onSelect(temporaryDate);
       onClose();
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     } else {

@@ -1,18 +1,10 @@
 import React from "react";
-import {
-  View,
-  Text,
-  Button,
-  TouchableOpacity,
-  StyleSheet as RNStyleSheet,
-} from "react-native";
+import { View, Text, TouchableOpacity, SafeAreaView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Feather from "react-native-vector-icons/Feather";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useThemeContext } from "../../../context/ThemeContext.js";
-import { Card } from "react-native-paper";
-
-import ThemeDisplay from "../../../components/ThemeDisplay.js";
+import ThemeDisplay from "../components/ThemeDisplay.js";
 import ThemeSelector from "../components/ThemeSelector.js";
 
 const ThemeScreen = () => {
@@ -28,7 +20,7 @@ const ThemeScreen = () => {
   };
 
   return (
-    <View
+    <SafeAreaView
       style={{
         flex: 1,
         backgroundColor: theme.colors.screenBackground,
@@ -40,6 +32,7 @@ const ThemeScreen = () => {
           flexDirection: "row",
           width: "100%",
           justifyContent: "space-between",
+          alignItems: "baseline",
           padding: 10,
           paddingTop: 30,
         }}
@@ -48,7 +41,7 @@ const ThemeScreen = () => {
           <Feather
             name="chevron-left"
             color={theme.colors.sectionHeaderTextColor}
-            size={38}
+            size={28}
           />
         </TouchableOpacity>
 
@@ -68,42 +61,39 @@ const ThemeScreen = () => {
         </TouchableOpacity>
       </View>
 
-      <View style={{ flex: 1 }}>
-        <ThemeSelector />
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: theme.colors.surface,
+          padding: 5,
+          paddingTop: 20,
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 18,
+            color: theme.colors.cardHeaderTextColor,
+            alignSelf: "center",
+          }}
+        >
+          Current Theme
+        </Text>
+        <View style={{ flex: 1 }}>
+          <ThemeDisplay />
+        </View>
       </View>
 
-      <View style={{ flex: 1, width: 440 }}>
-        <ThemeDisplay />
+      <View
+        style={{
+          flex: 4,
+          paddingBottom: "20%",
+          alignItems: "center",
+        }}
+      >
+        <ThemeSelector renderStructure="structure1" />
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
-
-const styles = RNStyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  box: {
-    width: 100,
-    height: 100,
-    margin: 10,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  propertiesContainer: {
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-around",
-    marginTop: 20,
-  },
-  propertyBox: {
-    flex: 1,
-    height: 50,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});
 
 export default ThemeScreen;

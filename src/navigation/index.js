@@ -24,17 +24,16 @@ export default function RootNavigation() {
       <View
         style={{
           flex: 1,
-          backgroundColor: theme.colors.screenBackground, // Set the background color
-          paddingTop: Platform.OS === "ios" ? 0 : StatusBar.currentHeight,
+          // backgroundColor: theme.colors.screenBackground, // Set the background color
+          backgroundColor: "black",
+          paddingTop: StatusBar.currentHeight,
         }}
       >
         {authResolved ? (
           user ? (
-            <UserSettingsProvider>
-              <FoodLogProvider>
-                <UserStack />
-              </FoodLogProvider>
-            </UserSettingsProvider>
+            <FoodLogProvider>
+              <UserStack />
+            </FoodLogProvider>
           ) : (
             <AuthStack />
           )

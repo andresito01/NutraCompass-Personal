@@ -16,43 +16,43 @@ const CustomHeightPickerModal = ({
   const [selectedUnit, setSelectedUnit] = useState("in");
   const [selectedFeet, setSelectedFeet] = useState("5");
   const [selectedInches, setSelectedInches] = useState("11");
+  const [selectedCentimeters, setSelectedCentimeters] = useState("30");
 
   const handleSave = () => {
     const height =
       selectedUnit === "cm"
-        ? `${selectedFeet}.00 ${selectedUnit}`
+        ? `${selectedCentimeters}.00 ${selectedUnit}`
         : `${selectedFeet}'${selectedInches}"`;
 
-    console.log("Height: " + height);
     onSelect(height);
     onClose();
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
 
   const renderFeetPicker = () => {
-    if (selectedUnit === "cm") {
-      return Array.from({ length: 366 }, (_, i) => i + 30).map((value) => (
-        <Picker.Item
-          key={value}
-          label={value.toString()}
-          value={value.toString()}
-          color={theme.colors.cardHeaderTextColor}
-        />
-      ));
-    } else {
-      return Array.from({ length: 12 }, (_, i) => i + 1).map((value) => (
-        <Picker.Item
-          key={value}
-          label={value.toString()}
-          value={value.toString()}
-          color={theme.colors.cardHeaderTextColor}
-        />
-      ));
-    }
+    return Array.from({ length: 12 }, (_, i) => i + 1).map((value) => (
+      <Picker.Item
+        key={value}
+        label={value.toString()}
+        value={value.toString()}
+        color={theme.colors.cardHeaderTextColor}
+      />
+    ));
   };
 
   const renderInchesPicker = () => {
     return Array.from({ length: 12 }, (_, i) => i).map((value) => (
+      <Picker.Item
+        key={value}
+        label={value.toString()}
+        value={value.toString()}
+        color={theme.colors.cardHeaderTextColor}
+      />
+    ));
+  };
+
+  const renderCentimetersPicker = () => {
+    return Array.from({ length: 366 }, (_, i) => i + 30).map((value) => (
       <Picker.Item
         key={value}
         label={value.toString()}
@@ -91,13 +91,25 @@ const CustomHeightPickerModal = ({
               }}
             >
               {/* Picker for selecting value based on unit (left side) */}
-              <Picker
-                selectedValue={selectedFeet}
-                onValueChange={(itemValue) => setSelectedFeet(itemValue)}
-                style={heightPickerStyle}
-              >
-                {renderFeetPicker()}
-              </Picker>
+              {selectedUnit === "in" ? (
+                <Picker
+                  selectedValue={selectedFeet}
+                  onValueChange={(itemValue) => setSelectedFeet(itemValue)}
+                  style={heightPickerStyle}
+                >
+                  {renderFeetPicker()}
+                </Picker>
+              ) : (
+                <Picker
+                  selectedValue={selectedCentimeters}
+                  onValueChange={(itemValue) =>
+                    setSelectedCentimeters(itemValue)
+                  }
+                  style={heightPickerStyle}
+                >
+                  {renderCentimetersPicker()}
+                </Picker>
+              )}
 
               {/* Picker for inches (right side) */}
               {selectedUnit === "in" && (

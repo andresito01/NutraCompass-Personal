@@ -20,8 +20,6 @@ const NotesScreen = () => {
   const [notePages, setNotePages] = useState([]);
   const [showDeleteNoteDialog, setShowDeleteNoteDialog] = useState(false);
 
-  console.log("Note Pages: \n", notePages);
-
   const toggleNoteEditor = (index) => {
     setIsEditing(!isEditing);
     setSelectedNoteIndex(index);

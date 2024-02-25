@@ -86,13 +86,75 @@ export default function ProfileDetailsSection({ value, setValue, onNext }) {
   };
 
   const handleSelectBirthday = (birthday) => {
-    setSelectedBirthday(birthday);
-    setValue({ ...value, birthday });
+    const formattedDate = birthday.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+
+    // Calculate age based on the selected date
+    const age = calculateAge(birthday);
+
+    setSelectedBirthday(formattedDate);
+    setValue({ ...value, birthday: formattedDate, age: age });
+  };
+
+  // Helper method to calculate the user's age
+  const calculateAge = (selectedDate) => {
+    // Calculate age based on the selected date
+    const currentDate = new Date();
+    const birthDate = new Date(selectedDate);
+    let age = currentDate.getFullYear() - birthDate.getFullYear();
+    const monthDifference = currentDate.getMonth() - birthDate.getMonth();
+    if (
+      monthDifference < 0 ||
+      (monthDifference === 0 && currentDate.getDate() < birthDate.getDate())
+    ) {
+      age--;
+    }
+    return age;
   };
 
   const handleSelectHeight = (height) => {
     setSelectedHeight(height);
-    setValue({ ...value, height });
+
+    // Process the height object
+    let feet = 0;
+    let inches = 0;
+    let centimeters = 0;
+    let heightInInches = 0;
+
+    // Check if the height is in feet and inches format (e.g., "5'10\"")
+    const feetAndInchesRegex = /^(\d+)'(\d+)\"$/;
+    const feetAndInchesMatch = height.match(feetAndInchesRegex);
+    if (feetAndInchesMatch) {
+      feet = parseInt(feetAndInchesMatch[1]);
+      inches = parseInt(feetAndInchesMatch[2]);
+      heightInInches = feet * 12 + inches;
+
+      setValue({
+        ...value,
+        height: {
+          inches: parseFloat(heightInInches),
+          centimeters: parseFloat(heightInInches * 2.54).toFixed(2),
+        },
+      });
+    }
+
+    // Check if the height is in centimeters format (e.g., "180.00 cm")
+    const centimetersRegex = /^(\d+(?:\.\d+)?)\s+cm$/;
+    const centimetersMatch = height.match(centimetersRegex);
+    if (centimetersMatch) {
+      centimeters = parseInt(centimetersMatch[1]);
+
+      setValue({
+        ...value,
+        height: {
+          inches: parseFloat(centimeters / 2.54).toFixed(2),
+          centimeters: parseFloat(centimeters),
+        },
+      });
+    }
   };
 
   const handleSelectWeight = (weight) => {
@@ -143,7 +205,7 @@ export default function ProfileDetailsSection({ value, setValue, onNext }) {
           style={{
             fontSize: 28,
             fontWeight: "bold",
-            color: theme.colors.cardHeaderTextColor,
+            color: "black",
             textAlign: "center",
           }}
         >
@@ -153,7 +215,7 @@ export default function ProfileDetailsSection({ value, setValue, onNext }) {
           style={{
             paddingHorizontal: 10,
             fontSize: 16,
-            color: theme.colors.cardHeaderTextColor,
+            color: "black",
             textAlign: "center",
           }}
         >
@@ -211,7 +273,7 @@ export default function ProfileDetailsSection({ value, setValue, onNext }) {
       <CustomDatePickerModal
         title="Select Birthday"
         selectedDate={selectedBirthday}
-        onSelect={(date) => setSelectedBirthday(date)}
+        onSelect={handleSelectBirthday}
         visible={isBirthdayModalVisible}
         onClose={() => handleCloseModal("birthday")}
       />
@@ -219,7 +281,7 @@ export default function ProfileDetailsSection({ value, setValue, onNext }) {
       <CustomHeightPickerModal
         title="Select Height"
         selectedHeight={selectedHeight}
-        onSelect={(height) => setSelectedHeight(height)}
+        onSelect={handleSelectHeight}
         visible={isHeightModalVisible}
         onClose={() => handleCloseModal("height")}
       />
@@ -227,7 +289,7 @@ export default function ProfileDetailsSection({ value, setValue, onNext }) {
       <CustomWeightInputModal
         title="Enter Weight"
         selectedWeight={selectedWeight}
-        onSelect={(weight) => setSelectedWeight(weight)}
+        onSelect={handleSelectWeight}
         visible={isWeightModalVisible}
         onClose={() => handleCloseModal("weight")}
       />
@@ -243,7 +305,7 @@ export default function ProfileDetailsSection({ value, setValue, onNext }) {
         <Text
           style={{
             fontSize: 14,
-            color: theme.colors.cardHeaderTextColor,
+            color: "white",
             textAlign: "center",
           }}
         >
@@ -253,9 +315,20 @@ export default function ProfileDetailsSection({ value, setValue, onNext }) {
         <Button
           mode="contained"
           labelStyle={{
-            color: "white",
+            color: "black",
             fontSize: 18,
             fontWeight: "bold",
+          }}
+          style={{
+            backgroundColor: !(
+              selectedSex &&
+              selectedBirthday &&
+              selectedHeight &&
+              selectedWeight
+            )
+              ? "gray"
+              : "white",
+            borderRadius: 8,
             width: "60%",
           }}
           disabled={

@@ -19,161 +19,11 @@ import { useThemeContext } from "../../../context/ThemeContext.js";
 import { useUserSettings } from "../../userSettings/context/UserSettingsContext.js";
 import { useFoodLog } from "../context/FoodLogContext.js";
 import {
-  searchForFoodItemNutrients,
-  processCoreNutrients,
-  processVitamins,
-  processMinerals,
+  getNutrientsForFoodItem,
   processActiveFoodItemNumberOfServingsUpdate,
 } from "../api/EdamamFoodDB/edamamMethods.js";
 
-const NutritionFactsRow = ({
-  label,
-  quantity,
-  unit,
-  totalDaily,
-
-  color,
-}) => {
-  const styles = foodNutrientModalStyles();
-
-  return (
-    <View style={styles.nutritionFactsRow}>
-      <View style={styles.nutritionalFactsLabelContainer}>
-        <Text style={styles.nutritionFactsLabel}>{label}</Text>
-      </View>
-      <View style={styles.nutritionalFactsValuesContainer}>
-        <Text style={{ ...styles.nutritionFactsValue, color: color }}>
-          {quantity} {unit}
-        </Text>
-        <Text style={{ ...styles.nutritionFactsDailyValue, color: color }}>
-          {totalDaily}%
-        </Text>
-      </View>
-    </View>
-  );
-};
-
-const NutritionFactsIndentedRow = ({
-  label,
-  quantity,
-  unit,
-  totalDaily,
-
-  color,
-}) => {
-  const styles = foodNutrientModalStyles();
-
-  return (
-    <View style={styles.nutritionFactsRow}>
-      <View style={styles.nutritionalFactsLabelContainer}>
-        <Text style={styles.nutritionFactsIndentLabel}>{label}</Text>
-      </View>
-      <View style={styles.nutritionalFactsValuesContainer}>
-        <Text style={{ ...styles.nutritionFactsIndentValue, color: color }}>
-          {quantity} {unit}
-        </Text>
-        <Text
-          style={{ ...styles.nutritionFactsIndentDailyValue, color: color }}
-        >
-          {totalDaily}%
-        </Text>
-      </View>
-    </View>
-  );
-};
-
-const ServingSizeRow = ({
-  isVisible,
-  toggleSelectServing,
-  label,
-  selectedServing,
-}) => {
-  const { theme } = useThemeContext();
-  const styles = foodNutrientModalStyles();
-
-  return (
-    <View style={styles.rowContainer}>
-      <Text style={styles.inputLabel}>{label}</Text>
-      <TouchableOpacity
-        style={{
-          borderWidth: 1,
-          borderColor: isVisible ? theme.colors.primary : "gray",
-          borderRadius: 8,
-          paddingVertical: 10,
-          paddingHorizontal: 20,
-        }}
-        onPress={toggleSelectServing}
-      >
-        <Text style={{ color: theme.colors.cardHeaderTextColor }}>
-          {Math.round(parseFloat(selectedServing?.weight))}g{" "}
-          {selectedServing?.label}
-        </Text>
-      </TouchableOpacity>
-    </View>
-  );
-};
-
-const NumberOfServingsRow = ({
-  label,
-  keyboardType,
-  numberOfServings,
-  updateNumberOfServings,
-  hideSelectServingAndSelectMealOnTextInputFocus,
-}) => {
-  const styles = foodNutrientModalStyles();
-
-  // Convert NaN or null to an empty string for better user experience
-  const formattedNumberOfServings =
-    numberOfServings !== null && !isNaN(numberOfServings)
-      ? numberOfServings.toString()
-      : "";
-
-  return (
-    <View style={styles.rowContainer}>
-      <Text style={styles.inputLabel}>{label}</Text>
-      <TextInput
-        onFocus={hideSelectServingAndSelectMealOnTextInputFocus}
-        mode="flat"
-        keyboardType={keyboardType}
-        style={styles.textInput}
-        value={formattedNumberOfServings}
-        onChangeText={(newNumberOfServings) =>
-          updateNumberOfServings(newNumberOfServings)
-        }
-      />
-    </View>
-  );
-};
-
-const MealRow = ({
-  isVisible,
-  toggleSelectMeal,
-  label,
-  selectedMealOption,
-}) => {
-  const { theme } = useThemeContext();
-  const styles = foodNutrientModalStyles();
-
-  return (
-    <View style={styles.rowContainer}>
-      <Text style={styles.inputLabel}>{label}</Text>
-      <TouchableOpacity
-        style={{
-          borderWidth: 1,
-          borderColor: isVisible ? theme.colors.primary : "gray",
-          borderRadius: 8,
-          paddingVertical: 10,
-          paddingHorizontal: 20,
-        }}
-        onPress={toggleSelectMeal}
-      >
-        <Text style={{ color: theme.colors.cardHeaderTextColor }}>
-          {selectedMealOption?.name}
-        </Text>
-      </TouchableOpacity>
-    </View>
-  );
-};
+console.log("Food Nutrient Modal Rendered.");
 
 const FoodNutrientModal = ({
   isVisible,
@@ -183,43 +33,49 @@ const FoodNutrientModal = ({
   foodNutrientModalType,
   activeMealSection,
   selectedDate,
+  isBuildingMeal,
+  toggleSnackbar,
 }) => {
   const styles = foodNutrientModalStyles();
-  const { theme } = useThemeContext();
+  const { theme, mode } = useThemeContext();
 
+  const {
+    mealSections,
+    saveOrUpdateSingleFoodItemToFoodLog,
+    saveOrUpdateCustomMeal,
+    saveFoodToTempCustomMeal,
+    saveMealToFoodLog,
+    tempCustomMeal,
+  } = useFoodLog();
   const { getNutritionalGoals } = useUserSettings();
   const { calorieGoal, macroGoals } = getNutritionalGoals();
 
-  const { mealSections, editFoodEntry } = useFoodLog();
+  const [showItemList, setShowItemList] = useState(false);
   const [showNutritionFactsList, setShowNutritionFactsList] = useState(false);
   const [showVitaminList, setShowVitaminList] = useState(false);
   const [showMineralList, setShowMineralList] = useState(false);
-
   // State to store the nutrient data for a single serving
   const [activeFoodItemOneServing, setActiveFoodItemOneServing] = useState({});
-
   // State for selected serving size
   const [selectedServing, setSelectedServing] = useState(
     activeFoodItem?.activeMeasure
   );
-
   // State for the number of servings
   const [numberOfServings, setNumberOfServings] = useState(
     activeFoodItem?.numberOfServings || 1
   );
-
   // State for select/change meal section the food item is to be added to.
   const [selectedMealSection, setSelectedMealSection] = useState(
     activeFoodItem?.mealType ||
       mealSections.filter((mealOption) => mealOption.id === activeMealSection)
   );
-
   // State for select serving modal visibility
   const [isSelectServingSizeVisible, setIsSelectServingSizeVisible] =
     useState(false);
-
   // State for select meal modal visibility
   const [isSelectMealVisible, setIsSelectMealVisible] = useState(false);
+  // State to keep track of whether to disable inputs
+  const [disableInputs, setDisableInputs] = useState(false);
 
   // Get screen width
   const screenWidth = Dimensions.get("window").width;
@@ -231,54 +87,78 @@ const FoodNutrientModal = ({
 
   // Effect to update selectedServing and numberOfServings when isVisible changes
   useEffect(() => {
-    if (isVisible === true) {
-      setSelectedServing(activeFoodItem?.activeMeasure);
-      setNumberOfServings(activeFoodItem?.numberOfServings || 1);
+    const fetchData = async () => {
+      if (isVisible === true) {
+        if (activeFoodItem?.isCustomMeal && isBuildingMeal) {
+          setDisableInputs(true); // Disable inputs if building a meal and activeFoodItem is a custom meal
+          const numberOfServingsNutrientData =
+            processActiveFoodItemNumberOfServingsUpdate(
+              activeFoodItem,
+              activeFoodItem?.numberOfServings || 1
+            );
 
-      const activeMealSectionFromDiary = mealSections.filter(
-        (mealOption) => mealOption.id === activeFoodItem?.mealType
-      );
+          setActiveFoodItem((prevActiveFoodItem) => ({
+            ...prevActiveFoodItem,
+            nutrients: numberOfServingsNutrientData,
+          }));
+        } else if (activeFoodItem?.mealItems && !isBuildingMeal) {
+          // Process meal structure
+          const totalNutrients = activeFoodItem.nutrients;
 
-      setSelectedMealSection(
-        activeMealSection || activeMealSectionFromDiary[0]
-      );
+          setActiveFoodItem((prevActiveFoodItem) => ({
+            ...prevActiveFoodItem,
+            nutrients: totalNutrients,
+          }));
 
-      // Check if activeFoodItemOneServing is empty
-      if (
-        !activeFoodItemOneServing ||
-        Object.keys(activeFoodItemOneServing).length === 0
-      ) {
-        // Fetch nutrients based on the selected serving size
-        const ingredientsParam = {
-          ingredients: [
-            {
-              quantity: 1, // Use numberOfServings instead of 1
-              measureURI: activeFoodItem?.activeMeasure?.uri || "",
-              foodId: activeFoodItem?.foodId || "",
-            },
-          ],
-        };
+          setDisableInputs(false); // Disable inputs for meal items
+        } else {
+          // Process individual food item
+          setDisableInputs(false); // Enable inputs otherwise
+          // Check if activeFoodItemOneServing is empty
+          if (
+            !activeFoodItemOneServing ||
+            Object.keys(activeFoodItemOneServing).length === 0
+          ) {
+            try {
+              const selectedFoodWithSearchedNutrientInfo =
+                await getNutrientsForFoodItem(activeFoodItem);
 
-        searchForFoodItemNutrients(ingredientsParam).then((nutrients) => {
-          const oneServingNutrientData = {
-            ...activeFoodItem,
-            activeMeasure: activeFoodItem?.activeMeasure,
-            nutrients: {
-              ...processCoreNutrients(nutrients, 1),
-              vitamins: processVitamins(nutrients, 1),
-              minerals: processMinerals(nutrients, 1),
-            },
-          };
+              const numberOfServingsNutrientData =
+                processActiveFoodItemNumberOfServingsUpdate(
+                  selectedFoodWithSearchedNutrientInfo,
+                  activeFoodItem?.numberOfServings || 1
+                );
 
-          setActiveFoodItemOneServing(oneServingNutrientData);
-        });
+              setActiveFoodItem((prevActiveFoodItem) => ({
+                ...prevActiveFoodItem,
+                nutrients: numberOfServingsNutrientData,
+              }));
+              setActiveFoodItemOneServing(selectedFoodWithSearchedNutrientInfo);
+            } catch (error) {
+              console.error("Error fetching nutrient data:", error);
+            }
+          }
+        }
+
+        setSelectedServing(activeFoodItem?.activeMeasure);
+        setNumberOfServings(activeFoodItem?.numberOfServings || 1);
+
+        const activeMealSectionFromDiary = mealSections.filter(
+          (mealOption) => mealOption.id === activeFoodItem?.mealType
+        );
+
+        setSelectedMealSection(
+          activeMealSection || activeMealSectionFromDiary[0]
+        );
+      } else {
+        setSelectedServing(null);
+        setNumberOfServings(null);
+        setSelectedMealSection(null);
+        setActiveFoodItemOneServing(null);
       }
-    } else {
-      setSelectedServing(null);
-      setNumberOfServings(null);
-      setSelectedMealSection(null);
-      setActiveFoodItemOneServing(null);
-    }
+    };
+
+    fetchData();
   }, [isVisible]);
 
   const toggleSelectServing = () => {
@@ -316,36 +196,18 @@ const FoodNutrientModal = ({
       toggleSelectServing(); // Close the serving size options modal
     }
 
-    // Fetch nutrients based on the selected serving size
-    const ingredientsParam = {
-      ingredients: [
-        {
-          quantity: 1, // Use numberOfServings instead of 1
-          measureURI: servingSizeOption?.uri || "",
-          foodId: activeFoodItem.foodId || "",
-        },
-      ],
-    };
-
-    const nutrients = await searchForFoodItemNutrients(ingredientsParam);
-
-    const oneServingdNutrientData = {
-      ...activeFoodItem,
-      activeMeasure: servingSizeOption,
-      nutrients: {
-        ...processCoreNutrients(nutrients, 1),
-        vitamins: processVitamins(nutrients, 1),
-        minerals: processMinerals(nutrients, 1),
-      },
-    };
+    const selectedFoodWithUpdatedNutrientInfoBasedOnServingSize =
+      await getNutrientsForFoodItem(activeFoodItem, servingSizeOption);
 
     const numberOfServingsNutrientData =
       processActiveFoodItemNumberOfServingsUpdate(
-        oneServingdNutrientData,
+        selectedFoodWithUpdatedNutrientInfoBasedOnServingSize,
         numberOfServings
       );
 
-    setActiveFoodItemOneServing(oneServingdNutrientData);
+    setActiveFoodItemOneServing(
+      selectedFoodWithUpdatedNutrientInfoBasedOnServingSize
+    );
     setSelectedServing(servingSizeOption);
     setActiveFoodItem((prevActiveFoodItem) => ({
       ...prevActiveFoodItem,
@@ -383,6 +245,68 @@ const FoodNutrientModal = ({
     }));
   };
 
+  const handleEditFoodEntryAndSave = () => {
+    // If not building a meal, a selected meal section exists, selected date is valid,
+    // an active food item is selected, and the active food item is a custom meal
+    if (
+      !isBuildingMeal &&
+      selectedMealSection &&
+      selectedDate &&
+      activeFoodItem &&
+      activeFoodItem?.isCustomMeal
+    ) {
+      // Save the custom meal to the food log
+      saveMealToFoodLog(selectedMealSection.id, selectedDate, activeFoodItem);
+    }
+    // If not building a meal, a selected meal section exists, selected date is valid,
+    // and an active food item is selected
+    else if (
+      !isBuildingMeal &&
+      selectedMealSection &&
+      selectedDate &&
+      activeFoodItem
+    ) {
+      // Update or save the individual food item to the food log
+      saveOrUpdateSingleFoodItemToFoodLog(
+        selectedMealSection.id,
+        activeFoodItem?.id || null,
+        activeFoodItem,
+        selectedDate
+      );
+    }
+    // If building a meal and the active food item is a custom meal
+    else if (isBuildingMeal && activeFoodItem?.isCustomMeal) {
+      // Save or update the custom meal
+      saveOrUpdateCustomMeal(activeFoodItem);
+    }
+    // If building a meal and the active food item is not a custom meal
+    else if (isBuildingMeal && activeFoodItem) {
+      // Save the active food item to the temporary custom meal
+      saveFoodToTempCustomMeal(activeFoodItem);
+    }
+    // If none of the above conditions are met
+    else {
+      // Log an error indicating an invalid state
+      console.error(
+        "Invalid state encountered while attempting to handle food entry: " +
+          "isBuildingMeal:",
+        isBuildingMeal,
+        ", selectedMealSection:",
+        selectedMealSection,
+        ", selectedDate:",
+        selectedDate,
+        ", activeFoodItem:",
+        activeFoodItem
+      );
+      return;
+    }
+    handleCloseModal();
+    // Trigger snackbar if the user is not saving or updating a customMeal
+    if (!(isBuildingMeal && activeFoodItem?.isCustomMeal)) {
+      toggleSnackbar();
+    }
+  };
+
   const handleCloseModal = () => {
     setShowMineralList(false);
     setShowVitaminList(false);
@@ -392,6 +316,10 @@ const FoodNutrientModal = ({
     setIsSelectMealVisible(false);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     closeModal();
+  };
+
+  const toggleItemList = () => {
+    setShowItemList(!showItemList);
   };
 
   const toggleNutritionFactsList = () => {
@@ -523,6 +451,8 @@ const FoodNutrientModal = ({
         <G transform={{ translate: `${radius}, ${radius}` }}>
           {chartData.map((segment, index) => {
             const angle = (segment.percentage * 360) / 100;
+            // Calculate the path for the entire circle (neutral background)
+            const fullCirclePath = `M 0 -${radius} A ${radius} ${radius} 0 1 1 0 ${radius} A ${radius} ${radius} 0 1 1 0 -${radius}`;
             const path = `M 0 0 L ${
               radius * Math.cos((currentAngle * Math.PI) / 180)
             } ${
@@ -532,9 +462,21 @@ const FoodNutrientModal = ({
             } ${radius * Math.sin(((currentAngle + angle) * Math.PI) / 180)} Z`;
             currentAngle += angle;
 
-            return <Path key={index} d={path} fill={segment.color} />;
+            return (
+              <React.Fragment key={index}>
+                <Path
+                  d={fullCirclePath}
+                  fill={
+                    mode === "dark"
+                      ? "rgba(255, 255, 255, 0.1)"
+                      : "rgba(0, 0, 0, 0.1)"
+                  }
+                />
+                <Path d={path} fill={segment.color} />
+              </React.Fragment>
+            );
           })}
-          <Circle r={radius - 10} fill={theme.colors.surface} />
+          <Circle r={radius - 5} fill={theme.colors.surface} />
 
           <SvgText
             fill={theme.colors.cardHeaderTextColor}
@@ -567,9 +509,9 @@ const FoodNutrientModal = ({
       ? NutritionFactsIndentedRow
       : NutritionFactsRow;
 
-    return nutrientKeysOrder.map((nutrientKey) => (
+    return nutrientKeysOrder.map((nutrientKey, index) => (
       <NutrientComponent
-        key={nutrientKey}
+        key={`${nutrientKey}_${index}`}
         label={activeFoodItem?.nutrients?.[nutrientKey]?.label}
         quantity={activeFoodItem?.nutrients?.[nutrientKey]?.quantity}
         unit={
@@ -595,9 +537,9 @@ const FoodNutrientModal = ({
       ? NutritionFactsIndentedRow
       : NutritionFactsRow;
 
-    return nutrientKeysOrder.map((nutrientKey) => (
+    return nutrientKeysOrder.map((nutrientKey, index) => (
       <NutrientComponent
-        key={nutrientKey}
+        key={`${nutrientKey}_${index}`}
         label={activeFoodItem?.nutrients?.vitamins?.[nutrientKey]?.label}
         quantity={activeFoodItem?.nutrients?.vitamins?.[nutrientKey]?.quantity}
         unit={activeFoodItem?.nutrients?.vitamins?.[nutrientKey]?.unit}
@@ -620,9 +562,9 @@ const FoodNutrientModal = ({
       ? NutritionFactsIndentedRow
       : NutritionFactsRow;
 
-    return nutrientKeysOrder.map((nutrientKey) => (
+    return nutrientKeysOrder.map((nutrientKey, index) => (
       <NutrientComponent
-        key={nutrientKey}
+        key={`${nutrientKey}_${index}`}
         label={activeFoodItem?.nutrients?.minerals?.[nutrientKey]?.label}
         quantity={activeFoodItem?.nutrients?.minerals?.[nutrientKey]?.quantity}
         unit={activeFoodItem?.nutrients?.minerals?.[nutrientKey]?.unit}
@@ -653,21 +595,6 @@ const FoodNutrientModal = ({
   ];
   const mineralKeys = ["CA", "FE", "MG", "P", "K", "NA", "ZN"];
 
-  const handleEditFoodEntryAndSave = () => {
-    if (selectedMealSection && activeFoodItem) {
-      editFoodEntry(
-        selectedMealSection.id,
-        activeFoodItem?.id || null,
-        activeFoodItem,
-        selectedDate
-      );
-    } else {
-      console.error("Invalid selectedMealSection or activeFoodItem");
-    }
-
-    handleCloseModal();
-  };
-
   return (
     <Modal
       isVisible={isVisible}
@@ -676,11 +603,8 @@ const FoodNutrientModal = ({
       animationIn="slideInLeft"
       animationOut="slideOutLeft"
     >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <SafeAreaView
-          onStartShouldSetResponder={() => true}
-          style={styles.container}
-        >
+      <TouchableWithoutFeedback style={{ flex: 1 }} onPress={Keyboard.dismiss}>
+        <SafeAreaView style={styles.container}>
           {/* Header */}
           <Appbar.Header style={styles.header}>
             <Appbar.Action
@@ -728,33 +652,40 @@ const FoodNutrientModal = ({
                 </View>
                 {/* Input Fields Section */}
                 <View style={styles.sectionContainer}>
-                  <View style={{ marginBottom: 16 }}>
-                    <ServingSizeRow
-                      isVisible={isSelectServingSizeVisible}
-                      toggleSelectServing={toggleSelectServing}
-                      label="Serving Size"
-                      selectedServing={selectedServing}
-                    />
-                  </View>
-                  <View style={{ marginBottom: 16 }}>
-                    <NumberOfServingsRow
-                      label="Number of Servings"
-                      keyboardType="numeric"
-                      numberOfServings={numberOfServings}
-                      updateNumberOfServings={updateNumberOfServings}
-                      hideSelectServingAndSelectMealOnTextInputFocus={
-                        hideSelectServingAndSelectMealOnTextInputFocus
-                      }
-                    />
-                  </View>
-                  <View style={{ marginBottom: 16 }}>
-                    <MealRow
-                      isVisible={isSelectMealVisible}
-                      toggleSelectMeal={toggleSelectMeal}
-                      label="Meal"
-                      selectedMealOption={selectedMealSection}
-                    />
-                  </View>
+                  {!disableInputs && (
+                    <View>
+                      <View style={{ marginBottom: 16 }}>
+                        <ServingSizeRow
+                          isVisible={isSelectServingSizeVisible}
+                          toggleSelectServing={toggleSelectServing}
+                          label="Serving Size"
+                          selectedServing={selectedServing}
+                        />
+                      </View>
+                      <View style={{ marginBottom: 16 }}>
+                        <NumberOfServingsRow
+                          label="Number of Servings"
+                          keyboardType="numeric"
+                          numberOfServings={numberOfServings}
+                          updateNumberOfServings={updateNumberOfServings}
+                          hideSelectServingAndSelectMealOnTextInputFocus={
+                            hideSelectServingAndSelectMealOnTextInputFocus
+                          }
+                        />
+                      </View>
+
+                      {!isBuildingMeal && (
+                        <View style={{ marginBottom: 16 }}>
+                          <MealRow
+                            isVisible={isSelectMealVisible}
+                            toggleSelectMeal={toggleSelectMeal}
+                            label="Meal"
+                            selectedMealOption={selectedMealSection}
+                          />
+                        </View>
+                      )}
+                    </View>
+                  )}
                   <View
                     style={{
                       flexDirection: "row",
@@ -1119,6 +1050,81 @@ const FoodNutrientModal = ({
                     </View>
                   </View>
                 )}
+
+                {/* Render Meal Items Section if it's a custom meal */}
+                {activeFoodItem?.isCustomMeal && (
+                  <View style={styles.sectionContainer}>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <Text style={styles.nutritionFactsLabel}>Items</Text>
+                      <TouchableOpacity
+                        onPress={toggleItemList}
+                        style={{
+                          flexDirection: "row",
+                          gap: 5,
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            color: theme.colors.primary,
+                            fontWeight: "bold",
+                          }}
+                        >
+                          {showItemList ? "Hide" : "Show"}
+                        </Text>
+                        <Feather
+                          name={showItemList ? "arrow-up" : "arrow-down"}
+                          color={theme.colors.primary}
+                          size={20}
+                        />
+                      </TouchableOpacity>
+                    </View>
+
+                    {/* Meal Items */}
+
+                    {showItemList &&
+                      activeFoodItem?.mealItems.map((item, index) => (
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            padding: 10,
+                            paddingTop: 14,
+                            borderBottomWidth: 1,
+                            borderBottomColor: theme.colors.cardBorderColor,
+                          }}
+                          key={index}
+                        >
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              color: theme.colors.cardHeaderTextColor,
+                            }}
+                          >
+                            {item.foodLabel}
+                          </Text>
+                          <View style={{ gap: 5 }}>
+                            <Text
+                              style={{
+                                fontSize: 14,
+                                color: theme.colors.cardHeaderTextColor,
+                              }}
+                            >
+                              {Math.round(item.nutrients.ENERC_KCAL.quantity)}{" "}
+                              cal, {Math.round(item.activeMeasure.weight)}{" "}
+                              {item.activeMeasure.label}
+                            </Text>
+                          </View>
+                        </View>
+                      ))}
+                  </View>
+                )}
               </TouchableOpacity>
             </ScrollView>
           )}
@@ -1129,7 +1135,7 @@ const FoodNutrientModal = ({
                 bottom: 0,
                 right: 0,
                 left: 0,
-                top: "70%",
+                top: "66%",
                 backgroundColor: theme.colors.screenBackground,
                 zIndex: 2,
               }}
@@ -1164,65 +1170,69 @@ const FoodNutrientModal = ({
                 <ScrollView>
                   <TouchableOpacity activeOpacity={1}>
                     {activeFoodItem &&
-                      activeFoodItem?.measures?.map((servingSizeOption) => (
-                        <TouchableOpacity
-                          key={servingSizeOption?.uri}
-                          onPress={() => handleSelectServing(servingSizeOption)}
-                          style={{
-                            width: "100%",
-                            flexDirection: "row",
-                            alignItems: "center",
-                            backgroundColor:
-                              selectedServing === servingSizeOption
-                                ? theme.colors.surface
-                                : "transparent",
-                            marginVertical: 5,
-                            padding: 10,
-                          }}
-                        >
-                          <View
+                      activeFoodItem?.measures?.map(
+                        (servingSizeOption, index) => (
+                          <TouchableOpacity
+                            key={`${servingSizeOption?.uri}_${index}`}
+                            onPress={() =>
+                              handleSelectServing(servingSizeOption)
+                            }
                             style={{
-                              flex: 1,
-                              alignItems: "flex-end",
-                              paddingRight: 10,
+                              width: "100%",
+                              flexDirection: "row",
+                              alignItems: "center",
+                              backgroundColor:
+                                selectedServing === servingSizeOption
+                                  ? theme.colors.surface
+                                  : "transparent",
+                              marginVertical: 5,
+                              padding: 10,
                             }}
                           >
-                            <Text
+                            <View
                               style={{
-                                color: theme.colors.cardHeaderTextColor,
-                                fontSize: 20,
+                                flex: 1,
+                                alignItems: "flex-end",
+                                paddingRight: 10,
                               }}
                             >
-                              {Math.round(servingSizeOption?.weight)}
-                            </Text>
-                          </View>
-                          <View style={{ flex: 2 }}>
-                            <Text
+                              <Text
+                                style={{
+                                  color: theme.colors.cardHeaderTextColor,
+                                  fontSize: 20,
+                                }}
+                              >
+                                {Math.round(servingSizeOption?.weight)}
+                              </Text>
+                            </View>
+                            <View style={{ flex: 2 }}>
+                              <Text
+                                style={{
+                                  color: theme.colors.cardHeaderTextColor,
+                                  fontSize: 20,
+                                }}
+                              >
+                                {servingSizeOption?.label}
+                              </Text>
+                            </View>
+                            <View
                               style={{
-                                color: theme.colors.cardHeaderTextColor,
-                                fontSize: 20,
+                                flex: 1,
+                                alignItems: "flex-end",
+                                paddingRight: 5,
                               }}
                             >
-                              {servingSizeOption?.label}
-                            </Text>
-                          </View>
-                          <View
-                            style={{
-                              flex: 1,
-                              alignItems: "flex-end",
-                              paddingRight: 5,
-                            }}
-                          >
-                            {selectedServing === servingSizeOption ? (
-                              <Feather
-                                name="check-square"
-                                size={28}
-                                color={theme.colors.primary}
-                              />
-                            ) : null}
-                          </View>
-                        </TouchableOpacity>
-                      ))}
+                              {selectedServing === servingSizeOption ? (
+                                <Feather
+                                  name="check-square"
+                                  size={28}
+                                  color={theme.colors.primary}
+                                />
+                              ) : null}
+                            </View>
+                          </TouchableOpacity>
+                        )
+                      )}
                   </TouchableOpacity>
                 </ScrollView>
               </View>
@@ -1235,7 +1245,7 @@ const FoodNutrientModal = ({
                 bottom: 0,
                 right: 0,
                 left: 0,
-                top: "70%",
+                top: "66%",
                 backgroundColor: theme.colors.screenBackground,
                 zIndex: 2,
               }}
@@ -1273,9 +1283,9 @@ const FoodNutrientModal = ({
                       selectedMealSection &&
                       mealSections
                         ?.filter((mealOption) => mealOption.name)
-                        .map((mealOption) => (
+                        .map((mealOption, index) => (
                           <TouchableOpacity
-                            key={mealOption?.id}
+                            key={`${mealOption?.id}_${index}`}
                             onPress={() => handleSelectMeal(mealOption)}
                             style={{
                               width: "100%",
@@ -1324,6 +1334,153 @@ const FoodNutrientModal = ({
         </SafeAreaView>
       </TouchableWithoutFeedback>
     </Modal>
+  );
+};
+
+// Sub-components
+
+const NutritionFactsRow = ({ label, quantity, unit, totalDaily, color }) => {
+  const styles = foodNutrientModalStyles();
+
+  return (
+    <View style={styles.nutritionFactsRow}>
+      <View style={styles.nutritionalFactsLabelContainer}>
+        <Text style={styles.nutritionFactsLabel}>{label}</Text>
+      </View>
+      <View style={styles.nutritionalFactsValuesContainer}>
+        <Text style={{ ...styles.nutritionFactsValue, color: color }}>
+          {quantity} {unit}
+        </Text>
+        <Text style={{ ...styles.nutritionFactsDailyValue, color: color }}>
+          {totalDaily}%
+        </Text>
+      </View>
+    </View>
+  );
+};
+
+const NutritionFactsIndentedRow = ({
+  label,
+  quantity,
+  unit,
+  totalDaily,
+  color,
+}) => {
+  const styles = foodNutrientModalStyles();
+
+  return (
+    <View style={styles.nutritionFactsRow}>
+      <View style={styles.nutritionalFactsLabelContainer}>
+        <Text style={styles.nutritionFactsIndentLabel}>{label}</Text>
+      </View>
+      <View style={styles.nutritionalFactsValuesContainer}>
+        <Text style={{ ...styles.nutritionFactsIndentValue, color: color }}>
+          {quantity} {unit}
+        </Text>
+        <Text
+          style={{ ...styles.nutritionFactsIndentDailyValue, color: color }}
+        >
+          {totalDaily}%
+        </Text>
+      </View>
+    </View>
+  );
+};
+
+const ServingSizeRow = ({
+  isVisible,
+  toggleSelectServing,
+  label,
+  selectedServing,
+}) => {
+  const { theme } = useThemeContext();
+  const styles = foodNutrientModalStyles();
+
+  return (
+    <View style={styles.rowContainer}>
+      <Text style={styles.inputLabel}>{label}</Text>
+      <TouchableOpacity
+        style={{
+          width: "40%",
+          alignItems: "center",
+          borderWidth: 1,
+          borderColor: isVisible ? theme.colors.primary : "gray",
+          borderRadius: 8,
+          paddingVertical: 10,
+          paddingHorizontal: 20,
+        }}
+        onPress={toggleSelectServing}
+      >
+        <Text style={{ color: theme.colors.cardHeaderTextColor }}>
+          {Math.round(parseFloat(selectedServing?.weight))}g{" "}
+          {selectedServing?.label}
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+const NumberOfServingsRow = ({
+  label,
+  keyboardType,
+  numberOfServings,
+  updateNumberOfServings,
+  hideSelectServingAndSelectMealOnTextInputFocus,
+}) => {
+  const styles = foodNutrientModalStyles();
+
+  // Convert NaN or null to an empty string for better user experience
+  const formattedNumberOfServings =
+    numberOfServings !== null && !isNaN(numberOfServings)
+      ? numberOfServings.toString()
+      : "";
+
+  return (
+    <View style={styles.rowContainer}>
+      <Text style={styles.inputLabel}>{label}</Text>
+      <TextInput
+        onFocus={hideSelectServingAndSelectMealOnTextInputFocus}
+        mode="flat"
+        keyboardType={keyboardType}
+        style={{ ...styles.textInput, width: "40%" }}
+        value={formattedNumberOfServings}
+        onChangeText={(newNumberOfServings) =>
+          updateNumberOfServings(newNumberOfServings)
+        }
+      />
+    </View>
+  );
+};
+
+const MealRow = ({
+  isVisible,
+  toggleSelectMeal,
+  label,
+  selectedMealOption,
+}) => {
+  const { theme } = useThemeContext();
+  const styles = foodNutrientModalStyles();
+
+  return (
+    <View style={styles.rowContainer}>
+      <Text style={styles.inputLabel}>{label}</Text>
+      <TouchableOpacity
+        style={{
+          width: "40%",
+          alignItems: "center",
+          borderWidth: 1,
+          borderColor: isVisible ? theme.colors.primary : "gray",
+          borderRadius: 8,
+          paddingVertical: 10,
+          paddingHorizontal: 20,
+        }}
+        onPress={toggleSelectMeal}
+      >
+        <Text style={{ color: theme.colors.cardHeaderTextColor }}>
+          {selectedMealOption?.name}
+        </Text>
+      </TouchableOpacity>
+    </View>
   );
 };
 

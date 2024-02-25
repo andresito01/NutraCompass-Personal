@@ -12,7 +12,7 @@ import { useTheme } from "react-native-paper"; // Import useTheme from react-nat
 import goalsScreenStyles from "./styles/goalsScreenStyles.js";
 import { useThemeContext } from "../context/ThemeContext.js";
 
-GoalsScreen = () => {
+const GoalsScreen = () => {
   const navigation = useNavigation();
   const { theme } = useThemeContext();
   const paperTheme = useTheme(); // Get the theme

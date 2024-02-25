@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Keyboard } from "react-native";
-import { Button, useTheme } from "react-native-paper";
 import Modal from "react-native-modal";
 import Feather from "react-native-vector-icons/Feather";
 import MacroPercentageSlider from "../../../components/MacroPercentageSlider.js";
@@ -20,7 +19,6 @@ const MacroSettingsModal = ({
   fat,
 }) => {
   const { theme } = useThemeContext();
-  const paperTheme = useTheme();
 
   // Convert tempChanges fields to numbers
 
@@ -37,17 +35,6 @@ const MacroSettingsModal = ({
 
   // Check if the sum of percentages is equal to 100%
   const isSum100Percent = numericProtein + numericCarb + numericFat === 100;
-
-  console.log("Numeric Protein: ", numericProtein);
-  console.log("Numeric Carb: ", numericCarb);
-  console.log("Numeric Fat: ", numericFat);
-  console.log("IsSum100Percent: ", isSum100Percent);
-  console.log(
-    "Macro Percentage Sum: ",
-    numericProtein + numericCarb + numericFat
-  );
-
-  // console.log("tempChanges Type Check", typeof protein);
 
   return (
     <Modal

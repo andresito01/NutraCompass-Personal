@@ -16,7 +16,6 @@ const CustomSexPickerModal = ({ title, visible, onClose, onSelect }) => {
 
   const handleSave = () => {
     if (selectedValue !== null) {
-      console.log("Sex: " + selectedValue);
       onSelect(selectedValue);
       onClose();
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);

@@ -4,6 +4,14 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { AuthProvider } from "./src/authentication/context/AuthContext.js";
 import RootNavigation from "./src/navigation/index.js";
 import { ThemeProvider } from "./src/context/ThemeContext.js";
+import { UserSettingsProvider } from "./src/features/userSettings/context/UserSettingsContext.js";
+import {
+  Menu,
+  MenuProvider,
+  MenuOptions,
+  MenuOption,
+  MenuTrigger,
+} from "react-native-popup-menu";
 // import * as SplashScreen from "expo-splash-screen";
 
 // SplashScreen.preventAutoHideAsync();
@@ -13,10 +21,14 @@ export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <AuthProvider>
-        <ThemeProvider>
-          {/* Root Navigation */}
-          <RootNavigation />
-        </ThemeProvider>
+        <UserSettingsProvider>
+          <ThemeProvider>
+            <MenuProvider>
+              {/* Root Navigation */}
+              <RootNavigation />
+            </MenuProvider>
+          </ThemeProvider>
+        </UserSettingsProvider>
       </AuthProvider>
     </GestureHandlerRootView>
   );

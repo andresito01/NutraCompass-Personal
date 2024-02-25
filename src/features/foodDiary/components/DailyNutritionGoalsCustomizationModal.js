@@ -18,6 +18,8 @@ import { useThemeContext } from "../../../context/ThemeContext.js";
 import MacroSettingsModal from "./MacroSettingsModal.js";
 //const MacroSettingsModal = React.lazy(() => import("./MacroSettingsModal.js"));
 
+console.log("Daily Nutrition Goals Customization Modal Rendered.");
+
 const DailyNutritionGoalsCustomizationModal = ({ isVisible, closeModal }) => {
   const styles = dailyNutritionGoalsCustomizationModalStyles();
   const { theme } = useThemeContext();
@@ -95,12 +97,6 @@ const DailyNutritionGoalsCustomizationModal = ({ isVisible, closeModal }) => {
     setTempChanges({});
     Keyboard.dismiss();
     setActiveField(null);
-
-    // console.log("IsSum100Percent: ", isSum100Percent);
-    // console.log(
-    //   "Macro Percentage Sum: ",
-    //   numericProtein + numericCarb + numericFat
-    // );
   };
 
   const handleInputChange = (field, text) => {
@@ -148,7 +144,7 @@ const DailyNutritionGoalsCustomizationModal = ({ isVisible, closeModal }) => {
         }}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        <View style={styles.header}>
+        <View style={{ ...styles.header, paddingTop: 30 }}>
           <TouchableOpacity
             style={styles.closeModalButton}
             onPress={() => {

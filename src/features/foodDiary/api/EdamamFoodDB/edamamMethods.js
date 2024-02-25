@@ -18,6 +18,7 @@ export async function searchFood(searchTerm) {
     }
 
     const data = await response.json();
+    console.log("Food Search Edamam API Call Triggered.");
 
     let processedData = [];
     if (
@@ -31,19 +32,19 @@ export async function searchFood(searchTerm) {
             typeof foodItem.food === "object" &&
             Array.isArray(foodItem.measures)
           ) {
-            const ingredientsParam = {
-              ingredients: [
-                {
-                  quantity: 1,
-                  measureURI: foodItem.measures[0]?.uri || "",
-                  foodId: foodItem.food?.foodId || "",
-                },
-              ],
-            };
+            // const ingredientsParam = {
+            //   ingredients: [
+            //     {
+            //       quantity: 1,
+            //       measureURI: foodItem.measures[0]?.uri || "",
+            //       foodId: foodItem.food?.foodId || "",
+            //     },
+            //   ],
+            // };
 
-            const nutrients = await searchForFoodItemNutrients(
-              ingredientsParam
-            );
+            // const nutrients = await searchForFoodItemNutrients(
+            //   ingredientsParam
+            // );
 
             // Use helper methods here
             const processedDataSchema = {
@@ -54,11 +55,14 @@ export async function searchFood(searchTerm) {
               numberOfServings: 1,
               activeMeasure: foodItem.measures[0],
               measures: foodItem?.measures,
-              nutrients: {
-                ...processCoreNutrients(nutrients, 1),
-                vitamins: processVitamins(nutrients, 1),
-                minerals: processMinerals(nutrients, 1),
+              defaultNutrients: {
+                ENERC_KCAL: foodItem.food?.nutrients?.ENERC_KCAL,
               },
+              // nutrients: {
+              //   ...processCoreNutrients(nutrients, 1),
+              //   vitamins: processVitamins(nutrients, 1),
+              //   minerals: processMinerals(nutrients, 1),
+              // },
             };
 
             return processedDataSchema;
@@ -94,7 +98,7 @@ export async function searchFoodByBarcode(code) {
     }
 
     const data = await response.json();
-
+    console.log("Food Search Edamam API Call Triggered.");
     let processedData = [];
     if (
       // typeof data.hints.food === "object" &&
@@ -107,19 +111,19 @@ export async function searchFoodByBarcode(code) {
             typeof foodItem.food === "object" &&
             Array.isArray(foodItem.measures)
           ) {
-            const ingredientsParam = {
-              ingredients: [
-                {
-                  quantity: 1,
-                  measureURI: foodItem.measures[0]?.uri || "",
-                  foodId: foodItem.food?.foodId || "",
-                },
-              ],
-            };
+            // const ingredientsParam = {
+            //   ingredients: [
+            //     {
+            //       quantity: 1,
+            //       measureURI: foodItem.measures[0]?.uri || "",
+            //       foodId: foodItem.food?.foodId || "",
+            //     },
+            //   ],
+            // };
 
-            const nutrients = await searchForFoodItemNutrients(
-              ingredientsParam
-            );
+            // const nutrients = await searchForFoodItemNutrients(
+            //   ingredientsParam
+            // );
 
             // Use helper methods here
             const processedDataSchema = {
@@ -130,11 +134,14 @@ export async function searchFoodByBarcode(code) {
               numberOfServings: 1,
               activeMeasure: foodItem.measures[0],
               measures: foodItem?.measures,
-              nutrients: {
-                ...processCoreNutrients(nutrients, 1),
-                vitamins: processVitamins(nutrients, 1),
-                minerals: processMinerals(nutrients, 1),
+              defaultNutrients: {
+                ENERC_KCAL: foodItem.food?.nutrients?.ENERC_KCAL,
               },
+              // nutrients: {
+              //   ...processCoreNutrients(nutrients, 1),
+              //   vitamins: processVitamins(nutrients, 1),
+              //   minerals: processMinerals(nutrients, 1),
+              // },
             };
 
             return processedDataSchema;
@@ -196,10 +203,54 @@ export async function searchForFoodItemNutrients(ingredients) {
     }
 
     const data = await response.json();
+    console.log("Nutrient Search Edamam API Call Triggered.");
     return data;
     // Process the data as needed, e.g., display the food items
   } catch (error) {
     console.error("There was a problem with the fetch operation:", error);
+  }
+}
+
+// Get nutrient information for a specific food item
+export async function getNutrientsForFoodItem(foodItem, newServingSize) {
+  const ingredientsParam = {
+    ingredients: [
+      {
+        quantity: 1,
+        measureURI: newServingSize
+          ? newServingSize?.uri || foodItem.activeMeasure?.uri
+          : foodItem.activeMeasure?.uri || foodItem.measures[0]?.uri,
+        foodId: foodItem.foodId || "",
+      },
+    ],
+  };
+
+  try {
+    const nutrients = await searchForFoodItemNutrients(ingredientsParam);
+
+    const processedDataSchema = newServingSize
+      ? {
+          ...foodItem,
+          activeMeasure: newServingSize,
+          nutrients: {
+            ...processCoreNutrients(nutrients, 1),
+            vitamins: processVitamins(nutrients, 1),
+            minerals: processMinerals(nutrients, 1),
+          },
+        }
+      : {
+          ...foodItem,
+          nutrients: {
+            ...processCoreNutrients(nutrients, 1),
+            vitamins: processVitamins(nutrients, 1),
+            minerals: processMinerals(nutrients, 1),
+          },
+        };
+
+    return processedDataSchema;
+  } catch (error) {
+    console.error("There was a problem fetching nutrient data:", error);
+    return null;
   }
 }
 

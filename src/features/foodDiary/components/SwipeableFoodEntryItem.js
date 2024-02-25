@@ -165,7 +165,7 @@ const SwipeableFoodEntryItem = ({
             {itemData.foodLabel}
           </Text>
           <Text style={styles.entryCaloriesText}>
-            {Math.round(itemData.nutrients.ENERC_KCAL.quantity)}
+            {Math.round(itemData?.nutrients?.ENERC_KCAL?.quantity)}
           </Text>
         </TouchableOpacity>
       </Animated.View>

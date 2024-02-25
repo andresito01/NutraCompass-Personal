@@ -8,7 +8,6 @@ const FoodlogFabGroupMenu = ({
   openDailyNutritionGoalsCustomizationModal,
   openDailyNutritionGoalsCalculationModal,
 }) => {
-  const paperTheme = useTheme();
   const { theme } = useThemeContext();
   const [state, setState] = useState({ open: false }); // Set open to isFocused initially
 
@@ -57,7 +56,8 @@ const FoodlogFabGroupMenu = ({
         }}
         style={{
           position: "absolute",
-          bottom: "8%",
+          bottom: 0,
+          paddingBottom: "13%",
           backfaceVisibility: "hidden",
         }}
         fabStyle={{ height: 40, justifyContent: "center" }}

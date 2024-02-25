@@ -10,11 +10,34 @@ export default function SetAGoalSection({ value, setValue, onNext }) {
   const styles = signupScreenStyles();
   const { theme } = useThemeContext();
 
-  const [goal, setGoal] = useState("Custom Energy Target"); // Default goal, you can set it based on your logic
-  const [customKcalTarget, setCustomKcalTarget] = useState("");
+  const [goal, setGoal] = useState("Weight Goal"); // Selected RadioButton value
+  const [customKcalTarget, setCustomKcalTarget] = useState("2000");
+  const [weightTrendGoalSliderValue, setWeightTrendGoalSliderValue] =
+    useState(0);
+
   const handleNext = () => {
-    // Add validation logic for this section
+    // Determine the next action based on the selected goal
+    if (goal === "Weight Goal" && weightTrendGoalSliderValue) {
+      // Handle weight goal logic
+      setValue({
+        ...value,
+        weightTrendGoal: weightTrendGoalSliderValue,
+        customEnergyTarget: null,
+      });
+    } else if (goal === "Custom Energy Target" && customKcalTarget) {
+      // Handle custom energy target logic
+      setValue({
+        ...value,
+        customEnergyTarget: Number(customKcalTarget),
+        weightTrendGoal: null,
+      });
+    }
+
     // Call onNext only if validation passes
+    onNext();
+  };
+
+  const handleSkip = () => {
     onNext();
   };
 
@@ -31,7 +54,7 @@ export default function SetAGoalSection({ value, setValue, onNext }) {
           style={{
             fontSize: 28,
             fontWeight: "bold",
-            color: theme.colors.cardHeaderTextColor,
+            color: "black",
             textAlign: "center",
           }}
         >
@@ -40,7 +63,7 @@ export default function SetAGoalSection({ value, setValue, onNext }) {
         <Text
           style={{
             fontSize: 18,
-            color: theme.colors.cardHeaderTextColor,
+            color: "black",
             textAlign: "center",
           }}
         >
@@ -96,20 +119,20 @@ export default function SetAGoalSection({ value, setValue, onNext }) {
                     >
                       {(() => {
                         switch (true) {
-                          case value.weightGoal < 0:
+                          case weightTrendGoalSliderValue < 0:
                             return "Lose";
-                          case value.weightGoal === 0:
+                          case weightTrendGoalSliderValue === 0:
                             return "Maintain";
-                          case value.weightGoal > 0:
+                          case weightTrendGoalSliderValue > 0:
                             return "Gain";
                           default:
                             return "";
                         }
                       })()}{" "}
                       (
-                      {value.weightGoal < 0
-                        ? value.weightGoal * -1
-                        : value.weightGoal}{" "}
+                      {weightTrendGoalSliderValue < 0
+                        ? weightTrendGoalSliderValue * -1
+                        : weightTrendGoalSliderValue}{" "}
                       lbs/week)
                     </Text>
 
@@ -129,8 +152,9 @@ export default function SetAGoalSection({ value, setValue, onNext }) {
                           ? theme.colors.primary
                           : theme.colors.surface
                       }
+                      value={weightTrendGoalSliderValue}
                       onValueChange={(sliderValue) => {
-                        setValue({ ...value, weightGoal: sliderValue });
+                        setWeightTrendGoalSliderValue(sliderValue);
                         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                       }}
                       disabled={!(goal === "Weight Goal")}
@@ -176,18 +200,16 @@ export default function SetAGoalSection({ value, setValue, onNext }) {
                               : "rgba(236, 236, 236, 0.6)",
                           backgroundColor: "transparent",
                           borderWidth: 1,
-                          borderRadius: 8,
-                          borderBottomLeftRadius: 0,
-                          borderBottomRightRadius: 0,
+                          borderRadius: 6,
                           textAlign: "center",
                         }}
                         underlineColor="transparent"
                         activeUnderlineColor={theme.colors.primary}
                         keyboardType="number-pad"
                         value={customKcalTarget}
-                        onChangeText={(text) => setCustomKcalTarget(text)}
-                        placeholder="2000"
-                        defaultValue="2000"
+                        onChangeText={(text) => {
+                          setCustomKcalTarget(text);
+                        }}
                         disabled={!(goal === "Custom Energy Target")}
                       />
                       <Text
@@ -223,9 +245,13 @@ export default function SetAGoalSection({ value, setValue, onNext }) {
         <Button
           mode="contained"
           labelStyle={{
-            color: theme.colors.surface,
+            color: "black",
             fontSize: 18,
             fontWeight: "bold",
+          }}
+          style={{
+            backgroundColor: "white",
+            borderRadius: 8,
             width: "60%",
           }}
           onPress={handleNext}
@@ -235,12 +261,12 @@ export default function SetAGoalSection({ value, setValue, onNext }) {
         <Button
           mode="text"
           labelStyle={{
-            color: theme.colors.primary,
+            color: "white",
             fontSize: 18,
             fontWeight: "bold",
-            width: "60%",
           }}
-          onPress={handleNext}
+          style={{ width: "60%" }}
+          onPress={handleSkip}
         >
           Skip
         </Button>

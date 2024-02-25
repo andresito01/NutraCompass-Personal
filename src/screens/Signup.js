@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import logo from "../../assets/brandmark-design.png";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import {
@@ -9,10 +9,8 @@ import {
   TouchableWithoutFeedback,
   TouchableOpacity,
   Keyboard,
+  SafeAreaView,
 } from "react-native";
-import { TextInput, Button, useTheme, Card } from "react-native-paper"; // Import TextInput and Button from React Native Paper
-import ThemeChanger from "../components/ThemeChanger.js";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import { LinearGradient } from "expo-linear-gradient";
 import signupScreenStyles from "./styles/signupScreenStyles.js";
 // Firebase API method imports
@@ -24,6 +22,7 @@ import ProfileDetailsSection from "../authentication/components/ProfileDetailsSe
 import ActivityLevelSection from "../authentication/components/ActivityLevelSection.js";
 import SetAGoalSection from "../authentication/components/SetAGoalSection.js";
 import AccountDetailsSection from "../authentication/components/AccountDetailsSection.js";
+import BodyTypeSection from "../authentication/components/BodyTypeSection.js";
 
 const SectionBarComponent = ({ currentSection }) => {
   const { theme } = useThemeContext();
@@ -85,36 +84,64 @@ const SectionBarComponent = ({ currentSection }) => {
               : "rgba(169, 169, 169, 0.7)",
         }}
       />
+
+      <View
+        style={{
+          borderRadius: 16,
+          width: 50,
+          height: 8,
+          backgroundColor:
+            currentSection >= 4
+              ? theme.colors.primary
+              : "rgba(169, 169, 169, 0.7)",
+        }}
+      />
     </View>
   );
 };
 
 function SignUpScreen({ navigation }) {
   const styles = signupScreenStyles(); // Use the imported styles
-  const paperTheme = useTheme();
   const { theme } = useThemeContext();
 
-  const [show, setShow] = React.useState(false);
   // Removed dob: new Date(), from state
   const [value, setValue] = React.useState({
+    sex: "",
+    birthday: "",
+    age: null,
+    height: { inches: null, centimeters: null },
+    weight: "",
+    activityLevel: "",
+    maintenanceCalories: null,
+    weightTrendGoal: null,
+    customEnergyTarget: null,
+    bodyFatPercentageRange: null,
     firstName: "",
     lastName: "",
     email: "",
     password: "",
+    confirmPassword: "",
     error: "",
-    activityLevel: 0,
-    weightGoal: 0,
   });
 
   const emptyState = () => {
     setValue({
+      sex: "",
+      birthday: "",
+      age: null,
+      height: { inches: null, centimeters: null },
+      weight: "",
+      activityLevel: "",
+      maintenanceCalories: null,
+      weightTrendGoal: null,
+      customEnergyTarget: null,
+      bodyFatPercentageRange: null,
       firstName: "",
       lastName: "",
       email: "",
       password: "",
+      confirmPassword: "",
       error: "",
-      activityLevel: 0,
-      weightGoal: 0,
     });
   };
 
@@ -126,76 +153,319 @@ function SignUpScreen({ navigation }) {
   };
 
   const handleSignUp = () => {
+    console.log("Values" + JSON.stringify(value, null, 1));
+
     // Sign up form validation
-    if (value.email === "" || value.password === "") {
-      setValue({
-        ...value,
-        error: "Email and password are mandatory.",
-      });
+    if (value.firstName === "" || value.lastName === "") {
+      Alert.alert("Please enter your first name and last name.");
+    } else if (value.email === "" || value.password === "") {
       Alert.alert("Email and password are mandatory.");
+    } else if (value.password !== value.confirmPassword) {
+      Alert.alert("Password and Confirm Password don't match.");
     } else {
-      // Removed value.dob from registration parameters
-      registration(
-        value.firstName,
-        value.lastName,
-        value.email,
-        value.password
+      // Determine weight unit
+      let weightUnit;
+      const weightParts = value.weight.split(" ");
+      if (weightParts.length === 2) {
+        weightUnit = weightParts[1]; // Get the second word
+      }
+
+      // Convert weight to numeric value in kilograms
+      let parsedWeight;
+      if (weightUnit === "lbs") {
+        // Weight is in pounds, convert to kilograms
+        parsedWeight = parseFloat(weightParts[0]) * 0.453592; // Convert pounds to kilograms
+      } else if (weightUnit === "kg") {
+        // Weight is already in kilograms
+        parsedWeight = parseFloat(weightParts[0]);
+      }
+
+      // First user daily calorie goal upon registration
+      let firstCalorieGoal = 0;
+      if (value.customEnergyTarget) {
+        // If user inputed a custom energy target then assign it as the daily calorie goal
+        firstCalorieGoal = value.customEnergyTarget;
+      } else if (value.maintenanceCalories) {
+        // If user inputed maintenance calories then assign it as the daily calorie goal
+        firstCalorieGoal = value.maintenanceCalories;
+      } else if (
+        value.activityLevel &&
+        parsedWeight &&
+        value.sex &&
+        value.age &&
+        value.height.centimeters
+      ) {
+        // If user inputed an activity level then use it alongside their height, weight, sex, and age to calculate their maintenance calories then assign it as the daily calorie goal
+        firstCalorieGoal = calculateDailyCalories(
+          parseFloat(value.height.centimeters),
+          parsedWeight,
+          value.sex,
+          value.age,
+          value.activityLevel,
+          value.weightTrendGoal,
+          value.bodyFatPercentageRange
+        );
+      } else {
+        // If user skipped inputs in the activity level section and set a goal section, then use default daily calorie goal
+        firstCalorieGoal = 2000;
+      }
+
+      // If the user has not directly assigned themself a custom energy target for their daily calorie goal, then process the user's default nutritional goal settings based on the user's weight trend goal if that weight trend goal exists.
+
+      // If user settings document doesn't exist, initialize with default values
+      const defaultSettings = {
+        profile: {
+          firstName: value.firstName,
+          lastName: value.lastName,
+          email: value.email,
+          birthday: value.birthday,
+          age: value.age,
+          sex: value.sex,
+          bodyWeight: value.weight,
+          height: {
+            inches: value.height.inches,
+            centimeters: value.height.centimeters,
+          },
+        },
+        appAppearance: {
+          theme: "Default",
+          isDark: true, // Default to dark theme
+        },
+        nutritionalGoals: {
+          calorieGoal: firstCalorieGoal,
+          macroGoals: {
+            carb: {
+              dailyPercentage: 0.4,
+              dailyCalories: calculateCarbDailyCalories(firstCalorieGoal, 40),
+              dailyGrams: calculateCarbDailyGrams(firstCalorieGoal, 40),
+            },
+            protein: {
+              dailyPercentage: 0.3,
+              dailyCalories: calculateProteinDailyCalories(
+                firstCalorieGoal,
+                30
+              ),
+              dailyGrams: calculateProteinDailyGrams(firstCalorieGoal, 30),
+            },
+            fat: {
+              dailyPercentage: 0.3,
+              dailyCalories: calculateFatDailyCalories(firstCalorieGoal, 30),
+              dailyGrams: calculateFatDailyGrams(firstCalorieGoal, 30),
+            },
+          },
+        },
+        physicalFitnessGoals: {
+          // Will add more to this later when building the workout diary.
+          bodyWeightGoal: 0,
+        },
+      };
+
+      console.log(
+        "Default Settings" + JSON.stringify(defaultSettings, null, 1)
       );
+
+      registration(value.email, value.password, defaultSettings);
       emptyState();
-      setShow(false);
     }
   };
 
-  const handleDateChange = (event, selectedDate) => {
-    const currentDate = selectedDate || dob;
-    setValue({ ...value, dob: currentDate });
+  // HELPER METHODS FOR DETERMINING DEFAULT USER SETTINGS VALUES
+
+  const calculateDailyCalories = (
+    heightInCm,
+    weightInKg,
+    sex,
+    age,
+    activityLevel,
+    weightTrendGoal,
+    bodyFatPercentageRange // This is the user's selected body fat percentage range
+  ) => {
+    let dailyCalories;
+
+    // Check if bodyFatPercentageRange exists to determine which formula to use
+    if (bodyFatPercentageRange) {
+      // Use Katch-McArdle formula for increased accuracy if bodyFatPercentageRange exists
+
+      // Calculate BMR based on Katch-McArdle formula
+      const leanBodyMass = calculateLeanBodyMass(
+        weightInKg,
+        bodyFatPercentageRange
+      );
+      const bmr = 370 + 21.6 * leanBodyMass;
+
+      // Adjust BMR based on activity level
+      const activityMultiplier = getActivityMultiplier(activityLevel);
+      const maintenanceCalories = Math.floor(bmr * activityMultiplier);
+
+      // Adjust maintenance calories based on weight trend goal
+      dailyCalories = adjustCaloriesForWeightTrend(
+        maintenanceCalories,
+        weightTrendGoal
+      );
+
+      console.log(
+        "Daily Calorie Goal calculated using Katch-McArdle formula: " +
+          dailyCalories
+      );
+    } else {
+      // Use Mifflin-St Jeor formula if bodyFatPercentageRange does not exist
+
+      // Calculate BMR based on Mifflin-St Jeor formula
+      let bmr;
+      if (sex === "Male") {
+        bmr = 10 * weightInKg + 6.25 * heightInCm - 5 * age + 5;
+      } else if (
+        sex === "Female" ||
+        sex === "Pregnant" ||
+        sex === "Breastfeeding"
+      ) {
+        bmr = 10 * weightInKg + 6.25 * heightInCm - 5 * age - 161;
+      } else {
+        console.error("Please select your gender.");
+        return;
+      }
+
+      // Adjust BMR based on activity level
+      const activityMultiplier = getActivityMultiplier(activityLevel);
+      const maintenanceCalories = Math.floor(bmr * activityMultiplier);
+
+      // Adjust maintenance calories based on weight trend goal
+      dailyCalories = adjustCaloriesForWeightTrend(
+        maintenanceCalories,
+        weightTrendGoal
+      );
+
+      console.log(
+        "Daily Calorie Goal calculated using Mifflin-St Jeor formula: " +
+          dailyCalories
+      );
+    }
+
+    return dailyCalories;
   };
 
-  const showDatePicker = () => {
-    setShow(!show);
+  // Function to calculate lean body mass based on weight and body fat percentage range
+  const calculateLeanBodyMass = (weightInKg, bodyFatPercentageRange) => {
+    // Convert body fat percentage to a decimal
+    const bodyFatPercentage = parseFloat(bodyFatPercentageRange) / 100;
+
+    // Calculate lean body mass using the formula: Lean Body Mass = Weight - (Weight * Body Fat Percentage)
+    const leanBodyMass = weightInKg - weightInKg * bodyFatPercentage;
+
+    return leanBodyMass;
+  };
+
+  // Function to get activity multiplier based on activity level
+  const getActivityMultiplier = (activityLevel) => {
+    // Define activity multipliers based on activity level
+    const activityMultipliers = {
+      None: 1,
+      "Sedentary (BMR x 0.2)": 1.2,
+      "Lightly Active (BMR x 0.375)": 1.375,
+      "Moderately Active (BMR x 0.5)": 1.5,
+      "Very Active (BMR x 0.9)": 1.9,
+    };
+    return activityMultipliers[activityLevel];
+  };
+
+  // Function to adjust maintenance calories based on weight trend goal
+  const adjustCaloriesForWeightTrend = (
+    maintenanceCalories,
+    weightTrendGoal
+  ) => {
+    // Adjust maintenance calories based on weight trend goal (losing or gaining weight)
+    let dailyCalories = maintenanceCalories;
+    if (weightTrendGoal < 0) {
+      // Losing weight
+      dailyCalories -= Math.abs(weightTrendGoal) * 500; // 1 lb per week = 500 calorie deficit per day
+    } else if (weightTrendGoal > 0) {
+      // Gaining weight
+      dailyCalories += weightTrendGoal * 500; // 1 lb per week = 500 calorie surplus per day
+    }
+    return dailyCalories;
+  };
+
+  // Method to calculate total daily calorie carbs goal based on percentage of the total daily calories
+
+  const calculateCarbDailyCalories = (totalDailyCalories, carbPercentage) => {
+    return Math.round((totalDailyCalories * carbPercentage) / 100);
+  };
+
+  // Method to calculate total daily calorie protein goal based on percentage of the total daily calories
+  const calculateProteinDailyCalories = (
+    totalDailyCalories,
+    proteinPercentage
+  ) => {
+    return Math.round((totalDailyCalories * proteinPercentage) / 100);
+  };
+
+  // Method to calculate total daily calorie fat goal based on percentage of the total daily calories
+  const calculateFatDailyCalories = (totalDailyCalories, fatPercentage) => {
+    return Math.round((totalDailyCalories * fatPercentage) / 100);
+  };
+
+  const calculateCarbDailyGrams = (totalDailyCalories, carbPercentage) => {
+    const carbCaloriesPerGram = 4;
+    return Math.round(
+      (totalDailyCalories * (carbPercentage / 100)) / carbCaloriesPerGram
+    );
+  };
+
+  const calculateProteinDailyGrams = (
+    totalDailyCalories,
+    proteinPercentage
+  ) => {
+    const proteinCaloriesPerGram = 4;
+    return Math.round(
+      (totalDailyCalories * (proteinPercentage / 100)) / proteinCaloriesPerGram
+    );
+  };
+
+  const calculateFatDailyGrams = (totalDailyCalories, fatPercentage) => {
+    const fatCaloriesPerGram = 9;
+    return Math.round(
+      (totalDailyCalories * (fatPercentage / 100)) / fatCaloriesPerGram
+    );
   };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View
+      <SafeAreaView
         style={{
           flex: 1,
           backgroundColor: theme.colors.screenBackground,
         }}
       >
-        <View
+        <LinearGradient
+          colors={["black", "white"]}
           style={{
-            height: 70,
-            minWidth: "100%",
-            justifyContent: "center",
+            flex: 1,
           }}
+          start={{ x: 0, y: 0.6 }}
+          end={{ x: 0, y: 0.2 }}
         >
-          <TouchableOpacity
-            style={{ alignSelf: "flex-start", padding: 15, zIndex: 2 }}
-            onPress={() => {
-              currentSection == 1
-                ? navigation.navigate("Welcome")
-                : setCurrentSection(currentSection - 1);
-
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          <View
+            style={{
+              height: 85,
+              minWidth: "100%",
+              justifyContent: "center",
             }}
           >
-            <Feather
-              name="chevron-left"
-              color={theme.colors.sectionHeaderTextColor}
-              size={38}
-            />
-          </TouchableOpacity>
-        </View>
-        <Image source={logo} style={styles.logo} />
-        <LinearGradient
-          colors={[
-            paperTheme.colors.gradientStart,
-            paperTheme.colors.gradientEnd,
-          ]}
-          locations={[0.5, 1]} // Control the position of the gradient colors
-          style={styles.gradientContainer}
-        >
+            <TouchableOpacity
+              style={{ alignSelf: "flex-start", padding: 15, zIndex: 2 }}
+              onPress={() => {
+                currentSection == 1
+                  ? navigation.navigate("Welcome")
+                  : setCurrentSection(currentSection - 1);
+
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              }}
+            >
+              <Feather name="chevron-left" color={"black"} size={38} />
+            </TouchableOpacity>
+          </View>
+          {/* <Image source={logo} style={styles.logo} /> */}
+
           <View style={styles.contentContainer}>
             <SectionBarComponent currentSection={currentSection} />
             {currentSection === 1 && (
@@ -223,150 +493,23 @@ function SignUpScreen({ navigation }) {
             )}
 
             {currentSection === 4 && (
-              <AccountDetailsSection
+              <BodyTypeSection
                 value={value}
                 setValue={setValue}
                 onNext={handleNextSection}
               />
             )}
 
-            {/* Add other section components based on similar pattern */}
             {currentSection === 5 && (
-              <Button
-                mode="contained"
-                labelStyle={{
-                  color: "white",
-                  fontSize: 18,
-                  fontWeight: "bold",
-                }}
-                onPress={handleSignUp}
-              >
-                Sign Up
-              </Button>
+              <AccountDetailsSection
+                value={value}
+                setValue={setValue}
+                handleSignUp={handleSignUp}
+              />
             )}
           </View>
         </LinearGradient>
-      </View>
-
-      {/* <View style={styles.contentContainer}>
-<View
-  style={{
-    alignItems: "center",
-    paddingTop: 10,
-    paddingBottom: 15,
-    gap: 2,
-  }}
->
-  <Text
-    style={{
-      fontSize: 28,
-      fontWeight: "bold",
-      color: theme.colors.cardHeaderTextColor,
-      textAlign: "center",
-    }}
-  >
-    Profile Details
-  </Text>
-  <Text
-    style={{
-      fontSize: 18,
-      color: theme.colors.cardHeaderTextColor,
-      textAlign: "center",
-    }}
-  >
-    Enter your details so NutraCompass can customize your targets.
-  </Text>
-</View>
-<Card style={{ width: "100%" }}>
-  <Card.Content>
-    <View
-      style={{ justifyContent: "center", width: "100%", gap: 10 }}
-    >
-      <TextInput
-        label="First Name"
-        value={value.firstName}
-        style={styles.input}
-        onChangeText={(text) =>
-          setValue({ ...value, firstName: text })
-        }
-        autoCapitalize="none"
-        outlineStyle={{ borderRadius: 14 }}
-        mode="outlined"
-        onFocus={() => {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        }}
-      />
-      <TextInput
-        label="Last Name"
-        value={value.lastName}
-        style={styles.input}
-        onChangeText={(text) =>
-          setValue({ ...value, lastName: text })
-        }
-        autoCapitalize="none"
-        outlineStyle={{ borderRadius: 14 }}
-        mode="outlined"
-        onFocus={() => {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        }}
-      />
-      {/* <Pressable onPress={showDatePicker}>
-    <Text style={styles.datePickerText}>Select Date of Birth</Text>
-  </Pressable>
-  {show && (
-    <DateTimePicker
-      value={value.dob}
-      mode="date"
-      display="spinner"
-      onChange={handleDateChange}
-    />
-  )} 
-      <TextInput
-        label="Email"
-        value={value.email}
-        style={styles.input}
-        onChangeText={(text) => setValue({ ...value, email: text })}
-        autoCapitalize="none"
-        secureTextEntry={false}
-        outlineStyle={{ borderRadius: 14 }}
-        mode="outlined"
-        onFocus={() => {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        }}
-      />
-      <TextInput
-        label="Password"
-        style={styles.input}
-        onChangeText={(text) =>
-          setValue({ ...value, password: text })
-        }
-        secureTextEntry={true}
-        autoCapitalize="none"
-        outlineStyle={{ borderRadius: 14 }}
-        mode="outlined"
-        onFocus={() => {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        }}
-      />
-    </View>
-  </Card.Content>
-</Card>
-
-<Button
-  mode="contained"
-  style={styles.button}
-  labelStyle={{ color: "white", fontSize: 18, fontWeight: "bold" }} // Style the button text
-  onPress={handleSignUp}
->
-  Sign Up
-</Button>
-<Text
-  style={styles.link}
-  onPress={() => navigation.navigate("Welcome")}
->
-  Go to Welcome Screen
-</Text>
-</View> */}
+      </SafeAreaView>
     </TouchableWithoutFeedback>
   );
 }

@@ -1,29 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Text, View, Image } from "react-native";
-import { TextInput, Button, Card } from "react-native-paper";
+import { TextInput, Button, Card, Icon } from "react-native-paper";
 import Slider from "@react-native-community/slider";
 import * as Haptics from "expo-haptics";
-import activityLevelLogo from "../../../assets/adaptive-icon.png";
 import signupScreenStyles from "../../screens/styles/signupScreenStyles.js";
 import { useThemeContext } from "../../context/ThemeContext.js";
-import { connectFirestoreEmulator } from "firebase/firestore";
 
 const ActivityLevelSection = ({ value, setValue, onNext }) => {
   const styles = signupScreenStyles();
   const { theme } = useThemeContext();
 
+  const [sliderValue, setSliderValue] = useState(0);
   const [customKcal, setCustomKcal] = useState("");
 
-  useEffect(() => {
-    // Cleanup function to reset state when the component unmounts
-    return () => {
-      setValue({ ...value, activityLevel: 0 });
-      setCustomKcal("");
-    };
-  }, []); // Empty dependency array ensures this effect runs only on unmount
-
   const getActivityLevel = (sliderValue) => {
-    console.log("Slider Value: ", sliderValue);
     if (sliderValue === 0) return "None";
     else if (sliderValue === 20) return "Sedentary (BMR x 0.2)";
     else if (sliderValue === 40) return "Lightly Active (BMR x 0.375)";
@@ -34,6 +24,24 @@ const ActivityLevelSection = ({ value, setValue, onNext }) => {
   const handleNext = () => {
     // Add validation logic for this section
     // Call onNext only if validation passes
+    if ((sliderValue === 100) & customKcal) {
+      setValue({
+        ...value,
+        maintenanceCalories: parseFloat(customKcal),
+        activityLevel: "",
+      });
+    } else {
+      setValue({
+        ...value,
+        activityLevel: getActivityLevel(sliderValue),
+        maintenanceCalories: null,
+      });
+    }
+
+    onNext();
+  };
+
+  const handleSkip = () => {
     onNext();
   };
 
@@ -50,7 +58,7 @@ const ActivityLevelSection = ({ value, setValue, onNext }) => {
           style={{
             fontSize: 28,
             fontWeight: "bold",
-            color: theme.colors.cardHeaderTextColor,
+            color: "black",
             textAlign: "center",
           }}
         >
@@ -60,7 +68,7 @@ const ActivityLevelSection = ({ value, setValue, onNext }) => {
           style={{
             paddingHorizontal: 10,
             fontSize: 16,
-            color: theme.colors.cardHeaderTextColor,
+            color: "black",
             textAlign: "center",
           }}
         >
@@ -79,29 +87,24 @@ const ActivityLevelSection = ({ value, setValue, onNext }) => {
         >
           <Card.Content>
             <View style={{ justifyContent: "center", width: "100%", gap: 10 }}>
-              <Image
-                source={activityLevelLogo}
-                style={{
-                  alignSelf: "center",
-                  width: 195,
-                  height: 54,
-                  margin: 20,
-                }}
-              />
-              {value.activityLevel !== 100 && (
+              <View style={{ alignSelf: "center" }}>
+                <Icon source="run-fast" color={"white"} size={80} />
+              </View>
+
+              {sliderValue !== 100 && (
                 <Text
                   style={{
                     fontSize: 18,
-                    color: theme.colors.cardHeaderTextColor,
+                    color: "white",
                     textAlign: "center",
                     fontWeight: "500",
                   }}
                 >
-                  {getActivityLevel(value.activityLevel)}
+                  {getActivityLevel(sliderValue)}
                 </Text>
               )}
 
-              {value.activityLevel === 100 && (
+              {sliderValue === 100 && (
                 <View
                   style={{
                     flexDirection: "row",
@@ -114,7 +117,7 @@ const ActivityLevelSection = ({ value, setValue, onNext }) => {
                   <Text
                     style={{
                       fontSize: 18,
-                      color: theme.colors.cardHeaderTextColor,
+                      color: "white",
                       textAlign: "center",
                       fontWeight: "500",
                     }}
@@ -132,7 +135,7 @@ const ActivityLevelSection = ({ value, setValue, onNext }) => {
                       borderBottomLeftRadius: 0,
                       borderBottomRightRadius: 0,
                       textAlign: "center",
-                      color: theme.colors.cardHeaderTextColor,
+                      color: "white",
                     }}
                     underlineColor="transparent"
                     activeOutlineColor="red"
@@ -146,7 +149,7 @@ const ActivityLevelSection = ({ value, setValue, onNext }) => {
                   <Text
                     style={{
                       fontSize: 18,
-                      color: theme.colors.cardHeaderTextColor,
+                      color: "white",
                       textAlign: "center",
                       fontWeight: "400",
                     }}
@@ -162,16 +165,17 @@ const ActivityLevelSection = ({ value, setValue, onNext }) => {
                 maximumValue={100}
                 minimumTrackTintColor={theme.colors.primary}
                 maximumTrackTintColor="rgba(169, 169, 169, 0.7)"
+                value={sliderValue}
                 onValueChange={(sliderValue) => {
-                  setValue({ ...value, activityLevel: sliderValue });
+                  setSliderValue(sliderValue);
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 }}
               />
-              {value.activityLevel === 0 && (
+              {sliderValue === 0 && (
                 <Text
                   style={{
                     fontSize: 14,
-                    color: theme.colors.cardHeaderTextColor,
+                    color: "white",
                     textAlign: "center",
                   }}
                 >
@@ -180,11 +184,11 @@ const ActivityLevelSection = ({ value, setValue, onNext }) => {
                 </Text>
               )}
 
-              {value.activityLevel === 20 && (
+              {sliderValue === 20 && (
                 <Text
                   style={{
                     fontSize: 14,
-                    color: theme.colors.cardHeaderTextColor,
+                    color: "white",
                     textAlign: "center",
                   }}
                 >
@@ -196,11 +200,11 @@ const ActivityLevelSection = ({ value, setValue, onNext }) => {
                 </Text>
               )}
 
-              {value.activityLevel === 40 && (
+              {sliderValue === 40 && (
                 <Text
                   style={{
                     fontSize: 14,
-                    color: theme.colors.cardHeaderTextColor,
+                    color: "white",
                     textAlign: "center",
                   }}
                 >
@@ -209,11 +213,11 @@ const ActivityLevelSection = ({ value, setValue, onNext }) => {
                 </Text>
               )}
 
-              {value.activityLevel === 60 && (
+              {sliderValue === 60 && (
                 <Text
                   style={{
                     fontSize: 14,
-                    color: theme.colors.cardHeaderTextColor,
+                    color: "white",
                     textAlign: "center",
                   }}
                 >
@@ -222,11 +226,11 @@ const ActivityLevelSection = ({ value, setValue, onNext }) => {
                 </Text>
               )}
 
-              {value.activityLevel === 80 && (
+              {sliderValue === 80 && (
                 <Text
                   style={{
                     fontSize: 14,
-                    color: theme.colors.cardHeaderTextColor,
+                    color: "white",
                     textAlign: "center",
                   }}
                 >
@@ -235,11 +239,11 @@ const ActivityLevelSection = ({ value, setValue, onNext }) => {
                 </Text>
               )}
 
-              {value.activityLevel === 100 && (
+              {sliderValue === 100 && (
                 <Text
                   style={{
                     fontSize: 14,
-                    color: theme.colors.cardHeaderTextColor,
+                    color: "white",
                     textAlign: "center",
                   }}
                 >
@@ -262,9 +266,13 @@ const ActivityLevelSection = ({ value, setValue, onNext }) => {
         <Button
           mode="contained"
           labelStyle={{
-            color: theme.colors.surface,
+            color: "black",
             fontSize: 18,
             fontWeight: "bold",
+          }}
+          style={{
+            backgroundColor: "white",
+            borderRadius: 8,
             width: "60%",
           }}
           onPress={handleNext}
@@ -274,12 +282,15 @@ const ActivityLevelSection = ({ value, setValue, onNext }) => {
         <Button
           mode="text"
           labelStyle={{
-            color: theme.colors.primary,
+            color: "white",
             fontSize: 18,
             fontWeight: "bold",
+          }}
+          style={{
+            borderRadius: 8,
             width: "60%",
           }}
-          onPress={handleNext}
+          onPress={handleSkip}
         >
           Skip
         </Button>

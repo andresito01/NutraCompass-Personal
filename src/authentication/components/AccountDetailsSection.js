@@ -1,23 +1,25 @@
-import React from "react";
-import { ScrollView, Text, View } from "react-native";
+import React, { useState } from "react";
+import { ScrollView, Text, View, TouchableOpacity } from "react-native";
 import { TextInput, Button, Card } from "react-native-paper";
 import * as Haptics from "expo-haptics";
 import signupScreenStyles from "../../screens/styles/signupScreenStyles.js";
+
 import { useThemeContext } from "../../context/ThemeContext.js";
 
-export default function AccountDetailsSection({ value, setValue, onNext }) {
+export default function AccountDetailsSection({
+  value,
+  setValue,
+  handleSignUp,
+}) {
   const styles = signupScreenStyles();
   const { theme } = useThemeContext();
 
-  const handleNext = () => {
-    // Add validation logic for this section
-    // Call onNext only if validation passes
-    onNext();
-  };
+  const [isSecureTextEntry, setIsSecureTextEntry] = useState(true);
 
   return (
     <ScrollView style={{ flex: 1, width: "100%" }}>
-      <View
+      <TouchableOpacity
+        activeOpacity={1}
         style={{
           alignItems: "center",
           paddingTop: 10,
@@ -28,7 +30,7 @@ export default function AccountDetailsSection({ value, setValue, onNext }) {
           style={{
             fontSize: 28,
             fontWeight: "bold",
-            color: theme.colors.cardHeaderTextColor,
+            color: "black",
             textAlign: "center",
           }}
         >
@@ -37,7 +39,7 @@ export default function AccountDetailsSection({ value, setValue, onNext }) {
         <Text
           style={{
             fontSize: 18,
-            color: theme.colors.cardHeaderTextColor,
+            color: "black",
             textAlign: "center",
           }}
         >
@@ -49,8 +51,8 @@ export default function AccountDetailsSection({ value, setValue, onNext }) {
             <View style={{ justifyContent: "center", width: "100%", gap: 10 }}>
               <TextInput
                 label="First Name"
-                value={value.firstName}
                 style={styles.input}
+                value={value.firstName}
                 onChangeText={(text) => setValue({ ...value, firstName: text })}
                 autoCapitalize="none"
                 outlineStyle={{ borderRadius: 14 }}
@@ -61,8 +63,8 @@ export default function AccountDetailsSection({ value, setValue, onNext }) {
               />
               <TextInput
                 label="Last Name"
-                value={value.lastName}
                 style={styles.input}
+                value={value.lastName}
                 onChangeText={(text) => setValue({ ...value, lastName: text })}
                 autoCapitalize="none"
                 outlineStyle={{ borderRadius: 14 }}
@@ -73,8 +75,8 @@ export default function AccountDetailsSection({ value, setValue, onNext }) {
               />
               <TextInput
                 label="Email"
-                value={value.email}
                 style={styles.input}
+                value={value.email}
                 onChangeText={(text) => setValue({ ...value, email: text })}
                 autoCapitalize="none"
                 secureTextEntry={false}
@@ -87,28 +89,42 @@ export default function AccountDetailsSection({ value, setValue, onNext }) {
               <TextInput
                 label="Password"
                 style={styles.input}
+                value={value.password}
                 onChangeText={(text) => setValue({ ...value, password: text })}
-                secureTextEntry={true}
+                secureTextEntry={isSecureTextEntry}
                 autoCapitalize="none"
                 outlineStyle={{ borderRadius: 14 }}
                 mode="outlined"
                 onFocus={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 }}
+                right={
+                  <TextInput.Icon
+                    icon="eye"
+                    onPress={() => setIsSecureTextEntry(!isSecureTextEntry)}
+                  />
+                }
               />
               <TextInput
                 label="Confirm Password"
                 style={styles.input}
+                value={value.confirmPassword}
                 onChangeText={(text) =>
                   setValue({ ...value, confirmPassword: text })
                 }
-                secureTextEntry={true}
+                secureTextEntry={isSecureTextEntry}
                 autoCapitalize="none"
                 outlineStyle={{ borderRadius: 14 }}
                 mode="outlined"
                 onFocus={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 }}
+                right={
+                  <TextInput.Icon
+                    icon="eye"
+                    onPress={() => setIsSecureTextEntry(!isSecureTextEntry)}
+                  />
+                }
               />
             </View>
           </Card.Content>
@@ -130,7 +146,7 @@ export default function AccountDetailsSection({ value, setValue, onNext }) {
             </View>
           </Card.Content>
         </Card>
-      </View>
+      </TouchableOpacity>
 
       <View
         style={{
@@ -144,14 +160,18 @@ export default function AccountDetailsSection({ value, setValue, onNext }) {
         <Button
           mode="contained"
           labelStyle={{
-            color: "white",
+            color: "black",
             fontSize: 18,
             fontWeight: "bold",
+          }}
+          style={{
+            backgroundColor: "white",
+            borderRadius: 8,
             width: "60%",
           }}
-          onPress={handleNext}
+          onPress={handleSignUp}
         >
-          Next
+          Sign Up
         </Button>
       </View>
     </ScrollView>

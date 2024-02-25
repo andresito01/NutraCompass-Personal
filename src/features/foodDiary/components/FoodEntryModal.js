@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Modal,
   View,
   Text,
   TouchableOpacity,
   FlatList,
-  SafeAreaView,
   TouchableWithoutFeedback,
   Keyboard,
   Animated,
@@ -22,70 +21,96 @@ import {
 } from "react-native-paper";
 import foodEntryModalStyles from "./styles/foodEntryModalStyles.js";
 import {
+  getNutrientsForFoodItem,
   searchFood,
   searchForFoodItemNutrients,
 } from "../api/EdamamFoodDB/edamamMethods.js";
 import BarcodeScanner from "./BarcodeScanner.js";
 import { useThemeContext } from "../../../context/ThemeContext.js";
+import { useFoodLog } from "../context/FoodLogContext.js";
 import FoodNutrientModal from "./FoodNutrientModal.js";
+
+console.log("Food Entry Modal Rendered.");
 
 const FoodEntryModal = React.memo(
   ({
     isVisible,
-    onSave,
     onCancel,
     activeFoodItem,
     setActiveFoodItem,
-    foodNutrientModalType,
-    setFoodNutrientModalType,
     activeMealSection,
     selectedDate,
+    isBuildingMeal, // New prop to indicate if building a meal
   }) => {
     const { theme } = useThemeContext();
+    const {
+      customMeals,
+      saveMealToFoodLog,
+      saveOrUpdateSingleFoodItemToFoodLog,
+      saveFoodToTempCustomMeal,
+    } = useFoodLog();
     const [searchTerm, setSearchTerm] = useState("");
     const [searchResults, setSearchResults] = useState([]);
-    // useEffect(
-    //   () =>
-    //     console.log(
-    //       "Search Results: " + JSON.stringify(searchResults, null, 1)
-    //     ),
-    //   [searchResults]
-    // );
+    const [showCustomMeals, setShowCustomMeals] = useState(false); // Track whether to show search results or custom meals
     const [isBarcodeScannerVisible, setIsBarcodeScannerVisible] =
       useState(false);
-    const [isFoodLoggedSnackBarVisible, setIsFoodLoggedSnackBarVisible] =
-      useState(false);
+    // State to manage snackbar visibility
+    const [isSnackbarVisible, setIsSnackbarVisible] = useState(false);
+    // State to track actions that should trigger the snackbar
+    const [snackbarTriggered, setSnackbarTriggered] = useState(false);
+    // State used to track which food entry item's icon button should be animated
+    const [selectedItem, setSelectedItem] = useState(null);
+
     const [isFoodNutrientModalVisible, setIsFoodNutrientModalVisible] =
       useState(false);
 
     const [selectedScale] = useState(new Animated.Value(1));
     const styles = foodEntryModalStyles();
 
+    // useEffect to toggle snackbar visibility when snackbarTriggered changes
+    useEffect(() => {
+      if (snackbarTriggered) {
+        setIsSnackbarVisible(true);
+        // Hide snackbar after 1000ms
+        const timeout = setTimeout(() => {
+          setIsSnackbarVisible(false);
+          setSnackbarTriggered(false); // Reset the trigger
+        }, 1000);
+
+        // Clear timeout on component unmount or when snackbarTriggered changes again
+        return () => clearTimeout(timeout);
+      }
+    }, [snackbarTriggered]);
+
+    // Function to handle toggling the snackbar
+    const toggleSnackbar = () => {
+      setSnackbarTriggered(true);
+    };
+
     const handleCloseFoodNutrientModal = () => {
       setIsFoodNutrientModalVisible(false);
     };
 
-    const handleOpenFoodNutrientModal = (title) => {
-      setFoodNutrientModalType(title);
+    const handleOpenFoodNutrientModal = () => {
       setIsFoodNutrientModalVisible(true);
     };
 
-    const handleViewFoodNutrients = (title, selectedFood) => {
+    const handleViewFoodNutrients = (selectedFood) => {
+      if (selectedFood.isCustomMeal) {
+        console.log("You need to process selectedFood because its a meal.");
+      }
       if (selectedFood) {
         // No need to format or fetch nutrient data, it's already available
 
         setActiveFoodItem(selectedFood);
 
-        handleOpenFoodNutrientModal(title);
+        handleOpenFoodNutrientModal();
 
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       } else {
         console.error("There is no selected food.");
       }
     };
-
-    const onToggleSnackBar = () => setIsFoodLoggedSnackBarVisible(true);
-    const onDismissSnackBar = () => setIsFoodLoggedSnackBarVisible(false);
 
     const handleBarcodeScanned = (resultsOrErrorMessage) => {
       console.log(
@@ -111,20 +136,95 @@ const FoodEntryModal = React.memo(
       }
     };
 
+    // Function to handle selecting an item
+    const handleSelectItem = (item) => {
+      setSelectedItem(item);
+    };
+
     const handleSaveFood = async (selectedFood) => {
+      // If not building a meal, an active meal section exists, selected date is valid,
+      // an active food item is selected, and the active food item is a custom meal
+      if (
+        !isBuildingMeal &&
+        activeMealSection &&
+        selectedDate &&
+        selectedFood &&
+        selectedFood?.isCustomMeal
+      ) {
+        // Save the custom meal to the food log
+        saveMealToFoodLog(activeMealSection.id, selectedDate, selectedFood);
+      }
+      // If not building a meal, an active meal section exists, selected date is valid,
+      // and an active food item is selected
+      else if (
+        !isBuildingMeal &&
+        activeMealSection &&
+        selectedDate &&
+        selectedFood
+      ) {
+        const updatedSelectedFood = await getNutrientsForFoodItem(selectedFood);
+
+        // Update existing/create the food entry with the provided details
+        saveOrUpdateSingleFoodItemToFoodLog(
+          activeMealSection.id,
+          selectedFood?.id || null,
+          updatedSelectedFood,
+          selectedDate
+        );
+      }
+      // If building a meal and the active food item is a custom meal
+      else if (isBuildingMeal && selectedFood?.isCustomMeal) {
+        // Save or update the custom meal
+        saveOrUpdateCustomMeal(selectedFood);
+      }
+      // If building a meal and the active food item is not a custom meal
+      else if (isBuildingMeal && selectedFood) {
+        const updatedSelectedFood = await getNutrientsForFoodItem(selectedFood);
+
+        // Save the active food item to the temporary custom meal
+        saveFoodToTempCustomMeal(updatedSelectedFood);
+      }
+      // If none of the above conditions are met
+      else {
+        // Log an error indicating an invalid state
+        console.error(
+          "Invalid state encountered while attempting to handle food entry: " +
+            "isBuildingMeal:",
+          isBuildingMeal,
+          ", activeMealSection:",
+          activeMealSection,
+          ", selectedDate:",
+          selectedDate,
+          ", selectedFood:",
+          selectedFood
+        );
+
+        return;
+      }
+
+      // Animate the save button
       Animated.timing(selectedScale, {
         toValue: 1,
         duration: 100,
         useNativeDriver: false,
-      }).start(() => {
-        onSave(selectedFood);
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        onToggleSnackBar();
+      }).start(async () => {
+        try {
+          // Provide feedback to the user
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          // Trigger snackbar
+          toggleSnackbar();
 
-        setTimeout(() => {
-          setIsFoodLoggedSnackBarVisible(false);
-          selectedScale.setValue(1); // Reset the scale value
-        }, 2000);
+          // Reset the scale value after a delay
+          setTimeout(() => {
+            setIsSnackbarVisible(false);
+            selectedScale.setValue(1);
+          }, 2000);
+        } catch (error) {
+          // Handle any errors that occur during the save operation
+          console.error("Error saving food:", error);
+          // Optionally, display an error message to the user
+          // You can use a Snackbar, Alert, or any other UI component for this purpose
+        }
       });
     };
 
@@ -148,7 +248,7 @@ const FoodEntryModal = React.memo(
     return (
       <Modal visible={isVisible} animationType="slide" transparent={true}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <SafeAreaView style={styles.modalContainer}>
+          <View style={styles.modalContainer}>
             <View style={styles.modalHeader}>
               <Appbar.Header
                 mode="center-aligned"
@@ -173,6 +273,7 @@ const FoodEntryModal = React.memo(
                 onIconPress={handleFoodSearch}
                 onSubmitEditing={handleFoodSearch}
                 mode="bar"
+                editable={!showCustomMeals ? true : false}
               />
               <Card
                 style={{
@@ -181,8 +282,10 @@ const FoodEntryModal = React.memo(
                 }}
               >
                 <Card.Actions>
-                  <Button>All</Button>
-                  <Button>My Meals</Button>
+                  <Button onPress={() => setShowCustomMeals(false)}>All</Button>
+                  <Button onPress={() => setShowCustomMeals(true)}>
+                    My Meals
+                  </Button>
                 </Card.Actions>
               </Card>
               <Card
@@ -198,25 +301,36 @@ const FoodEntryModal = React.memo(
               </Card>
               <FlatList
                 styles={styles.flatlist}
-                data={searchResults}
+                data={showCustomMeals ? customMeals : searchResults} // Show custom meals or search results based on button click
                 keyExtractor={(item) => item.foodId}
-                renderItem={({ item }) => (
+                renderItem={({ item, index }) => (
                   <TouchableOpacity
-                    onPress={() => handleViewFoodNutrients("Add Food", item)}
+                    key={`${item.foodId}_${index}`}
+                    onPress={() => handleViewFoodNutrients(item)}
                     style={styles.foodItemContainer}
                   >
                     <View style={styles.foodInfoContainer}>
                       <Text style={styles.foodLabel}>{item.foodLabel}</Text>
                       <View style={{ flexDirection: "row", gap: 5 }}>
                         <Text style={styles.foodLabelCalories}>
-                          {Math.round(
-                            parseFloat(item.nutrients.ENERC_KCAL?.quantity)
-                          )}{" "}
+                          {showCustomMeals
+                            ? Math.round(
+                                parseFloat(
+                                  item?.nutrients?.ENERC_KCAL?.quantity
+                                )
+                              )
+                            : Math.round(
+                                parseFloat(item?.defaultNutrients?.ENERC_KCAL)
+                              )}{" "}
                           cal,
                         </Text>
                         <Text style={styles.foodLabelServingSize}>
-                          {Math.round(item?.activeMeasure?.weight)}{" "}
-                          {item?.activeMeasure?.label}
+                          {showCustomMeals
+                            ? 1
+                            : Math.round(item?.activeMeasure?.weight)}{" "}
+                          {showCustomMeals
+                            ? "meal"
+                            : item?.activeMeasure?.label}
                           {item?.foodBrand ? "," : ""}
                         </Text>
                         <Text style={styles.foodLabelServingSize}>
@@ -232,10 +346,17 @@ const FoodEntryModal = React.memo(
                       <IconButton
                         iconColor={theme.colors.primary}
                         containerColor={theme.colors.screenBackground}
-                        icon={isFoodLoggedSnackBarVisible ? "check" : "plus"}
+                        icon={
+                          selectedItem === item && isSnackbarVisible
+                            ? "check"
+                            : "plus"
+                        }
                         color={theme.colors.cardHeaderTextColor}
                         size={24}
-                        onPress={() => handleSaveFood(item)}
+                        onPress={() => {
+                          handleSelectItem(item); // Select the current item
+                          handleSaveFood(item); // Save the selected food
+                        }}
                       />
                     </Animated.View>
                   </TouchableOpacity>
@@ -253,8 +374,8 @@ const FoodEntryModal = React.memo(
             )}
 
             <Snackbar
-              visible={isFoodLoggedSnackBarVisible}
-              onDismiss={onDismissSnackBar}
+              visible={isSnackbarVisible}
+              onDismiss={() => setIsSnackbarVisible(false)}
               style={{ backgroundColor: theme.colors.surface }}
             >
               <Text
@@ -267,18 +388,22 @@ const FoodEntryModal = React.memo(
                 Food Logged!
               </Text>
             </Snackbar>
-            {/* Food Nutrient Modal */}
 
-            <FoodNutrientModal
-              isVisible={isFoodNutrientModalVisible}
-              closeModal={handleCloseFoodNutrientModal}
-              activeFoodItem={activeFoodItem}
-              setActiveFoodItem={setActiveFoodItem}
-              foodNutrientModalType={foodNutrientModalType}
-              activeMealSection={activeMealSection}
-              selectedDate={selectedDate}
-            />
-          </SafeAreaView>
+            {/* Food Nutrient Modal */}
+            {activeFoodItem && (
+              <FoodNutrientModal
+                isVisible={isFoodNutrientModalVisible}
+                closeModal={handleCloseFoodNutrientModal}
+                activeFoodItem={activeFoodItem}
+                setActiveFoodItem={setActiveFoodItem}
+                foodNutrientModalType={"Add Food"}
+                activeMealSection={activeMealSection}
+                selectedDate={selectedDate}
+                isBuildingMeal={isBuildingMeal}
+                toggleSnackbar={toggleSnackbar}
+              />
+            )}
+          </View>
         </TouchableWithoutFeedback>
       </Modal>
     );

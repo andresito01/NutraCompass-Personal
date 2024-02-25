@@ -12,6 +12,7 @@ const dailyNutritionGoalsCustomizationModalStyles = () => {
     header: {
       minWidth: "100%",
       padding: 10,
+      paddingTop: 20,
       justifyContent: "flex-end",
     },
     closeModalButton: {
@@ -20,7 +21,7 @@ const dailyNutritionGoalsCustomizationModalStyles = () => {
     },
     formContainer: {
       position: "absolute",
-      top: screenHeight * 0.1, // Set top to about 20% below the height
+      top: screenHeight * 0.15, // Set top to about 20% below the height
       width: "80%",
       padding: 10,
       elevation: 4,

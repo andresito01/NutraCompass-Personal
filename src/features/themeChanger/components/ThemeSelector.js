@@ -1,6 +1,14 @@
 import React from "react";
-import { ScrollView, View } from "react-native";
+import { ScrollView, View, Dimensions } from "react-native";
 import { Card, Title } from "react-native-paper";
+import * as Haptics from "expo-haptics";
+import { useThemeContext } from "../../../context/ThemeContext.js";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  interpolate,
+} from "react-native-reanimated";
 import {
   Default,
   Gold,
@@ -16,7 +24,6 @@ import {
   AllPurple,
   AllTeal,
 } from "../../../../themes.js";
-import { useThemeContext } from "../../../context/ThemeContext.js";
 
 const themes = [
   Default,
@@ -34,94 +41,108 @@ const themes = [
   AllTeal,
 ];
 
-const ThemeSelector = () => {
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const MIN_WIDTH = SCREEN_WIDTH / 2.2;
+
+const ThemeSelector = ({ renderStructure }) => {
   const { toggleTheme, theme, mode } = useThemeContext();
+
+  const width = useSharedValue(SCREEN_WIDTH / 2); // Assuming you have SCREEN_WIDTH defined
 
   const handleThemeChange = (selectedTheme) => {
     toggleTheme(selectedTheme);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
 
   const renderThemeButtons = () => {
-    return themes.map((selectedTheme, index) => (
-      <Card
-        key={index}
-        style={{
-          marginVertical: 8,
-          elevation: 4,
-        }}
-        onPress={() => handleThemeChange(selectedTheme)}
-      >
-        <Card.Content>
-          <Title
-            style={{
-              color:
-                mode === "dark"
-                  ? selectedTheme.dark.colors.cardHeaderTextColor
-                  : selectedTheme.light.colors.cardHeaderTextColor,
-            }}
-          >
-            {selectedTheme.name} Theme
-          </Title>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-around",
-              marginTop: 16,
-            }}
-          >
-            <View
-              style={{
-                backgroundColor:
-                  mode === "dark"
-                    ? selectedTheme.dark.colors.primary
-                    : selectedTheme.light.colors.primary,
-                width: 40,
-                height: 40,
-                borderRadius: 8,
-              }}
-            />
-            <View
-              style={{
-                backgroundColor:
-                  mode === "dark"
-                    ? selectedTheme.dark.colors.secondary
-                    : selectedTheme.light.colors.secondary,
-                width: 40,
-                height: 40,
-                borderRadius: 8,
-              }}
-            />
-            <View
-              style={{
-                backgroundColor:
-                  mode === "dark"
-                    ? selectedTheme.dark.colors.cardBackgroundColor
-                    : selectedTheme.light.colors.cardBackgroundColor,
-                width: 40,
-                height: 40,
-                borderRadius: 8,
-              }}
-            />
-
-            <View
-              style={{
-                backgroundColor:
-                  mode === "dark"
-                    ? selectedTheme.dark.colors.cardBackgroundColorLowOpacity
-                    : selectedTheme.light.colors.cardBackgroundColorLowOpacity,
-                width: 40,
-                height: 40,
-                borderRadius: 8,
-              }}
-            />
+    if (renderStructure === "structure1") {
+      const themeRows = [];
+      for (let i = 0; i < themes.length; i += 2) {
+        const theme1 = themes[i];
+        const theme2 = themes[i + 1];
+        themeRows.push(
+          <View key={i} style={{ flexDirection: "row", marginHorizontal: 10 }}>
+            <ThemeCard theme={theme1} renderStructure={renderStructure} />
+            {theme2 && <ThemeCard theme={theme2} />}
           </View>
-        </Card.Content>
-      </Card>
-    ));
+        );
+      }
+      return themeRows;
+    } else if (renderStructure === "structure2") {
+      return themes.map((theme, index) => (
+        <ThemeCard key={index} theme={theme} />
+      ));
+    }
+  };
+
+  const ThemeCard = ({ theme }) => {
+    return (
+      <View style={[{ flex: 1 }]}>
+        <Card
+          style={{
+            margin: 8,
+            elevation: 4,
+            minWidth: 130,
+          }}
+          onPress={() => handleThemeChange(theme)}
+        >
+          <Card.Content>
+            <Title
+              style={{
+                textAlign: "center",
+                alignSelf: "center",
+                color:
+                  mode === "dark"
+                    ? theme.dark.colors.cardHeaderTextColor
+                    : theme.light.colors.cardHeaderTextColor,
+              }}
+            >
+              {theme.name}
+            </Title>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-evenly",
+                marginTop: 16,
+                gap: 10,
+              }}
+            >
+              <View
+                style={{
+                  backgroundColor:
+                    mode === "dark"
+                      ? theme.dark.colors.primary
+                      : theme.light.colors.primary,
+                  minWidth: 40,
+                  minHeight: 40,
+                  borderRadius: 8,
+                  aspectRatio: 1,
+                }}
+              />
+              <View
+                style={{
+                  backgroundColor:
+                    mode === "dark"
+                      ? theme.dark.colors.secondary
+                      : theme.light.colors.secondary,
+                  minWidth: 40,
+                  minHeight: 40,
+                  borderRadius: 8,
+                }}
+              />
+            </View>
+          </Card.Content>
+        </Card>
+      </View>
+    );
   };
 
   return (
-    <ScrollView contentContainerStyle={{ padding: 16 }}>
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+      style={{ width: "100%" }}
+      contentContainerStyle={{ alignItems: "center" }}
+    >
       {renderThemeButtons()}
     </ScrollView>
   );

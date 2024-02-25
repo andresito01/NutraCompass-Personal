@@ -17,6 +17,8 @@ import mealSectionCustomizationModalStyles from "./styles/mealSectionCustomizati
 import Feather from "react-native-vector-icons/Feather";
 import { useThemeContext } from "../../../context/ThemeContext.js";
 
+console.log("Meal Section Customization Modal Rendered.");
+
 const MealSectionCustomizationModal = ({ isVisible, closeModal }) => {
   const styles = mealSectionCustomizationModalStyles();
   const { theme } = useThemeContext();
@@ -230,7 +232,7 @@ const MealSectionCustomizationModal = ({ isVisible, closeModal }) => {
     >
       <TouchableWithoutFeedback style={{ flex: 1 }} onPress={Keyboard.dismiss}>
         <View style={styles.modalContent}>
-          <View style={styles.modalButtonHeader}>
+          <View style={{ ...styles.modalButtonHeader, paddingTop: 20 }}>
             <TouchableOpacity
               style={styles.closeModalButton}
               onPress={handleCloseModal}

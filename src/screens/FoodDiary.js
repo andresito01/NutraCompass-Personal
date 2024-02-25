@@ -1,7 +1,13 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Text, View, SectionList, Dimensions } from "react-native";
+import React, { useState, useRef, useEffect, useMemo } from "react";
+import {
+  Text,
+  View,
+  SectionList,
+  Dimensions,
+  TouchableOpacity,
+} from "react-native";
 import * as Haptics from "expo-haptics";
-import { Card, Button, IconButton } from "react-native-paper";
+import { Card, Button, IconButton, Divider } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
 import { useIsFocused } from "@react-navigation/native";
 import FoodEntryModal from "../features/foodDiary/components/FoodEntryModal.js";
@@ -18,19 +24,33 @@ import { useUserSettings } from "../features/userSettings/context/UserSettingsCo
 import { useThemeContext } from "../context/ThemeContext.js";
 import CarouselRenderItemComponent from "../features/foodDiary/components/CarouselRenderItemComponent.js";
 import CarouselWithIndicators from "../features/foodDiary/components/CarouselWithIndicators.js";
+import {
+  Menu,
+  MenuProvider,
+  MenuOptions,
+  MenuOption,
+  MenuTrigger,
+} from "react-native-popup-menu";
+import { Entypo } from "@expo/vector-icons";
+// import { SimpleLineIcons } from "@expo/vector-icons";
+// import { EvilIcons } from "@expo/vector-icons";
 
 const { height: screenHeight, width: screenWidth } = Dimensions.get("window");
 
 export default function FoodDiaryScreen() {
   const styles = foodDiaryScreenStyles();
   const { theme, mode } = useThemeContext();
-  const { mealSections, foodEntries, saveFoodLogEntry } = useFoodLog();
+  const {
+    mealSections,
+    foodEntries,
+    calculateTotalCaloriesAndMacros,
+    totalDailyCaloriesAndMacrosConsumed,
+    selectedDate,
+    setSelectedDate,
+  } = useFoodLog();
   const { getNutritionalGoals } = useUserSettings();
-  const { calorieGoal } = getNutritionalGoals();
+  const { calorieGoal, macroGoals } = getNutritionalGoals();
   const [activeMealSection, setActiveMealSection] = useState(null);
-  const [selectedDate, setSelectedDate] = useState(
-    new Date().toISOString().split("T")[0]
-  );
   const [activeFoodItem, setActiveFoodItem] = useState({});
 
   const [isFoodEntryModalVisible, setIsFoodEntryModalVisible] = useState(false);
@@ -48,36 +68,31 @@ export default function FoodDiaryScreen() {
   ] = useState(false);
   const [isFoodNutrientModalVisible, setIsFoodNutrientModalVisible] =
     useState(false);
-  const [foodNutrientModalType, setFoodNutrientModalType] = useState("");
+  const [collapsedSections, setCollapsedSections] = useState([]);
+  const [sections, setSections] = useState([]);
+  const [isMealSectionMenuVisible, setIsMealSectionMenuVisible] =
+    useState(false);
 
   const isFocused = useIsFocused();
-  const flatListRef = useRef(null);
 
-  const calculateTotalCalories = (entries) => {
-    if (!Array.isArray(entries)) {
-      return 0;
-    }
+  useEffect(() => {
+    setRefreshSectionList(true);
+    updateSections();
+  }, [selectedDate, foodEntries, mealSections]);
 
-    return entries.reduce((total, entry) => {
-      if (entry && entry?.nutrients?.ENERC_KCAL?.quantity) {
-        const entryCalories = parseFloat(
-          entry?.nutrients?.ENERC_KCAL?.quantity
-        );
-
-        return total + entryCalories;
-      } else {
-        return total;
-      }
-    }, 0);
+  const toggleMealSectionOptionsMenu = (sectionId) => {
+    console.log("Meal Id: " + sectionId);
+    setIsMenuVisible(!isMenuVisible);
   };
 
-  const handleAddEntry = (mealType) => {
+  const handleDeleteMealSectionEntries = () => {
+    // Implement your delete functionality here
+    console.log("Delete section");
+  };
+
+  const handleOpenFoodEntryModal = (mealType) => {
     setActiveMealSection(mealType);
     setIsFoodEntryModalVisible(true);
-  };
-
-  const handleSaveEntry = (mealType, selectedFood) => {
-    saveFoodLogEntry(mealType, selectedFood, selectedDate);
   };
 
   const handleCloseFoodEntryModal = () => {
@@ -113,28 +128,11 @@ export default function FoodDiaryScreen() {
     setIsFoodNutrientModalVisible(false);
   };
 
-  const handleOpenFoodNutrientModal = (title, activeItem) => {
-    setFoodNutrientModalType(title);
+  const handleOpenFoodNutrientModal = (activeItem) => {
     setActiveFoodItem(activeItem);
     setIsFoodNutrientModalVisible(true);
   };
 
-  const filteredEntriesByMeal = {};
-  mealSections.forEach((section) => {
-    // Use optional chaining here to handle potential undefined properties
-    if (foodEntries?.[section.id]) {
-      filteredEntriesByMeal[section.id] = foodEntries[section.id].filter(
-        (entry) => entry?.date === selectedDate
-      );
-    }
-  });
-
-  const calorieProgressBarPercentage =
-    calculateTotalCalories(
-      mealSections.flatMap((section) => filteredEntriesByMeal[section.id])
-    ) / calorieGoal;
-
-  const [collapsedSections, setCollapsedSections] = useState([]);
   const toggleSection = (sectionId) => {
     setCollapsedSections((prev) =>
       prev.includes(sectionId)
@@ -142,8 +140,6 @@ export default function FoodDiaryScreen() {
         : [...prev, sectionId]
     );
   };
-
-  const [sections, setSections] = useState([]);
 
   const updateSections = () => {
     const newSections = mealSections
@@ -164,14 +160,19 @@ export default function FoodDiaryScreen() {
       });
 
     setSections(newSections);
+    setRefreshSectionList(false); // Set refreshing back to false after updating sections
   };
 
-  const toggleOptions = (sectionId) => {
-    console.log("Toggle Options");
-  };
+  // Calories remaining in relation to the daily calorie goal
+  const caloriesRemaining =
+    calorieGoal - totalDailyCaloriesAndMacrosConsumed.calories;
+
+  const calorieProgressBarPercentage =
+    totalDailyCaloriesAndMacrosConsumed.calories / calorieGoal;
 
   const renderSectionHeader = ({ section }) => {
-    //console.log("Meal Section Data: " + JSON.stringify(section, null, 1));
+    const totalSectionCaloriesAndMacrosConsumed =
+      calculateTotalCaloriesAndMacros(section.data);
     return (
       <Card style={styles.mealSectionHeaderContainer}>
         <Card.Content
@@ -194,7 +195,7 @@ export default function FoodDiaryScreen() {
             }}
           >
             <Text style={styles.totalMealSectionCalories}>
-              {Math.round(calculateTotalCalories(section.data))}
+              {Math.round(totalSectionCaloriesAndMacrosConsumed.calories)}
             </Text>
             <IconButton
               icon={"dots-hexagon"}
@@ -211,18 +212,176 @@ export default function FoodDiaryScreen() {
   };
 
   const renderItem = ({ item, section }) => {
-    //console.log("Item: " + JSON.stringify(item, null, 2));
     return (
       !collapsedSections.includes(section.id) && (
         <SwipeableFoodEntryListItem
           item={item}
           foodEntryItems={section.data}
           mealType={item.mealType}
-          handleOpenFoodNutrientModal={(title, activeItem) =>
-            handleOpenFoodNutrientModal(title, activeItem)
+          handleOpenFoodNutrientModal={(activeItem) =>
+            handleOpenFoodNutrientModal(activeItem)
           }
         />
       )
+    );
+  };
+
+  // Meal Section Toggle Action Menu Option
+  const QuickAddToMealSection = ({ text, value, iconName, iconColor }) => (
+    <MenuOption
+      onSelect={() => console.log(`You clicked ${value}`)}
+      customStyles={{
+        optionWrapper: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+        },
+      }}
+    >
+      <Text style={{ color: theme.colors.cardHeaderTextColor }}>{text}</Text>
+      <Entypo name={iconName} size={24} color={iconColor} />
+    </MenuOption>
+  );
+
+  // Meal Section Toggle Action Menu Option
+  const DeleteAllMealSectionEntries = ({
+    text,
+    value,
+    iconName,
+    iconColor,
+  }) => (
+    <MenuOption
+      onSelect={() => console.log(`You clicked ${value}`)}
+      customStyles={{
+        optionWrapper: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+        },
+      }}
+    >
+      <Text style={{ color: theme.colors.cardHeaderTextColor }}>{text}</Text>
+      <Entypo name={iconName} size={24} color={iconColor} />
+    </MenuOption>
+  );
+
+  // Meal Section Toggle Action Menu Option
+  const CopyMealSectionFromDate = ({ text, value, iconName, iconColor }) => (
+    <MenuOption
+      onSelect={() => console.log(`You clicked ${value}`)}
+      customStyles={{
+        optionWrapper: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+        },
+      }}
+    >
+      <Text style={{ color: theme.colors.cardHeaderTextColor }}>{text}</Text>
+      <Entypo name={iconName} size={24} color={iconColor} />
+    </MenuOption>
+  );
+
+  // Meal Section Toggle Action Menu Option
+  const SaveMealSectionEntriesAsCustomMeal = ({
+    text,
+    value,
+    iconName,
+    iconColor,
+  }) => (
+    <MenuOption
+      onSelect={() => console.log(`You clicked ${value}`)}
+      customStyles={{
+        optionWrapper: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+        },
+      }}
+    >
+      <Text style={{ color: theme.colors.cardHeaderTextColor }}>{text}</Text>
+      <Entypo name={iconName} size={24} color={iconColor} />
+    </MenuOption>
+  );
+
+  // Meal Section Toggle Action Menu Option
+  const CopyMealSectionToDate = ({ text, value, iconName, iconColor }) => (
+    <MenuOption
+      onSelect={() => console.log(`You clicked ${value}`)}
+      customStyles={{
+        optionWrapper: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+        },
+      }}
+    >
+      <Text style={{ color: theme.colors.cardHeaderTextColor }}>{text}</Text>
+      <Entypo name={iconName} size={24} color={iconColor} />
+    </MenuOption>
+  );
+
+  // Meal Section Toggle Action Menu
+  const MealSectionToggleMenu = () => {
+    return (
+      <Menu
+        style={{ marginRight: 10 }}
+        visible={isMealSectionMenuVisible}
+        onDismiss={() => setIsMealSectionMenuVisible(false)}
+      >
+        <MenuTrigger style={styles.footerButton}>
+          <Entypo
+            name="dots-three-horizontal"
+            size={24}
+            color={theme.colors.cardHeaderTextColor}
+          />
+        </MenuTrigger>
+        <MenuOptions
+          customStyles={{
+            optionsContainer: {
+              borderRadius: 10,
+              borderWidth: 1,
+              borderColor: theme.colors.cardBorderColor,
+              backgroundColor: theme.colors.surface,
+            },
+          }}
+        >
+          <QuickAddToMealSection
+            text="Quick Add"
+            value="Quick Add"
+            iconName="add-to-list"
+            iconColor={"#53E032"}
+          />
+          <Divider />
+          <DeleteAllMealSectionEntries
+            text="Clear All Entries"
+            value="Clear All Entries"
+            iconName="trash"
+            iconColor={"#FE9089"}
+          />
+          <Divider />
+          <CopyMealSectionFromDate
+            text="Copy From Date"
+            value="Copy From Date"
+            iconName="cycle"
+            iconColor={"#FED589"}
+          />
+          <Divider />
+          <CopyMealSectionToDate
+            text="Copy To Date"
+            value="Copy From Date"
+            iconName="copy"
+            iconColor={"lightblue"}
+          />
+          <Divider />
+          <SaveMealSectionEntriesAsCustomMeal
+            text="Save as Meal"
+            value="Save as Meal"
+            iconName="database"
+            iconColor={"#9089FE"}
+          />
+        </MenuOptions>
+      </Menu>
     );
   };
 
@@ -234,63 +393,68 @@ export default function FoodDiaryScreen() {
             style={styles.footerButton}
             mode="elevated"
             onPress={() => {
-              handleAddEntry(section);
+              handleOpenFoodEntryModal(section);
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             }}
           >
             Add Food
           </Button>
-          <IconButton
-            size={28}
-            icon={"dots-horizontal"}
-            style={{ ...styles.footerButton, margin: 0, padding: 0 }}
-            onPress={() => toggleOptions(section.id)}
-          >
-            {collapsedSections.includes(section.id) ? "Expand" : "Collapse"}
-          </IconButton>
+
+          <MealSectionToggleMenu />
         </View>
       )
     );
   };
 
-  // Calculate total calories and remaining calories
-  const totalCalories = calculateTotalCalories(
-    mealSections.flatMap((section) => filteredEntriesByMeal[section.id])
-  );
-
-  const caloriesRemaining = calorieGoal - totalCalories;
-
-  const carouselHeight = screenHeight * 0.22; // Set the height to 22% of the screen height
+  const carouselHeight = screenHeight * 0.27; // Set the height to 22% of the screen height
   const carouselWidth = screenWidth; // Set the width to 100% of the screen width
 
   const carouselSlides = [
     {
-      type: "CaloriesProgressSection",
+      type: "CaloriesAndWaterProgressSection",
       calorieGoal: calorieGoal,
-      totalCalories: totalCalories,
+      totalCalories: totalDailyCaloriesAndMacrosConsumed.calories,
       caloriesRemaining: caloriesRemaining,
       calorieProgressBarPercentage: calorieProgressBarPercentage,
     },
     {
       type: "MacroProgressSection",
+      carbsData: {
+        percentage:
+          totalDailyCaloriesAndMacrosConsumed.carbs /
+          macroGoals.carb.dailyGrams,
+        color: "orange",
+        label: "Carbs",
+        totalGramsGoal: macroGoals.carb.dailyGrams,
+        consumedGrams: totalDailyCaloriesAndMacrosConsumed.carbs, // Example value, replace with actual data
+      },
+      proteinData: {
+        percentage:
+          totalDailyCaloriesAndMacrosConsumed.protein /
+          macroGoals.protein.dailyGrams,
+        color: "green",
+        label: "Protein",
+        totalGramsGoal: macroGoals.protein.dailyGrams,
+        consumedGrams: totalDailyCaloriesAndMacrosConsumed.protein, // Example value, replace with actual data
+      },
+      fatData: {
+        percentage:
+          totalDailyCaloriesAndMacrosConsumed.fat / macroGoals.fat.dailyGrams,
+        color: "red",
+        label: "Fat",
+        totalGramsGoal: macroGoals.fat.dailyGrams,
+        consumedGrams: totalDailyCaloriesAndMacrosConsumed.fat, // Example value, replace with actual data
+      },
     },
-    {
-      type: "DailyNutritionPerformanceSummary",
-      calorieGoal: calorieGoal,
-      totalCalories: totalCalories,
-      caloriesRemaining: caloriesRemaining,
-    },
+    // {
+    //   type: "DailyNutritionPerformanceSummary",
+    //   calorieGoal: calorieGoal,
+    //   totalCalories: totalDailyCaloriesAndMacrosConsumed.calories,
+    //   caloriesRemaining: caloriesRemaining,
+    // },
   ];
 
   const [refreshSectionList, setRefreshSectionList] = useState(false);
-
-  useEffect(() => {
-    setRefreshSectionList(true);
-    console.log("useEffect Running. Section List Refreshing.");
-    updateSections();
-    console.log("useEffect Ran. Section List Done Refreshing.");
-    setRefreshSectionList(false);
-  }, [selectedDate, foodEntries, mealSections]);
 
   return (
     <View style={styles.safeAreaView}>
@@ -314,18 +478,30 @@ export default function FoodDiaryScreen() {
           theme={theme}
         />
       </View>
-      <SectionList
-        ref={flatListRef}
-        sections={sections}
-        keyExtractor={(item, index) => item.id}
-        onRefresh={updateSections}
-        refreshing={refreshSectionList}
-        renderItem={renderItem}
-        renderSectionHeader={renderSectionHeader}
-        renderSectionFooter={renderSectionFooter}
-        stickySectionHeadersEnabled
-        contentContainerStyle={{ paddingBottom: 100 }}
-      />
+
+      <View
+        style={{
+          backgroundColor: theme.colors.screenBackground,
+          flex: 1,
+        }}
+      >
+        <SectionList
+          sections={sections}
+          keyExtractor={(item, index) => item.id}
+          onRefresh={updateSections}
+          refreshing={refreshSectionList}
+          renderItem={renderItem}
+          renderSectionHeader={renderSectionHeader}
+          renderSectionFooter={renderSectionFooter}
+          stickySectionHeadersEnabled
+          contentContainerStyle={{ flexGrow: 1 }}
+          style={{
+            marginBottom: 16,
+            backgroundColor: theme.colors.screenBackground,
+          }}
+        />
+      </View>
+
       <FoodlogFabGroupMenu
         isFocused={isFocused}
         openMealSectionCustomizationModal={
@@ -338,19 +514,16 @@ export default function FoodDiaryScreen() {
           handleOpenDailyNutritionGoalsCalculationModal
         }
       />
+
       {/* Food Entry Modal opens when Add Food button is clicked */}
       <FoodEntryModal
         isVisible={isFoodEntryModalVisible}
-        onSave={(selectedFood) =>
-          handleSaveEntry(activeMealSection.id, selectedFood)
-        }
         onCancel={handleCloseFoodEntryModal}
         activeFoodItem={activeFoodItem}
         setActiveFoodItem={setActiveFoodItem}
-        foodNutrientModalType={foodNutrientModalType}
-        setFoodNutrientModalType={setFoodNutrientModalType}
         activeMealSection={activeMealSection}
         selectedDate={selectedDate}
+        isBuildingMeal={false}
       />
       {/* Meal Section Customization Modal opens when the Fab Group action button called Customize Meal Names is clicked */}
       <MealSectionCustomizationModal
@@ -368,14 +541,14 @@ export default function FoodDiaryScreen() {
         closeModal={handleCloseDailyNutritionGoalsCalculationModal}
       />
       {/* Food Nutrient Modal */}
-
       <FoodNutrientModal
         isVisible={isFoodNutrientModalVisible}
         closeModal={handleCloseFoodNutrientModal}
         activeFoodItem={activeFoodItem}
         setActiveFoodItem={setActiveFoodItem}
-        foodNutrientModalType={foodNutrientModalType}
+        foodNutrientModalType={"Edit Entry"}
         selectedDate={selectedDate}
+        isBuildingMeal={false}
       />
     </View>
   );

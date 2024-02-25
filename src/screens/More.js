@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, View, Pressable } from "react-native";
+import { Text, View, Pressable, SafeAreaView } from "react-native";
 import Feather from "react-native-vector-icons/Feather";
 import { Card } from "react-native-paper";
 import { loggingOut } from "../authentication/api/FirebaseAPI/authenticationMethods.js";
@@ -22,19 +22,20 @@ function MoreScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text
           style={{
             color: theme.colors.cardHeaderTextColor,
             alignSelf: "center",
+            fontSize: 18,
           }}
         >
           More
         </Text>
       </View>
       {/* Customize Goals  */}
-      <Pressable
+      {/* <Pressable
         onPress={() => navigation.navigate("Goals")}
         style={styles.row}
       >
@@ -51,7 +52,7 @@ function MoreScreen() {
           color={theme.colors.cardHeaderTextColor}
           size={24}
         />
-      </Pressable>
+      </Pressable> */}
 
       {/* Theme Palette  */}
       <Pressable
@@ -96,7 +97,7 @@ function MoreScreen() {
 
         <Text style={styles.text}>Logout</Text>
       </Pressable>
-    </View>
+    </SafeAreaView>
   );
 }
 

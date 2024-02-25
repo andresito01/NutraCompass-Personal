@@ -11,7 +11,16 @@ const dashboardScreenStyles = () => {
       flex: 1,
       backgroundColor: theme.colors.screenBackground,
       alignItems: "center",
-      justifyContent: "center",
+      paddingTop: "5%",
+      paddingBottom: "10%",
+    },
+    header: {
+      width: "100%",
+      height: "10%",
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: 10,
     },
     text: {
       color: theme.colors.cardHeaderTextColor,

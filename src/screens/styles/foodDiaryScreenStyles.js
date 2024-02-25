@@ -16,6 +16,7 @@ const foodDiaryScreenStyles = () => {
     safeAreaView: {
       flex: 1,
       backgroundColor: theme.colors.screenBackground,
+      paddingBottom: "25%",
     },
     scrollViewContainer: {
       flex: 1,

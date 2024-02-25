@@ -51,9 +51,9 @@ const signinScreenStyles = () => {
       padding: 10,
     },
     input: {
-      backgroundColor: "transparent", // Grayish background for text inputs
+      backgroundColor: "transparent",
       paddingHorizontal: 16,
-      color: paperTheme.colors.text, // Text color from the theme
+      color: paperTheme.colors.text,
     },
     button: {
       backgroundColor: paperTheme.colors.primary,
