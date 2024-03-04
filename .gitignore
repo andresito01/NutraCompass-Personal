@@ -38,12 +38,8 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
-#Firebase SDK
-src/config/keys.js
-
-# Features API Keys
-src/features/foodDiary/api/EdamamFoodDB/keys.js
-src/features/workoutDiary/api/ExerciseDB/keys.js
+# Constants
+/constants.js
 
 # more
 .o

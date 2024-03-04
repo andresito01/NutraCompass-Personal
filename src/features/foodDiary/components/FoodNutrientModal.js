@@ -45,7 +45,6 @@ const FoodNutrientModal = ({
     saveOrUpdateCustomMeal,
     saveFoodToTempCustomMeal,
     saveMealToFoodLog,
-    tempCustomMeal,
   } = useFoodLog();
   const { getNutritionalGoals } = useUserSettings();
   const { calorieGoal, macroGoals } = getNutritionalGoals();
@@ -110,10 +109,10 @@ const FoodNutrientModal = ({
             nutrients: totalNutrients,
           }));
 
-          setDisableInputs(false); // Disable inputs for meal items
+          setDisableInputs(false); // If activeFoodItem is a meal and adding it to food log then don't disable inputs
         } else {
           // Process individual food item
-          setDisableInputs(false); // Enable inputs otherwise
+          setDisableInputs(false); // If processing an individual food item then don't disable inputs
           // Check if activeFoodItemOneServing is empty
           if (
             !activeFoodItemOneServing ||
@@ -192,57 +191,82 @@ const FoodNutrientModal = ({
 
   // Function to handle serving size selection
   const handleSelectServing = async (servingSizeOption) => {
-    if (isSelectServingSizeVisible) {
-      toggleSelectServing(); // Close the serving size options modal
-    }
+    // Check if activeFoodItem is not a custom meal
+    if (activeFoodItem && !activeFoodItem.isCustomMeal) {
+      if (isSelectServingSizeVisible) {
+        toggleSelectServing(); // Close the serving size options modal
+      }
+      const selectedFoodWithUpdatedNutrientInfoBasedOnServingSize =
+        await getNutrientsForFoodItem(activeFoodItem, servingSizeOption);
 
-    const selectedFoodWithUpdatedNutrientInfoBasedOnServingSize =
-      await getNutrientsForFoodItem(activeFoodItem, servingSizeOption);
+      const numberOfServingsNutrientData =
+        processActiveFoodItemNumberOfServingsUpdate(
+          selectedFoodWithUpdatedNutrientInfoBasedOnServingSize,
+          numberOfServings
+        );
 
-    const numberOfServingsNutrientData =
-      processActiveFoodItemNumberOfServingsUpdate(
-        selectedFoodWithUpdatedNutrientInfoBasedOnServingSize,
-        numberOfServings
+      setActiveFoodItemOneServing(
+        selectedFoodWithUpdatedNutrientInfoBasedOnServingSize
       );
-
-    setActiveFoodItemOneServing(
-      selectedFoodWithUpdatedNutrientInfoBasedOnServingSize
-    );
-    setSelectedServing(servingSizeOption);
-    setActiveFoodItem((prevActiveFoodItem) => ({
-      ...prevActiveFoodItem,
-      activeMeasure: servingSizeOption,
-      nutrients: numberOfServingsNutrientData,
-    }));
+      setSelectedServing(servingSizeOption);
+      setActiveFoodItem((prevActiveFoodItem) => ({
+        ...prevActiveFoodItem,
+        activeMeasure: servingSizeOption,
+        nutrients: numberOfServingsNutrientData,
+      }));
+    }
   };
 
   // Function to update the number of servings
   const updateNumberOfServings = async (newNumberOfServings) => {
-    // Check if activeFoodItemOneServing is empty
-    if (
-      !activeFoodItemOneServing ||
-      Object.keys(activeFoodItemOneServing).length === 0
-    ) {
-      console.log(
-        "Cannot update nutrients based on number of serving changes, without activeFoodItemOneServing."
-      );
-      return;
+    // Check if activeFoodItem is a custom meal
+    if (activeFoodItem && activeFoodItem.isCustomMeal) {
+      const servings = parseFloat(newNumberOfServings);
+      setNumberOfServings(servings);
+
+      // Update all meal items
+      const updatedMealItems = activeFoodItem.mealItems.map((item) => ({
+        ...item,
+        servingSize: item.servingSize * servings,
+        nutrients: updateNutrientsForMealItem(item, servings),
+      }));
+
+      // Recalculate total nutrients for the custom meal
+      const updatedNutrients = calculateTotalNutrients(updatedMealItems);
+
+      setActiveFoodItem((prevActiveFoodItem) => ({
+        ...prevActiveFoodItem,
+        numberOfServings: servings,
+        mealItems: updatedMealItems,
+        nutrients: updatedNutrients,
+      }));
+    } else {
+      // Handle the regular case for non-custom meals
+      if (
+        !activeFoodItemOneServing ||
+        Object.keys(activeFoodItemOneServing).length === 0
+      ) {
+        console.log(
+          "Cannot update nutrients based on number of serving changes, without activeFoodItemOneServing."
+        );
+        return;
+      }
+
+      const servings = parseFloat(newNumberOfServings);
+      setNumberOfServings(servings);
+
+      const updatedActiveItemNutrients =
+        processActiveFoodItemNumberOfServingsUpdate(
+          activeFoodItemOneServing,
+          servings
+        );
+
+      setActiveFoodItem((prevActiveFoodItem) => ({
+        ...prevActiveFoodItem,
+        numberOfServings: servings,
+        nutrients: updatedActiveItemNutrients,
+      }));
     }
-
-    const servings = parseFloat(newNumberOfServings);
-    setNumberOfServings(servings);
-
-    const updatedActiveItemNutrients =
-      processActiveFoodItemNumberOfServingsUpdate(
-        activeFoodItemOneServing,
-        servings
-      );
-
-    setActiveFoodItem((prevActiveFoodItem) => ({
-      ...prevActiveFoodItem,
-      numberOfServings: servings,
-      nutrients: updatedActiveItemNutrients,
-    }));
   };
 
   const handleEditFoodEntryAndSave = () => {
@@ -302,7 +326,10 @@ const FoodNutrientModal = ({
     }
     handleCloseModal();
     // Trigger snackbar if the user is not saving or updating a customMeal
-    if (!(isBuildingMeal && activeFoodItem?.isCustomMeal)) {
+
+    if (foodNutrientModalType === "Edit Entry") {
+      return;
+    } else if (!(isBuildingMeal && activeFoodItem?.isCustomMeal)) {
       toggleSnackbar();
     }
   };
@@ -652,6 +679,7 @@ const FoodNutrientModal = ({
                 </View>
                 {/* Input Fields Section */}
                 <View style={styles.sectionContainer}>
+                  {/* Inputs that are disabled if its activeFoodItem is a custom meal */}
                   {!disableInputs && (
                     <View>
                       <View style={{ marginBottom: 16 }}>
@@ -686,6 +714,7 @@ const FoodNutrientModal = ({
                       )}
                     </View>
                   )}
+
                   <View
                     style={{
                       flexDirection: "row",
@@ -1087,7 +1116,6 @@ const FoodNutrientModal = ({
                     </View>
 
                     {/* Meal Items */}
-
                     {showItemList &&
                       activeFoodItem?.mealItems.map((item, index) => (
                         <View
@@ -1103,13 +1131,14 @@ const FoodNutrientModal = ({
                         >
                           <Text
                             style={{
+                              flex: 2,
                               fontSize: 16,
                               color: theme.colors.cardHeaderTextColor,
                             }}
                           >
                             {item.foodLabel}
                           </Text>
-                          <View style={{ gap: 5 }}>
+                          <View style={{ flex: 1, gap: 5 }}>
                             <Text
                               style={{
                                 fontSize: 14,
@@ -1117,7 +1146,15 @@ const FoodNutrientModal = ({
                               }}
                             >
                               {Math.round(item.nutrients.ENERC_KCAL.quantity)}{" "}
-                              cal, {Math.round(item.activeMeasure.weight)}{" "}
+                              cal
+                            </Text>
+                            <Text
+                              style={{
+                                fontSize: 14,
+                                color: theme.colors.cardHeaderTextColor,
+                              }}
+                            >
+                              {Math.round(item.activeMeasure.weight)}{" "}
                               {item.activeMeasure.label}
                             </Text>
                           </View>

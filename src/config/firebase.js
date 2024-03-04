@@ -13,13 +13,13 @@ import {
 import { getFirestore } from "firebase/firestore";
 
 // Import Firebase configuration object
-import apiKeys from "./keys.js";
+import Constants from "../../constants.js";
 
 // Initialize Firebase and Firestore
 let app, auth, db;
 
 try {
-  app = initializeApp(apiKeys.firebaseConfig);
+  app = initializeApp(Constants.firebaseConfig);
 
   // Set persistence mechanism based on platform
   if (Platform.OS === "web") {

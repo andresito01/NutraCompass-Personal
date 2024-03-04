@@ -1,7 +1,8 @@
-import apiKeys from "./keys.js";
+// Import Edamam Food DB Api Config
+import Constants from "../../../../../constants.js";
 
-const API_ID = apiKeys.edamamConfig.app_id;
-const API_KEY = apiKeys.edamamConfig.app_key;
+const API_ID = Constants.edamamConfig.app_id;
+const API_KEY = Constants.edamamConfig.app_key;
 const PARSER_BASE_URL = "https://api.edamam.com/api/food-database/v2/parser";
 const NUTRIENTS_BASE_URL =
   "https://api.edamam.com/api/food-database/v2/nutrients";

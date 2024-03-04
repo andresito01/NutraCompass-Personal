@@ -55,6 +55,7 @@ export default function CreateCustomMealModal({ isVisible, closeModal }) {
         foodLabel: customMealName, // Add foodLabel property with meal name
         foodCategory: "Custom Meal",
         isCustomMeal: true,
+        numberOfServings: 1,
         mealItems: [], // Array to hold all the items in the meal
         nutrients: {}, // Initialize nutrients property to store processed nutrients
       };

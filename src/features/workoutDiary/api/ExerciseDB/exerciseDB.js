@@ -1,8 +1,8 @@
 import axios from "axios";
-import apiKeys from "./keys.js";
+import Constants from "../../../../../constants.js";
 
-const API_KEY = apiKeys.exerciseDBConfig.rapidApiKey;
-const API_HOST = apiKeys.exerciseDBConfig.rapidApiHost;
+const API_KEY = Constants.exerciseDBConfig.rapidApiKey;
+const API_HOST = Constants.exerciseDBConfig.rapidApiHost;
 const BASE_URL = "https://exercisedb.p.rapidapi.com";
 
 const apiCall = async (url, params) => {
