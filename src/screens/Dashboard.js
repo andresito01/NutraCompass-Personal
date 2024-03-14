@@ -11,6 +11,8 @@ import dashboardScreenStyles from "./styles/dashboardScreenStyles.js"; // Import
 import LinearGradientCard from "../components/LinearGradientCard.js";
 import CircularChart from "../components/CircularChart.js";
 import MacroCircularChart from "../components/MacroCircularChart.js";
+import { useNavigation } from '@react-navigation/native';
+import ChatScreen from "../features/SocialMedia/Screens/ChatScreen.js";
 
 export default function DashboardScreen() {
   const { user } = useAuth();
@@ -20,7 +22,8 @@ export default function DashboardScreen() {
   const { calorieGoal, macroGoals } = getNutritionalGoals();
   const [isPedometerAvailable, setIsPedometerAvailable] = useState("checking");
   const [pastStepCount, setPastStepCount] = useState(0);
-  const [currentStepCount, setCurrentStepCount] = useState(0);
+    const [currentStepCount, setCurrentStepCount] = useState(0);
+    const navigation = useNavigation();
 
   const styles = dashboardScreenStyles();
 
@@ -195,25 +198,16 @@ export default function DashboardScreen() {
           }}
         >
           {/** Direct Messages Page Navigation Button */}
-          <TouchableOpacity
-            style={{ justifyContent: "center", alignItems: "center" }}
-          >
-            {/* <Text
-              style={{
-                position: "absolute",
-                color: "red",
-                fontSize: 12,
-              }}
-              s
-            >
-              5
-            </Text> */}
-            <Feather
-              name="message-circle"
-              color={theme.colors.cardHeaderTextColor}
-              size={34}
-            />
-          </TouchableOpacity>
+                  <TouchableOpacity
+                      style={{ justifyContent: "center", alignItems: "center" }}
+                      onPress={() => navigation.navigate('Chat')}
+                  >
+                      <Feather
+                          name="message-circle"
+                          color={theme.colors.cardHeaderTextColor}
+                          size={34}
+                      />
+                  </TouchableOpacity>
           {/** Mini Profile Pic */}
           <TouchableOpacity>
             <View

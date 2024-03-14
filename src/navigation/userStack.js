@@ -26,9 +26,12 @@ import ThemeScreen from "../features/themeChanger/screens/ThemesScreen.js";
 import BottomSheet from "../components/BottomSheet.js";
 import ThemeSelector from "../features/themeChanger/components/ThemeSelector.js";
 import CustomMealsModal from "../features/foodDiary/components/CustomMealsModal.js";
+import ChatScreen from "../features/SocialMedia/Screens/ChatScreen.js";
 
+//chat button navigator
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+const HomeStack = createStackNavigator();
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -50,6 +53,16 @@ const FoodsStack = () => {
     </Stack.Navigator>
   );
 };
+
+function HomeStackNavigator() {
+    return (
+        <HomeStack.Navigator screenOptions={{ headerShown: false }}>
+            <HomeStack.Screen name="Dashboard" component={DashboardScreen} />
+            <HomeStack.Screen name="Chat" component={ChatScreen} />
+        </HomeStack.Navigator>
+    );
+}
+
 
 const TabButton = ({ label, isFocused, onPress, icon }) => {
   const { theme } = useThemeContext();
@@ -176,7 +189,8 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
     },
   };
 
-  const onPress = (index) => {
+    const onPress = (index) => {
+        console.log(index)
     navigation.navigate(state.routeNames[index]);
   };
 
@@ -194,6 +208,28 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
     }
 
     return "home"; // Default icon name
+    };
+
+  const onTabPress = (route, index) => {
+    const isRouteFocused = state.index === index;
+    const event = navigation.emit({
+      type: 'tabPress',
+      target: route.key,
+      canPreventDefault: true,
+    });
+
+    if (!event.defaultPrevented) {
+      if (isRouteFocused && route.name === 'Home') {
+        // If the 'Home' tab is already focused, reset to the Dashboard screen
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Dashboard' }],
+        });
+      } else {
+        // For other tabs, use the default behavior
+        navigation.navigate(route.name);
+      }
+    }
   };
 
   return (
@@ -205,20 +241,14 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
             options.tabBarLabel !== undefined
               ? options.tabBarLabel
               : route.name;
-
           const isFocused = state.index === index;
-
-          const onPressTab = () => {
-            onPress(index);
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-          };
 
           return (
             <TabButton
-              key={index}
+              key={route.key}
               label={label}
               isFocused={isFocused}
-              onPress={onPressTab}
+              onPress={() => onTabPress(route, index)} // Use the custom onTabPress
               icon={getIconName(route.name)}
             />
           );
@@ -268,15 +298,33 @@ const MainTabs = () => {
         headerShown: false,
       }}
     >
-      <Tab.Screen
+           <Tab.Screen
         name="Home"
-        component={DashboardScreen}
-        listeners={() => ({
-          tabPress: () => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        component={HomeStackNavigator}
+        listeners={({ navigation, route }) => ({
+          tabPress: e => {
+            // Prevent default action
+            e.preventDefault();
+            const state = navigation.getState();
+
+            // Check if the stack is not at the 'Dashboard' screen
+            if (route.state?.index > 0) {
+              // Reset the stack to the 'Dashboard' screen
+              navigation.navigate('Dashboard');
+            } else if (state.index === 0) {
+              // When already focused, reset to the initial route (which is 'Dashboard' here)
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'Dashboard' }],
+              });
+            } else {
+              // If the tab press is for another screen (not the Home stack), perform default action
+              navigation.navigate('Home');
+            }
           },
         })}
       />
+
       <Tab.Screen
         name="Diary"
         component={FoodDiaryScreen}
@@ -314,30 +362,29 @@ const MainTabs = () => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
           },
         })}
-      />
+          />
     </Tab.Navigator>
   );
 };
 
 const UserStack = () => {
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="SplashScreen"
-        screenOptions={{ headerShown: false }}
-      >
-        <Stack.Screen
-          name="SplashScreen"
-          component={SplashScreen}
-          options={{ gestureEnabled: false }}
-        />
-        <Stack.Screen
-          name="MainTabs"
-          component={MainTabs}
-          options={{ gestureEnabled: false }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+      <NavigationContainer>
+          <Stack.Navigator initialRouteName="SplashScreen" screenOptions={{ headerShown: false }}>
+              <Stack.Screen
+                  name="SplashScreen"
+                  component={SplashScreen}
+                  options={{ gestureEnabled: false }}
+              />
+              <Stack.Screen
+                  name="MainTabs"
+                  component={MainTabs}
+                  options={{ gestureEnabled: false }}
+              />
+           
+              {/* ... potentially other screens */}
+          </Stack.Navigator>
+      </NavigationContainer>
   );
 };
 

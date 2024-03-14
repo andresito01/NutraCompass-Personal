@@ -5,12 +5,12 @@ import { Platform } from "react-native";
 // Import Firebase functions from the appropriate SDKs
 import { initializeApp } from "firebase/app";
 import {
-  initializeAuth,
-  browserLocalPersistence,
-  browserSessionPersistence,
-  getReactNativePersistence,
+    initializeAuth,
+    browserLocalPersistence,
+    browserSessionPersistence,
+    getReactNativePersistence,
 } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, initializeFirestore } from "firebase/firestore";
 
 // Import Firebase configuration object
 import Constants from "../../constants.js";
@@ -19,22 +19,24 @@ import Constants from "../../constants.js";
 let app, auth, db;
 
 try {
-  app = initializeApp(Constants.firebaseConfig);
+    app = initializeApp(Constants.firebaseConfig);
 
-  // Set persistence mechanism based on platform
-  if (Platform.OS === "web") {
-    auth = initializeAuth(app, {
-      persistence: browserLocalPersistence,
-    });
-  } else {
-    auth = initializeAuth(app, {
-      persistence: getReactNativePersistence(AsyncStorage),
-    });
-  }
+    // Set persistence mechanism based on platform
+    if (Platform.OS === "web") {
+        auth = initializeAuth(app, {
+            //persistence: browserLocalPersistence,
+        });
+    } else {
+        // auth = initializeAuth(app, {
+        //   persistence: getReactNativePersistence(AsyncStorage),
+        // });
+        auth = initializeAuth(app); // Initialize without persistence
+    }
 
-  db = getFirestore(app);
+    db = getFirestore(app);
+    // db = initializeFirestore(app, { experimentalAutoDetectLongPolling: true });
 } catch (error) {
-  console.error("Firebase initialization error", error);
+    console.error("Firebase initialization error", error);
 }
 
 // Export Firebase auth and Firestore instances

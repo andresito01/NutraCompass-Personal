@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import {
-  Text,
-  View,
-  ScrollView,
-  Image,
-  Dimensions,
-  SafeAreaView,
+    Text,
+    View,
+    ScrollView,
+    Image,
+    Dimensions,
+    SafeAreaView,
+    TouchableOpacity,
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import * as Haptics from "expo-haptics";
@@ -18,156 +19,161 @@ import { useThemeContext } from "../context/ThemeContext.js";
 const { height: screenHeight, width: screenWidth } = Dimensions.get("window");
 
 function WelcomeScreen({ navigation }) {
-  const styles = welcomeScreenStyles(); // Destructure styles
-  const { theme } = useThemeContext(); // Use the imported theme
+    const styles = welcomeScreenStyles(); // Destructure styles
+    const { theme } = useThemeContext(); // Use the imported theme
 
-  const [currentIndex, setCurrentIndex] = useState(0);
+    const [currentIndex, setCurrentIndex] = useState(0);
 
-  const carouselHeight = screenHeight * 0.5; // Set the height to 22% of the screen height
-  const carouselWidth = screenWidth; // Set the width to 100% of the screen width
+    const carouselHeight = screenHeight * 0.5; // Set the height to 22% of the screen height
+    const carouselWidth = screenWidth; // Set the width to 100% of the screen width
 
-  const handleSlideChange = (index) => {
-    setCurrentIndex(index);
-  };
+    const handleSlideChange = (index) => {
+        setCurrentIndex(index);
+    };
 
-  // Array of carousel views
-  const carouselSlides = [
-    require("../../assets/welcome/welcome4.png"),
-    require("../../assets/welcome/welcome1.png"),
-    require("../../assets/welcome/welcome3.png"),
-    require("../../assets/welcome/welcome2.png"),
-  ];
+    // Array of carousel views
+    const carouselSlides = [
+        require("../../assets/welcome/welcome4.png"),
+        require("../../assets/welcome/welcome1.png"),
+        require("../../assets/welcome/welcome3.png"),
+        require("../../assets/welcome/welcome2.png"),
+    ];
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <LinearGradient
-        colors={["black", "white"]}
-        style={{
-          flex: 1,
-        }}
-        start={{ x: 0, y: 0.6 }}
-        end={{ x: 0, y: 0.2 }}
-      >
-        <View style={styles.contentContainer}>
-          <Image
-            source={logo}
-            style={{
-              width: 360,
-              height: 100,
-              alignSelf: "center",
-              marginBottom: 20,
-            }}
-          />
-
-          <View>
-            {/* Indicator */}
-            <View
-              style={{
-                alignSelf: "center",
-                flexDirection: "row",
-                marginVertical: 10,
-              }}
+    return (
+        <SafeAreaView style={styles.container}>
+            <LinearGradient
+                colors={["black", "white"]}
+                style={{
+                    flex: 1,
+                }}
+                start={{ x: 0, y: 0.6 }}
+                end={{ x: 0, y: 0.2 }}
             >
-              {carouselSlides.map((_, index) => (
-                <View
-                  key={index}
-                  style={{
-                    height: screenWidth * 0.025,
-                    width: screenWidth * 0.025,
-                    borderRadius: 30,
-                    backgroundColor:
-                      index === currentIndex
-                        ? theme.colors.primary
-                        : "rgba(255, 255, 255, 0.5)",
-                    marginHorizontal: 5, // Adjust as needed
-                  }}
-                />
-              ))}
-            </View>
-            <Carousel
-              height={carouselHeight}
-              width={carouselWidth}
-              data={carouselSlides}
-              renderItem={({ item }) => (
-                <View style={{ alignSelf: "center", flex: 1 }}>
-                  <Image
-                    resizeMode="contain"
-                    source={item}
-                    style={{
-                      flex: 1,
-                    }}
-                  />
+                <View style={styles.contentContainer}>
+                    <Image
+                        source={logo}
+                        style={{
+                            width: 360,
+                            height: 100,
+                            alignSelf: "center",
+                            marginBottom: 20,
+                        }}
+                    />
+
+                    <View>
+                        {/* Indicator */}
+                        <View
+                            style={{
+                                alignSelf: "center",
+                                flexDirection: "row",
+                                marginVertical: 10,
+                            }}
+                        >
+                            {carouselSlides.map((_, index) => (
+                                <View
+                                    key={index}
+                                    style={{
+                                        height: screenWidth * 0.025,
+                                        width: screenWidth * 0.025,
+                                        borderRadius: 30,
+                                        backgroundColor:
+                                            index === currentIndex
+                                                ? theme.colors.primary
+                                                : "rgba(255, 255, 255, 0.5)",
+                                        marginHorizontal: 5, // Adjust as needed
+                                    }}
+                                />
+                            ))}
+                        </View>
+                        <Carousel
+                            height={carouselHeight}
+                            width={carouselWidth}
+                            data={carouselSlides}
+                            renderItem={({ item }) => (
+                                <View style={{ alignSelf: "center", flex: 1 }}>
+                                    <Image
+                                        resizeMode="contain"
+                                        source={item}
+                                        style={{
+                                            flex: 1,
+                                        }}
+                                    />
+                                </View>
+                            )}
+                            onSnapToItem={handleSlideChange}
+                            on
+                        />
+                    </View>
+
+                    <View
+                        style={{
+                            alignItems: "center",
+                            justifyContent: "center",
+                            width: "100%",
+                        }}
+                    >
+                        <Button
+                            mode="contained"
+                            style={{
+                                backgroundColor: "white",
+                                borderRadius: 8,
+                                paddingVertical: 2,
+                                marginVertical: 15,
+                                width: "90%",
+                            }}
+                            labelStyle={{
+                                color: "black",
+                                fontSize: 18,
+                                fontWeight: "bold",
+                            }}
+                            onPress={() => {
+                                navigation.navigate("Sign Up");
+                                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                            }}
+                        >
+                            SIGN UP
+                        </Button>
+                        <TouchableOpacity
+                            style={{
+                                backgroundColor: "black",
+                                borderRadius: 24,
+                                paddingVertical: 10,
+                            }}
+                            onPress={() => {
+                                navigation.navigate("Sign In");
+                                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                            }}
+                        >
+                            <View
+                                style={{
+                                    backgroundColor: "black",
+                                    alignItems: "center",
+                                    gap: 5,
+                                }}
+                            >
+                                <Text
+                                    style={{
+                                        color: "white",
+                                        fontSize: 18,
+                                    }}
+                                >
+                                    Already have an account?
+                                </Text>
+                                <Text
+                                    style={{
+                                        color: "white",
+                                        fontSize: 18,
+                                    }}
+                                >
+                                    LOG IN
+                                </Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
                 </View>
-              )}
-              onSnapToItem={handleSlideChange}
-              on
-            />
-          </View>
-
-          <View
-            style={{
-              alignItems: "center",
-              justifyContent: "center",
-              width: "100%",
-            }}
-          >
-            <Button
-              mode="contained"
-              style={{
-                backgroundColor: "white",
-                borderRadius: 8,
-                paddingVertical: 2,
-                marginVertical: 15,
-                width: "90%",
-              }}
-              labelStyle={{
-                color: "black",
-                fontSize: 18,
-                fontWeight: "bold",
-              }}
-              onPress={() => {
-                navigation.navigate("Sign Up");
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              }}
-            >
-              SIGN UP
-            </Button>
-            <Button
-              mode="text"
-              style={{
-                backgroundColor: "transparent",
-                borderRadius: 24,
-                paddingVertical: 10,
-              }}
-              onPress={() => {
-                navigation.navigate("Sign In");
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              }}
-            >
-              <View style={{ alignItems: "center", gap: 5 }}>
-                <Text
-                  style={{
-                    color: "white",
-                    fontSize: 18,
-                  }}
-                >
-                  Already have an account?
-                </Text>
-                <Text
-                  style={{
-                    color: "white",
-                    fontSize: 18,
-                  }}
-                >
-                  LOG IN
-                </Text>
-              </View>
-            </Button>
-          </View>
-        </View>
-      </LinearGradient>
-    </SafeAreaView>
-  );
+            </LinearGradient>
+        </SafeAreaView>
+    );
 }
 
 export default WelcomeScreen;
