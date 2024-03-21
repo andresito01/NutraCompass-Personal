@@ -21,7 +21,7 @@ const SplashScreen = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-      navigation.navigate("MainTabs");
+      navigation.navigate("Drawer");
     }, 3000);
 
     return () => {

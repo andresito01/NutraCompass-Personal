@@ -44,29 +44,15 @@ const CustomSexPickerModal = ({ title, visible, onClose, onSelect }) => {
           <Card.Content>
             <ScrollView>
               <Picker
+                itemStyle={{ color: "white" }}
+                dropdownIconColor={"white"}
                 selectedValue={selectedValue}
                 onValueChange={(itemValue) => setSelectedValue(itemValue)}
               >
-                <Picker.Item
-                  color={theme.colors.cardHeaderTextColor}
-                  label="Male"
-                  value="Male"
-                />
-                <Picker.Item
-                  color={theme.colors.cardHeaderTextColor}
-                  label="Female"
-                  value="Female"
-                />
-                <Picker.Item
-                  color={theme.colors.cardHeaderTextColor}
-                  label="Pregnant"
-                  value="Pregnant"
-                />
-                <Picker.Item
-                  color={theme.colors.cardHeaderTextColor}
-                  label="Breastfeeding"
-                  value="Breastfeeding"
-                />
+                <Picker.Item label="Male" value="Male" />
+                <Picker.Item label="Female" value="Female" />
+                <Picker.Item label="Pregnant" value="Pregnant" />
+                <Picker.Item label="Breastfeeding" value="Breastfeeding" />
               </Picker>
             </ScrollView>
           </Card.Content>

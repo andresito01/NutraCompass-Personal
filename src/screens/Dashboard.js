@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Text, View, TouchableOpacity, ScrollView } from "react-native";
 import { Pedometer } from "expo-sensors";
 import { Icon } from "react-native-paper";
@@ -7,13 +7,15 @@ import { useAuth } from "../authentication/context/AuthContext.js";
 import { useThemeContext } from "../context/ThemeContext.js";
 import { useFoodLog } from "../features/foodDiary/context/FoodLogContext.js";
 import { useUserSettings } from "../features/userSettings/context/UserSettingsContext.js";
-import dashboardScreenStyles from "./styles/dashboardScreenStyles.js"; // Import your styles
+import dashboardScreenStyles from "./styles/dashboardScreenStyles.js";
 import LinearGradientCard from "../components/LinearGradientCard.js";
 import CircularChart from "../components/CircularChart.js";
 import MacroCircularChart from "../components/MacroCircularChart.js";
+import { useNavigation, DrawerActions } from "@react-navigation/native";
 
-export default function DashboardScreen() {
+const DashboardScreen = () => {
   const { user } = useAuth();
+  const navigation = useNavigation();
   const { theme, mode } = useThemeContext();
   const { totalDailyCaloriesAndMacrosConsumed, selectedDate } = useFoodLog();
   const { getNutritionalGoals } = useUserSettings();
@@ -22,6 +24,11 @@ export default function DashboardScreen() {
   const [pastStepCount, setPastStepCount] = useState(0);
   const [currentStepCount, setCurrentStepCount] = useState(0);
 
+  const openDrawer = () => {
+    navigation.dispatch(DrawerActions.openDrawer());
+  };
+
+  console.log("Macro Goals: " + JSON.stringify(macroGoals, null, 1));
   const styles = dashboardScreenStyles();
 
   const subscribeToStepCounter = async () => {
@@ -69,19 +76,12 @@ export default function DashboardScreen() {
     };
   }, []);
 
-  // Assuming an average step length of 0.762 meters (2.5 feet)
-  const AVERAGE_STEP_LENGTH_METERS = 0.762;
-
-  // Function to calculate distance from step count
-  const calculateDistanceFromSteps = (stepCount) => {
-    // Convert steps to meters
+  const calculateDistanceFromSteps = useCallback((stepCount) => {
+    const AVERAGE_STEP_LENGTH_METERS = 0.762;
     const distanceMeters = stepCount * AVERAGE_STEP_LENGTH_METERS;
-
-    // Convert meters to miles
     const distanceMiles = distanceMeters / 1609.34;
-
     return distanceMiles;
-  };
+  }, []);
 
   // Get the current date
   const currentDate = new Date();
@@ -100,56 +100,81 @@ export default function DashboardScreen() {
     day: "numeric",
   }).format(selectedDateAdjusted);
 
-  const calorieData = {
-    calorieGoal: calorieGoal,
-    totalCalories: totalDailyCaloriesAndMacrosConsumed.calories,
-    caloriesRemaining:
-      calorieGoal - totalDailyCaloriesAndMacrosConsumed.calories,
-    calorieProgressBarPercentage:
-      totalDailyCaloriesAndMacrosConsumed.calories / calorieGoal,
-  };
+  // Memoize data to prevent unnecessary recalculations on re-renders
+  const calorieData = React.useMemo(() => {
+    const calorieProgressBarPercentage =
+      totalDailyCaloriesAndMacrosConsumed.calories / calorieGoal;
+    return {
+      calorieGoal,
+      totalCalories: totalDailyCaloriesAndMacrosConsumed.calories,
+      caloriesRemaining:
+        calorieGoal - totalDailyCaloriesAndMacrosConsumed.calories,
+      calorieProgressBarPercentage: isNaN(calorieProgressBarPercentage)
+        ? 0
+        : calorieProgressBarPercentage,
+    };
+  }, [totalDailyCaloriesAndMacrosConsumed, calorieGoal]);
 
-  const macroData = {
-    carbsData: {
-      percentage:
-        totalDailyCaloriesAndMacrosConsumed.carbs / macroGoals.carb.dailyGrams,
-      color: "orange",
-      label: "Carbs",
-      totalGramsGoal: macroGoals.carb.dailyGrams,
-      consumedGrams: totalDailyCaloriesAndMacrosConsumed.carbs, // Example value, replace with actual data
-    },
-    proteinData: {
-      percentage:
-        totalDailyCaloriesAndMacrosConsumed.protein /
-        macroGoals.protein.dailyGrams,
-      color: "green",
-      label: "Protein",
-      totalGramsGoal: macroGoals.protein.dailyGrams,
-      consumedGrams: totalDailyCaloriesAndMacrosConsumed.protein, // Example value, replace with actual data
-    },
-    fatData: {
-      percentage:
-        totalDailyCaloriesAndMacrosConsumed.fat / macroGoals.fat.dailyGrams,
-      color: "red",
-      label: "Fat",
-      totalGramsGoal: macroGoals.fat.dailyGrams,
-      consumedGrams: totalDailyCaloriesAndMacrosConsumed.fat, // Example value, replace with actual data
-    },
-  };
+  const macroData = React.useMemo(() => {
+    const calculatePercentage = (consumed, goal) => {
+      return consumed / goal.dailyGrams;
+    };
 
-  // Calculate total percentage towards hitting all macro goals
-  const totalPercentage =
-    Object.values(macroData).reduce((total, { percentage }) => {
-      const adjustedPercentage = Math.min(percentage, 1); // Cap percentage at 100%
-      return total + adjustedPercentage;
-    }, 0) / Object.keys(macroData).length;
+    return {
+      carbsData: {
+        percentage: calculatePercentage(
+          totalDailyCaloriesAndMacrosConsumed.carbs,
+          macroGoals.carb
+        ),
+        color: "orange",
+        label: "Carbs",
+        totalGramsGoal: macroGoals.carb.dailyGrams,
+        consumedGrams: totalDailyCaloriesAndMacrosConsumed.carbs,
+      },
+      proteinData: {
+        percentage: calculatePercentage(
+          totalDailyCaloriesAndMacrosConsumed.protein,
+          macroGoals.protein
+        ),
+        color: "green",
+        label: "Protein",
+        totalGramsGoal: macroGoals.protein.dailyGrams,
+        consumedGrams: totalDailyCaloriesAndMacrosConsumed.protein,
+      },
+      fatData: {
+        percentage: calculatePercentage(
+          totalDailyCaloriesAndMacrosConsumed.fat,
+          macroGoals.fat
+        ),
+        color: "red",
+        label: "Fat",
+        totalGramsGoal: macroGoals.fat.dailyGrams,
+        consumedGrams: totalDailyCaloriesAndMacrosConsumed.fat,
+      },
+    };
+  }, [totalDailyCaloriesAndMacrosConsumed, macroGoals]);
+
+  const totalPercentage = React.useMemo(() => {
+    const totalMacroPercentage = Object.values(macroData).reduce(
+      (total, { percentage }) => {
+        const adjustedPercentage = Math.min(percentage, 1); // Cap percentage at 100%
+        return total + adjustedPercentage;
+      },
+      0
+    );
+
+    return totalMacroPercentage / Object.keys(macroData).length;
+  }, [macroData]);
 
   return (
     <View style={styles.container}>
       {/** Home Header Container */}
       <View style={styles.header}>
         {/** Side Menu Drawer Toggle */}
-        <TouchableOpacity style={{ gap: 8, paddingLeft: 5 }}>
+        <TouchableOpacity
+          onPress={openDrawer}
+          style={{ gap: 8, paddingLeft: 5 }}
+        >
           <View
             style={{
               backgroundColor: "gray",
@@ -597,4 +622,6 @@ export default function DashboardScreen() {
       </ScrollView>
     </View>
   );
-}
+};
+
+export default DashboardScreen;

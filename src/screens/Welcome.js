@@ -6,6 +6,7 @@ import {
   Image,
   Dimensions,
   SafeAreaView,
+  TouchableOpacity,
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import * as Haptics from "expo-haptics";
@@ -132,10 +133,9 @@ function WelcomeScreen({ navigation }) {
             >
               SIGN UP
             </Button>
-            <Button
-              mode="text"
+            <TouchableOpacity
               style={{
-                backgroundColor: "transparent",
+                backgroundColor: "black",
                 borderRadius: 24,
                 paddingVertical: 10,
               }}
@@ -144,7 +144,13 @@ function WelcomeScreen({ navigation }) {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               }}
             >
-              <View style={{ alignItems: "center", gap: 5 }}>
+              <View
+                style={{
+                  backgroundColor: "black",
+                  alignItems: "center",
+                  gap: 5,
+                }}
+              >
                 <Text
                   style={{
                     color: "white",
@@ -162,7 +168,7 @@ function WelcomeScreen({ navigation }) {
                   LOG IN
                 </Text>
               </View>
-            </Button>
+            </TouchableOpacity>
           </View>
         </View>
       </LinearGradient>

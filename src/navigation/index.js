@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Text, View, SafeAreaView, Platform, StatusBar } from "react-native";
 import { useAuth } from "../authentication/context/AuthContext.js";
-import UserStack from "./userStack";
+import UserStack from "./userStack.js";
 import AuthStack from "./authStack";
 import { Provider as PaperProvider } from "react-native-paper";
 import { useThemeContext } from "../context/ThemeContext.js";

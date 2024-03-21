@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import * as Haptics from "expo-haptics";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createDrawerNavigator } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
 import {
   View,
@@ -26,11 +27,25 @@ import ThemeScreen from "../features/themeChanger/screens/ThemesScreen.js";
 import BottomSheet from "../components/BottomSheet.js";
 import ThemeSelector from "../features/themeChanger/components/ThemeSelector.js";
 import CustomMealsModal from "../features/foodDiary/components/CustomMealsModal.js";
+import { CustomDrawerContent } from "../components/CustomDrawerContent.js";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+const Drawer = createDrawerNavigator();
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
+
+// Define your Drawer screens
+const DrawerScreens = () => {
+  return (
+    <Drawer.Navigator
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
+      screenOptions={{ headerShown: false }}
+    >
+      <Drawer.Screen name="Main" component={MainTabs} />
+    </Drawer.Navigator>
+  );
+};
 
 const AppSettingsStack = () => {
   return (
@@ -319,24 +334,21 @@ const MainTabs = () => {
   );
 };
 
+const RootNavigator = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={{ headerShown: false, gestureEnabled: false }}
+    >
+      <Stack.Screen name="SplashScreen" component={SplashScreen} />
+      <Stack.Screen name="Drawer" component={DrawerScreens} />
+    </Stack.Navigator>
+  );
+};
+
 const UserStack = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="SplashScreen"
-        screenOptions={{ headerShown: false }}
-      >
-        <Stack.Screen
-          name="SplashScreen"
-          component={SplashScreen}
-          options={{ gestureEnabled: false }}
-        />
-        <Stack.Screen
-          name="MainTabs"
-          component={MainTabs}
-          options={{ gestureEnabled: false }}
-        />
-      </Stack.Navigator>
+      <RootNavigator />
     </NavigationContainer>
   );
 };

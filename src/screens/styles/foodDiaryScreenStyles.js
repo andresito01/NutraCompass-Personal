@@ -22,7 +22,7 @@ const foodDiaryScreenStyles = () => {
       flex: 1,
       padding: 5,
       paddingBottom: 10,
-      backgroundColor: "transparent",
+      backgroundColor: theme.colors.screenBackground,
     },
     scrollViewContainerContent: {
       flexGrow: 1,

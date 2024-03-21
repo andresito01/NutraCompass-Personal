@@ -51,6 +51,7 @@ const CustomDatePickerModal = ({
           <Card.Content>
             {showDatePicker && (
               <DateTimePicker
+                textColor="white"
                 value={temporaryDate}
                 mode="date"
                 display="spinner"
