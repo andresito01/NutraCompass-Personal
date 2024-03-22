@@ -11,11 +11,10 @@ import dashboardScreenStyles from "./styles/dashboardScreenStyles.js";
 import LinearGradientCard from "../components/LinearGradientCard.js";
 import CircularChart from "../components/CircularChart.js";
 import MacroCircularChart from "../components/MacroCircularChart.js";
-import { useNavigation, DrawerActions } from "@react-navigation/native";
+import OpenDrawerToggle from "../features/SocialMedia/components/OpenDrawerToggle.js";
 
 const DashboardScreen = () => {
   const { user } = useAuth();
-  const navigation = useNavigation();
   const { theme, mode } = useThemeContext();
   const { totalDailyCaloriesAndMacrosConsumed, selectedDate } = useFoodLog();
   const { getNutritionalGoals } = useUserSettings();
@@ -23,10 +22,6 @@ const DashboardScreen = () => {
   const [isPedometerAvailable, setIsPedometerAvailable] = useState("checking");
   const [pastStepCount, setPastStepCount] = useState(0);
   const [currentStepCount, setCurrentStepCount] = useState(0);
-
-  const openDrawer = () => {
-    navigation.dispatch(DrawerActions.openDrawer());
-  };
 
   console.log("Macro Goals: " + JSON.stringify(macroGoals, null, 1));
   const styles = dashboardScreenStyles();
@@ -171,37 +166,7 @@ const DashboardScreen = () => {
       {/** Home Header Container */}
       <View style={styles.header}>
         {/** Side Menu Drawer Toggle */}
-        <TouchableOpacity
-          onPress={openDrawer}
-          style={{ gap: 8, paddingLeft: 5 }}
-        >
-          <View
-            style={{
-              backgroundColor: "gray",
-              paddingVertical: 1,
-              paddingHorizontal: 14,
-            }}
-          />
-          <View
-            style={{
-              backgroundColor: "gray",
-              paddingVertical: 1,
-              paddingHorizontal: 14,
-            }}
-          />
-          <View
-            style={{
-              backgroundColor: "gray",
-              paddingVertical: 1,
-              paddingHorizontal: 14,
-            }}
-          />
-          {/* <Feather
-            name="menu"
-            color={theme.colors.cardHeaderTextColor}
-            size={34}
-          /> */}
-        </TouchableOpacity>
+        <OpenDrawerToggle />
         <Text
           style={{
             color: theme.colors.primary,

@@ -28,6 +28,12 @@ import BottomSheet from "../components/BottomSheet.js";
 import ThemeSelector from "../features/themeChanger/components/ThemeSelector.js";
 import CustomMealsModal from "../features/foodDiary/components/CustomMealsModal.js";
 import { CustomDrawerContent } from "../components/CustomDrawerContent.js";
+// Social Media Screen Imports
+import MyProfileScreen from "../features/SocialMedia/MyProfile/screens/MyProfileScreen.js";
+import MyLibraryScreen from "../features/SocialMedia/MyLibrary/screens/MyLibraryScreen.js";
+import MyAccomplishmentsScreen from "../features/SocialMedia/MyAccomplishments/screens/MyAccomplishmentsScreen.js";
+import MarketPlaceScreen from "../features/SocialMedia/MarketPlace/screens/MarketPlaceScreen.js";
+import SocialSettingsScreen from "../features/SocialMedia/SocialSettings/screens/SocialSettingsScreen.js";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -43,6 +49,14 @@ const DrawerScreens = () => {
       screenOptions={{ headerShown: false }}
     >
       <Drawer.Screen name="Main" component={MainTabs} />
+      <Drawer.Screen name="My Profile" component={MyProfileScreen} />
+      <Drawer.Screen name="My Library" component={MyLibraryScreen} />
+      <Drawer.Screen
+        name="My Accomplishments"
+        component={MyAccomplishmentsScreen}
+      />
+      <Drawer.Screen name="Market Place" component={MarketPlaceScreen} />
+      <Drawer.Screen name="Social Settings" component={SocialSettingsScreen} />
     </Drawer.Navigator>
   );
 };
