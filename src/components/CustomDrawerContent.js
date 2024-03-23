@@ -23,6 +23,7 @@ export const CustomDrawerContent = (props) => {
           <Image
             source={require(profileImageUrl)}
             style={styles.profileImage}
+            alt="Profile Image"
           />
         </View>
       </View>
@@ -72,11 +73,11 @@ const getStyles = (theme) => ({
     paddingHorizontal: 20,
   },
   itemFocused: {
-    backgroundColor: theme.colors.primaryLightOpacity, // Example usage
+    backgroundColor: theme.colors.secondary, // Example usage
   },
   itemText: {
     fontSize: 16,
-    color: theme.colors.sectionHeaderTextColor, // Example usage
+    color: theme.colors.cardHeaderTextColor, // Example usage
   },
   customFeature: { margin: 20 },
 });

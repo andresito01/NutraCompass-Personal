@@ -1,22 +1,20 @@
 import React from "react";
-import { View } from "react-native";
-import { Card } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
 import { useThemeContext } from "../context/ThemeContext.js";
 
-const LinearGradientCard = ({ children }) => {
+const LinearGradientCard = ({ children, style }) => {
   const { theme } = useThemeContext();
   return (
     <LinearGradient
       colors={[theme.colors.secondary, theme.colors.primary]}
-      style={{
-        flex: 1,
-        borderRadius: 8,
-        padding: 5,
-        backgroundColor: theme.colors.screenBackground,
-      }}
-      start={{ x: 0, y: 4 }}
-      end={{ x: 1, y: 0.5 }}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={[
+        {
+          backgroundColor: theme.colors.screenBackground,
+        },
+        style,
+      ]} // Apply the passed style here
     >
       {children}
     </LinearGradient>
