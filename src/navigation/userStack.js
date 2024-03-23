@@ -27,6 +27,8 @@ import BottomSheet from "../components/BottomSheet.js";
 import ThemeSelector from "../features/themeChanger/components/ThemeSelector.js";
 import CustomMealsModal from "../features/foodDiary/components/CustomMealsModal.js";
 import ChatScreen from "../features/SocialMedia/Screens/ChatScreen.js";
+import SelectFriend from "../features/SocialMedia/Screens/SelectFriend.js";
+import TextScreen from "../features/SocialMedia/Screens/TextScreen.js";
 
 //chat button navigator
 const Stack = createStackNavigator();
@@ -40,7 +42,7 @@ const AppSettingsStack = () => {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="More" component={MoreScreen} />
       <Stack.Screen name="Goals" component={GoalsScreen} />
-      <Stack.Screen name="Themes" component={ThemeScreen} />
+          <Stack.Screen name="Themes" component={ThemeScreen} />
     </Stack.Navigator>
   );
 };
@@ -49,7 +51,7 @@ const FoodsStack = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Food Options" component={FoodsScreen} />
-      <Stack.Screen name="Custom Meals" component={CustomMealsModal} />
+          <Stack.Screen name="Custom Meals" component={CustomMealsModal} />
     </Stack.Navigator>
   );
 };
@@ -59,6 +61,8 @@ function HomeStackNavigator() {
         <HomeStack.Navigator screenOptions={{ headerShown: false }}>
             <HomeStack.Screen name="Dashboard" component={DashboardScreen} />
             <HomeStack.Screen name="Chat" component={ChatScreen} />
+            <HomeStack.Screen name="SelectFriend" component={SelectFriend} />
+            <HomeStack.Screen name="TextScreen" component={TextScreen} />
         </HomeStack.Navigator>
     );
 }

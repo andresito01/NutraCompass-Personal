@@ -17,7 +17,7 @@ const chatScreenStyles = (theme) => {
             fontSize: 20,
             fontWeight: 'bold',
             padding: 10,
-            color: theme.colors.text,
+            color: theme.colors.cardHeaderTextColor, 
             alignSelf: 'center', // Center title
             textAlign: 'center', // Center text
             flex: 1, // Allow title to take up available space
@@ -34,7 +34,7 @@ const chatScreenStyles = (theme) => {
             borderWidth: 1,
             borderColor: theme.colors.border,
             borderRadius: 30, // Increased border radius for an oval shape
-            color: theme.colors.text,
+            color: theme.colors.cardHeaderTextColor, 
             backgroundColor: theme.colors.background,
             marginHorizontal: 10,
             marginBottom: 10,
@@ -44,28 +44,30 @@ const chatScreenStyles = (theme) => {
             flexDirection: 'row',
             paddingVertical: 10,
             paddingHorizontal: 15,
-            alignItems: 'center',
             borderBottomWidth: StyleSheet.hairlineWidth,
             borderBottomColor: theme.colors.border,
         },
-        
         chatInfo: {
-            flex: 1,
-            justifyContent: 'center',
-            color: theme.colors.text,
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            width: '100%', // Ensure the container takes the full width
         },
         chatName: {
             fontSize: 16,
             fontWeight: 'bold',
-            color: theme.colors.text,
+            color: theme.colors.cardHeaderTextColor,
         },
         lastMessage: {
             fontSize: 14,
             color: theme.colors.text,
+            // Additional styles if needed
         },
         timestamp: {
             fontSize: 12,
             color: theme.colors.text,
+            // Ensure there is space between this and the last message
+            paddingLeft: 4,
         },
         unreadIndicator: {
             width: 10,
