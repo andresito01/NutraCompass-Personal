@@ -34,10 +34,16 @@ import MyLibraryScreen from "../features/SocialMedia/MyLibrary/screens/MyLibrary
 import MyAccomplishmentsScreen from "../features/SocialMedia/MyAccomplishments/screens/MyAccomplishmentsScreen.js";
 import MarketPlaceScreen from "../features/SocialMedia/MarketPlace/screens/MarketPlaceScreen.js";
 import SocialSettingsScreen from "../features/SocialMedia/SocialSettings/screens/SocialSettingsScreen.js";
+import ChatScreen from "../features/SocialMedia/Screens/ChatScreen.js";
+import SelectFriend from "../features/SocialMedia/Screens/SelectFriend.js";
+import TextScreen from "../features/SocialMedia/Screens/TextScreen.js";
 
+//chat button navigator
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
+const ChatStack = createStackNavigator();
+const HomeStack = createStackNavigator();
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -50,6 +56,7 @@ const DrawerScreens = () => {
     >
       <Drawer.Screen name="Main" component={MainTabs} />
       <Drawer.Screen name="My Profile" component={MyProfileScreen} />
+      <Drawer.Screen name="Messages" component={MessagesStack} />
       <Drawer.Screen name="My Library" component={MyLibraryScreen} />
       <Drawer.Screen
         name="My Accomplishments"
@@ -77,6 +84,27 @@ const FoodsStack = () => {
       <Stack.Screen name="Food Options" component={FoodsScreen} />
       <Stack.Screen name="Custom Meals" component={CustomMealsModal} />
     </Stack.Navigator>
+  );
+};
+
+const MessagesStack = () => {
+  return (
+    <ChatStack.Navigator screenOptions={{ headerShown: false }}>
+      <ChatStack.Screen name="Chat" component={ChatScreen} />
+      <ChatStack.Screen name="SelectFriend" component={SelectFriend} />
+      <ChatStack.Screen name="TextScreen" component={TextScreen} />
+    </ChatStack.Navigator>
+  );
+};
+
+const HomeScreenStack = () => {
+  return (
+    <HomeStack.Navigator screenOptions={{ headerShown: false }}>
+      <HomeStack.Screen name="Home" component={DashboardScreen} />
+      <HomeStack.Screen name="Chat" component={ChatScreen} />
+      <HomeStack.Screen name="SelectFriend" component={SelectFriend} />
+      <HomeStack.Screen name="TextScreen" component={TextScreen} />
+    </HomeStack.Navigator>
   );
 };
 
@@ -206,6 +234,7 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
   };
 
   const onPress = (index) => {
+    console.log(index);
     navigation.navigate(state.routeNames[index]);
   };
 
@@ -225,6 +254,28 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
     return "home"; // Default icon name
   };
 
+  const onTabPress = (route, index) => {
+    const isRouteFocused = state.index === index;
+    const event = navigation.emit({
+      type: "tabPress",
+      target: route.key,
+      canPreventDefault: true,
+    });
+
+    if (!event.defaultPrevented) {
+      if (isRouteFocused && route.name === "Home") {
+        // If the 'Home' tab is already focused, reset to the Dashboard screen
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "Dashboard" }],
+        });
+      } else {
+        // For other tabs, use the default behavior
+        navigation.navigate(route.name);
+      }
+    }
+  };
+
   return (
     <View style={{ flexDirection: "row" }}>
       <View style={styles.tabBar}>
@@ -234,20 +285,14 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
             options.tabBarLabel !== undefined
               ? options.tabBarLabel
               : route.name;
-
           const isFocused = state.index === index;
-
-          const onPressTab = () => {
-            onPress(index);
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-          };
 
           return (
             <TabButton
-              key={index}
+              key={route.key}
               label={label}
               isFocused={isFocused}
-              onPress={onPressTab}
+              onPress={() => onTabPress(route, index)} // Use the custom onTabPress
               icon={getIconName(route.name)}
             />
           );
@@ -298,14 +343,32 @@ const MainTabs = () => {
       }}
     >
       <Tab.Screen
-        name="Home"
-        component={DashboardScreen}
-        listeners={() => ({
-          tabPress: () => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        name="HomeStack"
+        component={HomeScreenStack}
+        listeners={({ navigation, route }) => ({
+          tabPress: (e) => {
+            // Prevent default action
+            e.preventDefault();
+            const state = navigation.getState();
+
+            // Check if the stack is not at the 'Dashboard' screen
+            if (route.state?.index > 0) {
+              // Reset the stack to the 'Dashboard' screen
+              navigation.navigate("Dashboard");
+            } else if (state.index === 0) {
+              // When already focused, reset to the initial route (which is 'Dashboard' here)
+              navigation.reset({
+                index: 0,
+                routes: [{ name: "Dashboard" }],
+              });
+            } else {
+              // If the tab press is for another screen (not the Home stack), perform default action
+              navigation.navigate("HomeStack");
+            }
           },
         })}
       />
+
       <Tab.Screen
         name="Diary"
         component={FoodDiaryScreen}

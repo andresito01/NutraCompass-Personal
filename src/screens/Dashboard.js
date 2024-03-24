@@ -12,6 +12,8 @@ import LinearGradientCard from "../components/LinearGradientCard.js";
 import CircularChart from "../components/CircularChart.js";
 import MacroCircularChart from "../components/MacroCircularChart.js";
 import OpenDrawerToggle from "../features/SocialMedia/components/OpenDrawerToggle.js";
+import { useNavigation } from "@react-navigation/native";
+import ChatScreen from "../features/SocialMedia/Screens/ChatScreen.js";
 
 const DashboardScreen = () => {
   const { user } = useAuth();
@@ -22,6 +24,7 @@ const DashboardScreen = () => {
   const [isPedometerAvailable, setIsPedometerAvailable] = useState("checking");
   const [pastStepCount, setPastStepCount] = useState(0);
   const [currentStepCount, setCurrentStepCount] = useState(0);
+  const navigation = useNavigation();
 
   console.log("Macro Goals: " + JSON.stringify(macroGoals, null, 1));
   const styles = dashboardScreenStyles();
@@ -187,17 +190,8 @@ const DashboardScreen = () => {
           {/** Direct Messages Page Navigation Button */}
           <TouchableOpacity
             style={{ justifyContent: "center", alignItems: "center" }}
+            onPress={() => navigation.navigate("Chat")}
           >
-            {/* <Text
-              style={{
-                position: "absolute",
-                color: "red",
-                fontSize: 12,
-              }}
-              s
-            >
-              5
-            </Text> */}
             <Feather
               name="message-circle"
               color={theme.colors.cardHeaderTextColor}
@@ -228,7 +222,7 @@ const DashboardScreen = () => {
       >
         {/** Today's Date Container */}
         <View style={{ height: "14%", width: "93%" }}>
-          <LinearGradientCard>
+          <LinearGradientCard style={{ borderRadius: 12, padding: 4 }}>
             <View
               style={{
                 flex: 1,
@@ -427,7 +421,7 @@ const DashboardScreen = () => {
           <View style={{ flexDirection: "row", gap: 10 }}>
             {/** Step Counter  */}
             <View style={{ flex: 1 }}>
-              <LinearGradientCard>
+              <LinearGradientCard style={{ borderRadius: 12, padding: 4 }}>
                 <View
                   style={{
                     flex: 1,
@@ -477,7 +471,7 @@ const DashboardScreen = () => {
             </View>
             {/** Distance Traveled  */}
             <View style={{ flex: 1 }}>
-              <LinearGradientCard>
+              <LinearGradientCard style={{ borderRadius: 12, padding: 4 }}>
                 <View
                   style={{
                     flex: 1,
