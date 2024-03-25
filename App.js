@@ -4,7 +4,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { AuthProvider } from "./src/authentication/context/AuthContext.js";
 import RootNavigation from "./src/navigation/index.js";
 import { ThemeProvider } from "./src/context/ThemeContext.js";
-import { UserSettingsProvider } from "./src/features/userSettings/context/UserSettingsContext.js";
+import { UserSettingsProvider } from "./src/features/UserSettings/context/UserSettingsContext.js";
 import {
   Menu,
   MenuProvider,

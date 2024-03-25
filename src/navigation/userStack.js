@@ -23,10 +23,10 @@ import FoodsScreen from "../screens/Foods.js";
 import WorkoutDiaryScreen from "../screens/WorkoutDiary.js";
 import MoreScreen from "../screens/More.js";
 import GoalsScreen from "../screens/Goals.js";
-import ThemeScreen from "../features/themeChanger/screens/ThemesScreen.js";
+import ThemeScreen from "../features/ThemeChanger/screens/ThemesScreen.js";
 import BottomSheet from "../components/BottomSheet.js";
-import ThemeSelector from "../features/themeChanger/components/ThemeSelector.js";
-import CustomMealsModal from "../features/foodDiary/components/CustomMealsModal.js";
+import ThemeSelector from "../features/ThemeChanger/components/ThemeSelector.js";
+import CustomMealsModal from "../features/FoodDiary/components/CustomMealsModal.js";
 import { CustomDrawerContent } from "../components/CustomDrawerContent.js";
 // Social Media Screen Imports
 import MyProfileScreen from "../features/SocialMedia/MyProfile/screens/MyProfileScreen.js";
@@ -34,9 +34,9 @@ import MyLibraryScreen from "../features/SocialMedia/MyLibrary/screens/MyLibrary
 import MyAccomplishmentsScreen from "../features/SocialMedia/MyAccomplishments/screens/MyAccomplishmentsScreen.js";
 import MarketPlaceScreen from "../features/SocialMedia/MarketPlace/screens/MarketPlaceScreen.js";
 import SocialSettingsScreen from "../features/SocialMedia/SocialSettings/screens/SocialSettingsScreen.js";
-import ChatScreen from "../features/SocialMedia/Screens/ChatScreen.js";
-import SelectFriend from "../features/SocialMedia/Screens/SelectFriend.js";
-import TextScreen from "../features/SocialMedia/Screens/TextScreen.js";
+import ChatScreen from "../features/SocialMedia/screens/ChatScreen.js";
+import SelectFriend from "../features/SocialMedia/screens/SelectFriend.js";
+import TextScreen from "../features/SocialMedia/screens/TextScreen.js";
 
 //chat button navigator
 const Stack = createStackNavigator();
@@ -100,7 +100,7 @@ const MessagesStack = () => {
 const HomeScreenStack = () => {
   return (
     <HomeStack.Navigator screenOptions={{ headerShown: false }}>
-      <HomeStack.Screen name="Home" component={DashboardScreen} />
+      <HomeStack.Screen name="Dashboard" component={DashboardScreen} />
       <HomeStack.Screen name="Chat" component={ChatScreen} />
       <HomeStack.Screen name="SelectFriend" component={SelectFriend} />
       <HomeStack.Screen name="TextScreen" component={TextScreen} />
@@ -343,7 +343,7 @@ const MainTabs = () => {
       }}
     >
       <Tab.Screen
-        name="HomeStack"
+        name="Home"
         component={HomeScreenStack}
         listeners={({ navigation, route }) => ({
           tabPress: (e) => {
@@ -363,7 +363,7 @@ const MainTabs = () => {
               });
             } else {
               // If the tab press is for another screen (not the Home stack), perform default action
-              navigation.navigate("HomeStack");
+              navigation.navigate("Home");
             }
           },
         })}

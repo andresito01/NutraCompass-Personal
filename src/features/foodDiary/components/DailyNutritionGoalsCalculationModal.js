@@ -13,6 +13,7 @@ import {
   SegmentedButtons,
   TextInput,
   Divider,
+  Snackbar,
 } from "react-native-paper";
 import { Calendar, CalendarList, Agenda } from "react-native-calendars";
 import * as Haptics from "expo-haptics";
@@ -20,7 +21,7 @@ import Modal from "react-native-modal";
 import Feather from "react-native-vector-icons/Feather";
 import dailyNutritionGoalsCalculationModalStyles from "./styles/dailyNutritionGoalsCalculationModalStyles.js";
 import { useThemeContext } from "../../../context/ThemeContext.js";
-import { useUserSettings } from "../../userSettings/context/UserSettingsContext.js";
+import { useUserSettings } from "../../UserSettings/context/UserSettingsContext.js";
 
 console.log("Daily Nutrition Goals Calculation Modal Rendered.");
 
@@ -30,7 +31,7 @@ const DailyNutritionGoalsCalculationModal = ({ isVisible, closeModal }) => {
   const { setNutritionalGoals } = useUserSettings();
 
   // State variable that checks if user used form results to update nutritional goals
-  const { formUsedToUpdateGoals, setFormUsedToUpdateGoals } = useState(false);
+  const [formUsedToUpdateGoals, setFormUsedToUpdateGoals] = useState(false);
   // Form User Answer State Variables
   const [goal, setGoal] = useState("Maintain");
   const [unit, setUnit] = useState("Standard");
@@ -55,6 +56,9 @@ const DailyNutritionGoalsCalculationModal = ({ isVisible, closeModal }) => {
   const [carbGrams, setCarbGrams] = useState(null);
   const [proteinGrams, setProteinGrams] = useState(null);
   const [fatGrams, setFatGrams] = useState(null);
+
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
 
   useEffect(() => {
     // Reset form fields when modal is closed
@@ -104,9 +108,13 @@ const DailyNutritionGoalsCalculationModal = ({ isVisible, closeModal }) => {
         setFormUsedToUpdateGoals(true);
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         console.log("Updating nutritional goals");
+        setSnackbarMessage("Nutritional goals updated successfully!");
+        setSnackbarVisible(true); // Show the Snackbar
       }
-    } catch {
-      console.log("Error updating nutritional goals");
+    } catch (error) {
+      console.error("Error updating nutritional goals:", error);
+      setSnackbarMessage("Failed to update nutritional goals.");
+      setSnackbarVisible(true); // Show the Snackbar
     }
   };
 
@@ -354,7 +362,7 @@ const DailyNutritionGoalsCalculationModal = ({ isVisible, closeModal }) => {
         </View>
         <View style={styles.contentContainer}>
           <Text style={styles.title}>Nutrition Calculator</Text>
-          <ScrollView>
+          <ScrollView contentContainerStyle={{ paddingBottom: 60 }}>
             <Card style={{ marginVertical: 20, marginHorizontal: 20 }}>
               <Card.Content>
                 <Text style={styles.infoBox}>
@@ -736,6 +744,29 @@ const DailyNutritionGoalsCalculationModal = ({ isVisible, closeModal }) => {
                 </Card>
               ) : null}
             </View>
+
+            <Snackbar
+              visible={snackbarVisible}
+              onDismiss={() => setSnackbarVisible(false)}
+              duration={3000} // Adjust duration as needed
+              action={{
+                label: "OK",
+                onPress: () => {
+                  // Do something if needed when the user presses the action button
+                },
+              }}
+              style={{ backgroundColor: theme.colors.surface }}
+            >
+              <Text
+                style={{
+                  fontSize: 16,
+                  alignSelf: "center",
+                  color: theme.colors.cardHeaderTextColor,
+                }}
+              >
+                {snackbarMessage}
+              </Text>
+            </Snackbar>
           </ScrollView>
         </View>
       </KeyboardAvoidingView>

@@ -10,20 +10,20 @@ import * as Haptics from "expo-haptics";
 import { Card, Button, IconButton, Divider } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
 import { useIsFocused } from "@react-navigation/native";
-import FoodEntryModal from "../features/foodDiary/components/FoodEntryModal.js";
-import MealSectionCustomizationModal from "../features/foodDiary/components/MealSectionCustomizationModal.js";
-import DailyNutritionGoalsCustomizationModal from "../features/foodDiary/components/DailyNutritionGoalsCustomizationModal.js";
-import DailyNutritionGoalsCalculationModal from "../features/foodDiary/components/DailyNutritionGoalsCalculationModal.js";
-import FoodNutrientModal from "../features/foodDiary/components/FoodNutrientModal.js";
+import FoodEntryModal from "../features/FoodDiary/components/FoodEntryModal.js";
+import MealSectionCustomizationModal from "../features/FoodDiary/components/MealSectionCustomizationModal.js";
+import DailyNutritionGoalsCustomizationModal from "../features/FoodDiary/components/DailyNutritionGoalsCustomizationModal.js";
+import DailyNutritionGoalsCalculationModal from "../features/FoodDiary/components/DailyNutritionGoalsCalculationModal.js";
+import FoodNutrientModal from "../features/FoodDiary/components/FoodNutrientModal.js";
 import foodDiaryScreenStyles from "./styles/foodDiaryScreenStyles.js";
-import SwipeableFoodEntryListItem from "../features/foodDiary/components/SwipeableFoodEntryListItem.js";
+import SwipeableFoodEntryListItem from "../features/FoodDiary/components/SwipeableFoodEntryListItem.js";
 import DateSelector from "../components/DateSelector.js";
-import FoodlogFabGroupMenu from "../features/foodDiary/components/FabGroupMenu.js";
-import { useFoodLog } from "../features/foodDiary/context/FoodLogContext.js";
-import { useUserSettings } from "../features/userSettings/context/UserSettingsContext.js";
+import FoodlogFabGroupMenu from "../features/FoodDiary/components/FabGroupMenu.js";
+import { useFoodLog } from "../features/FoodDiary/context/FoodLogContext.js";
+import { useUserSettings } from "../features/UserSettings/context/UserSettingsContext.js";
 import { useThemeContext } from "../context/ThemeContext.js";
-import CarouselRenderItemComponent from "../features/foodDiary/components/CarouselRenderItemComponent.js";
-import CarouselWithIndicators from "../features/foodDiary/components/CarouselWithIndicators.js";
+import CarouselRenderItemComponent from "../features/FoodDiary/components/CarouselRenderItemComponent.js";
+import CarouselWithIndicators from "../features/FoodDiary/components/CarouselWithIndicators.js";
 import {
   Menu,
   MenuProvider,

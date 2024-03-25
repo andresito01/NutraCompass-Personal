@@ -16,7 +16,7 @@ import Feather from "react-native-vector-icons/Feather";
 import foodNutrientModalStyles from "./styles/foodNutrientModalStyles.js";
 import Svg, { Circle, G, Text as SvgText, Path } from "react-native-svg";
 import { useThemeContext } from "../../../context/ThemeContext.js";
-import { useUserSettings } from "../../userSettings/context/UserSettingsContext.js";
+import { useUserSettings } from "../../UserSettings/context/UserSettingsContext.js";
 import { useFoodLog } from "../context/FoodLogContext.js";
 import {
   getNutrientsForFoodItem,

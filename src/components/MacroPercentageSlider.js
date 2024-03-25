@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text } from "react-native";
 //import {} from "react-native-paper";
 import Slider from "@react-native-community/slider";
-import { useUserSettings } from "../features/userSettings/context/UserSettingsContext.js";
+import { useUserSettings } from "../features/UserSettings/context/UserSettingsContext.js";
 import { useThemeContext } from "../context/ThemeContext.js";
 
 const MacroPercentageSlider = ({ selectedValues, onSelect, calories }) => {

@@ -3,16 +3,16 @@ import { SafeAreaView, View, ScrollView } from "react-native";
 import { Text, Divider, useTheme, Card, Title, FAB } from "react-native-paper";
 import workoutDiaryScreenStyles from "./styles/workoutDiaryScreenStyles.js";
 import DateSelector from "../components/DateSelector.js";
-import WorkoutStatusSection from "../features/workoutDiary/components/WorkoutStatusSection.js";
-import ExerciseSection from "../features/workoutDiary/components/ExerciseSection.js";
-import NotesScreen from "../features/workoutDiary/screens/Notes.js";
-import CreateScreen from "../features/workoutDiary/screens/CreateScreen.js";
+import WorkoutStatusSection from "../features/WorkoutDiary/components/WorkoutStatusSection.js";
+import ExerciseSection from "../features/WorkoutDiary/components/ExerciseSection.js";
+import NotesScreen from "../features/WorkoutDiary/screens/Notes.js";
+import CreateScreen from "../features/WorkoutDiary/screens/CreateScreen.js";
 import CollapsibleSection from "../components/CollapsibleSection.js";
 import SubCollapsibleSection from "../components/SubCollapsibleSection.js";
 import {
   fetchBodyParts,
   fetchExercisesByBodypart,
-} from "../features/workoutDiary/api/ExerciseDB/exerciseDB.js";
+} from "../features/WorkoutDiary/api/ExerciseDB/exerciseDB.js";
 import { useThemeContext } from "../context/ThemeContext.js";
 
 const WorkoutDiaryScreen = () => {

@@ -5,15 +5,15 @@ import { Icon } from "react-native-paper";
 import Feather from "react-native-vector-icons/Feather";
 import { useAuth } from "../authentication/context/AuthContext.js";
 import { useThemeContext } from "../context/ThemeContext.js";
-import { useFoodLog } from "../features/foodDiary/context/FoodLogContext.js";
-import { useUserSettings } from "../features/userSettings/context/UserSettingsContext.js";
+import { useFoodLog } from "../features/FoodDiary/context/FoodLogContext.js";
+import { useUserSettings } from "../features/UserSettings/context/UserSettingsContext.js";
 import dashboardScreenStyles from "./styles/dashboardScreenStyles.js";
 import LinearGradientCard from "../components/LinearGradientCard.js";
 import CircularChart from "../components/CircularChart.js";
 import MacroCircularChart from "../components/MacroCircularChart.js";
 import OpenDrawerToggle from "../features/SocialMedia/components/OpenDrawerToggle.js";
 import { useNavigation } from "@react-navigation/native";
-import ChatScreen from "../features/SocialMedia/Screens/ChatScreen.js";
+import ChatScreen from "../features/SocialMedia/screens/ChatScreen.js";
 
 const DashboardScreen = () => {
   const { user } = useAuth();

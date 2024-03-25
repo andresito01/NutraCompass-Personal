@@ -16,7 +16,7 @@ import {
   AllTeal,
 } from "../../themes";
 import { useAuth } from "../authentication/context/AuthContext.js";
-import { useUserSettings } from "../features/userSettings/context/UserSettingsContext.js";
+import { useUserSettings } from "../features/UserSettings/context/UserSettingsContext.js";
 
 const themes = [
   Default,

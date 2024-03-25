@@ -5,8 +5,8 @@ import UserStack from "./userStack.js";
 import AuthStack from "./authStack";
 import { Provider as PaperProvider } from "react-native-paper";
 import { useThemeContext } from "../context/ThemeContext.js";
-import { FoodLogProvider } from "../features/foodDiary/context/FoodLogContext.js";
-import { UserSettingsProvider } from "../features/userSettings/context/UserSettingsContext.js";
+import { FoodLogProvider } from "../features/FoodDiary/context/FoodLogContext.js";
+import { UserSettingsProvider } from "../features/UserSettings/context/UserSettingsContext.js";
 
 export default function RootNavigation() {
   const { user } = useAuth();

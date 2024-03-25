@@ -5,8 +5,8 @@ import { Card, Button, Icon } from "react-native-paper";
 import * as Haptics from "expo-haptics";
 import Feather from "react-native-vector-icons/Feather";
 import { useThemeContext } from "../context/ThemeContext.js";
-import { useFoodLog } from "../features/foodDiary/context/FoodLogContext.js";
-import CreateCustomMealModal from "../features/foodDiary/components/CreateCustomMealModal.js";
+import { useFoodLog } from "../features/FoodDiary/context/FoodLogContext.js";
+import CreateCustomMealModal from "../features/FoodDiary/components/CreateCustomMealModal.js";
 
 export default function FoodsScreen({ navigation }) {
   const { theme } = useThemeContext();

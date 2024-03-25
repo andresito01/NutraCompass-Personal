@@ -4,7 +4,7 @@ import { View, Text, ScrollView } from "react-native";
 import { Button as PaperButton, TextInput } from "react-native-paper";
 import * as Haptics from "expo-haptics";
 import CollapsibleSection from "../../../components/CollapsibleSection.js";
-import CustomExerciseCard from "../components/CustomExerciseCard.js";
+import CustomExerciseCard from "./CustomExerciseCard.js";
 import createExerciseFormStyles from "./styles/createExerciseFormStyles.js";
 
 const CreateExerciseForm = () => {

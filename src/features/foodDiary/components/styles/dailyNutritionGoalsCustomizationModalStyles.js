@@ -10,13 +10,18 @@ const dailyNutritionGoalsCustomizationModalStyles = () => {
 
   return StyleSheet.create({
     header: {
-      minWidth: "100%",
-      padding: 10,
-      paddingTop: 20,
-      justifyContent: "flex-end",
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      width: "100%",
+      paddingHorizontal: 20,
+      paddingTop: 30,
+      paddingBottom: 30,
     },
     closeModalButton: {
-      alignSelf: "flex-start",
+      marginTop: 20,
+    },
+    saveButton: {
       marginTop: 20,
     },
     formContainer: {

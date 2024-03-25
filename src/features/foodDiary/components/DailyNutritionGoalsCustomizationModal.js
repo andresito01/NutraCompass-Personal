@@ -8,12 +8,12 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { Button, Title, Card } from "react-native-paper";
+import { Button, Title, Card, Snackbar } from "react-native-paper";
 import * as Haptics from "expo-haptics";
 import Modal from "react-native-modal";
 import dailyNutritionGoalsCustomizationModalStyles from "./styles/dailyNutritionGoalsCustomizationModalStyles.js";
 import Feather from "react-native-vector-icons/Feather";
-import { useUserSettings } from "../../userSettings/context/UserSettingsContext.js";
+import { useUserSettings } from "../../UserSettings/context/UserSettingsContext.js";
 import { useThemeContext } from "../../../context/ThemeContext.js";
 import MacroSettingsModal from "./MacroSettingsModal.js";
 //const MacroSettingsModal = React.lazy(() => import("./MacroSettingsModal.js"));
@@ -32,6 +32,9 @@ const DailyNutritionGoalsCustomizationModal = ({ isVisible, closeModal }) => {
     calculateFatDailyGrams,
   } = useUserSettings();
   const { calorieGoal, macroGoals } = getNutritionalGoals();
+
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
 
   const [calories, setCalories] = useState(calorieGoal);
   const [protein, setProtein] = useState(
@@ -111,7 +114,9 @@ const DailyNutritionGoalsCustomizationModal = ({ isVisible, closeModal }) => {
   const carbDailyGrams = calculateCarbDailyGrams(calories, carb);
   const fatDailyGrams = calculateFatDailyGrams(calories, fat);
 
-  useEffect(() => {
+  // This function is triggered by a save button within the modal.
+  // It updates the global state based on the current local state values.
+  const handleSaveNutritionalGoals = () => {
     try {
       setNutritionalGoals({
         calorieGoal: calories,
@@ -120,10 +125,24 @@ const DailyNutritionGoalsCustomizationModal = ({ isVisible, closeModal }) => {
         fatPercentage: fat,
       });
       console.log("Updating nutritional goals");
-    } catch {
-      console.log("Error updating nutritional goals");
+      setSnackbarMessage("Nutritional goals updated successfully!");
+      setSnackbarVisible(true); // Show the Snackbar
+    } catch (error) {
+      console.log("Error updating nutritional goals.", error);
+      setSnackbarMessage("Failed to update nutritional goals.");
+      setSnackbarVisible(true); // Show the Snackbar
     }
-  }, [calories, protein, carb, fat]);
+  };
+
+  useEffect(() => {
+    // This useEffect is responsible for updating local state when the global state changes.
+    const { calorieGoal, macroGoals } = getNutritionalGoals();
+
+    setCalories(calorieGoal);
+    setProtein(Math.round(macroGoals.protein.dailyPercentage * 100));
+    setCarb(Math.round(macroGoals.carb.dailyPercentage * 100));
+    setFat(Math.round(macroGoals.fat.dailyPercentage * 100));
+  }, [getNutritionalGoals]);
 
   return (
     <Modal
@@ -144,11 +163,18 @@ const DailyNutritionGoalsCustomizationModal = ({ isVisible, closeModal }) => {
         }}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        <View style={{ ...styles.header, paddingTop: 30 }}>
+        <View style={styles.header}>
           <TouchableOpacity
             style={styles.closeModalButton}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              // Reset tempChanges
+              setTempChanges({});
+              // Reset the local states to match the global state to discard unsaved changes
+              setCalories(calorieGoal);
+              setProtein(Math.round(macroGoals.protein.dailyPercentage * 100));
+              setCarb(Math.round(macroGoals.carb.dailyPercentage * 100));
+              setFat(Math.round(macroGoals.fat.dailyPercentage * 100));
               closeModal();
             }}
             disabled={activeField ? true : false}
@@ -157,6 +183,20 @@ const DailyNutritionGoalsCustomizationModal = ({ isVisible, closeModal }) => {
               name="chevron-left"
               color={theme.colors.sectionHeaderTextColor}
               size={38}
+            />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.saveButton}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              handleSaveNutritionalGoals();
+            }}
+          >
+            <Feather
+              name="check-circle"
+              color={theme.colors.primary}
+              size={28}
             />
           </TouchableOpacity>
         </View>
@@ -341,6 +381,29 @@ const DailyNutritionGoalsCustomizationModal = ({ isVisible, closeModal }) => {
             fat={fat}
           />
         </Suspense>
+
+        <Snackbar
+          visible={snackbarVisible}
+          onDismiss={() => setSnackbarVisible(false)}
+          duration={3000} // Adjust duration as needed
+          action={{
+            label: "OK",
+            onPress: () => {
+              // Do something if needed when the user presses the action button
+            },
+          }}
+          style={{ backgroundColor: theme.colors.surface }}
+        >
+          <Text
+            style={{
+              fontSize: 16,
+              alignSelf: "center",
+              color: theme.colors.cardHeaderTextColor,
+            }}
+          >
+            {snackbarMessage}
+          </Text>
+        </Snackbar>
       </KeyboardAvoidingView>
     </Modal>
   );

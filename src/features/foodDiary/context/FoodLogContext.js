@@ -195,46 +195,6 @@ export function FoodLogProvider({ children }) {
     }
   };
 
-  // Load food entries for a specific meal section
-  const loadFoodEntriesForSpecificMealType = async (mealType) => {
-    // Check if the mealType is valid
-    if (!mealSections.some((section) => section.id === mealType)) {
-      console.error("Invalid mealType:", mealType);
-      return;
-    }
-
-    try {
-      const querySnapshot = await getDocs(
-        query(foodLogEntriesCollectionRef, where("mealType", "==", mealType))
-      );
-
-      const entries = [];
-
-      querySnapshot.forEach((doc) => {
-        entries.push({ id: doc.id, ...doc.data() });
-      });
-
-      // Update the local state with the loaded entries
-      setFoodEntries((prevEntries) => {
-        // Create a shallow copy of the previous state
-        const updatedEntries = { ...prevEntries };
-
-        // Check if the mealType exists in the previous state; if not, initialize it as an empty array
-        if (!updatedEntries[mealType]) {
-          updatedEntries[mealType] = [];
-        }
-
-        // Add the new entry to the mealType array
-        updatedEntries[mealType].push({ id: docRef.id, ...newEntry });
-
-        return updatedEntries;
-      });
-    } catch (error) {
-      console.error("Error loading food entries:", error);
-      // Handle the error gracefully, e.g., show a message to the user
-    }
-  };
-
   // Function to save a food log entry
   const saveFoodLogEntry = async (mealType, selectedDate, selectedFood) => {
     // Ensure that the meal section is valid
