@@ -13,9 +13,27 @@ export default function DateSelector({ selectedDate, setSelectedDate }) {
   const styles = dateSelectorStyles();
 
   const [isCalendarModalVisible, setIsCalendarModalVisible] = useState(false);
+  const [temporarySelectedDate, setTemporarySelectedDate] =
+    useState(selectedDate);
 
   const handleCalendarToggle = () => {
     setIsCalendarModalVisible(!isCalendarModalVisible);
+  };
+
+  // Updated to only set temporary date
+  const handleDateSelection = (date) => {
+    setTemporarySelectedDate(date.dateString);
+  };
+
+  // Handler for "OK" button
+  const handleConfirmDate = () => {
+    setSelectedDate(temporarySelectedDate);
+    setIsCalendarModalVisible(false);
+  };
+
+  // Handler for "Cancel" button, simply closes the modal without saving
+  const handleCancel = () => {
+    setIsCalendarModalVisible(false);
   };
 
   const handleDateChange = (newDate) => {
@@ -76,6 +94,16 @@ export default function DateSelector({ selectedDate, setSelectedDate }) {
 
   const handleNextDay = () => {
     setSelectedDate(addDay(selectedDate));
+  };
+
+  // Use current date for dot indicator
+  const today = new Date().toISOString().split("T")[0];
+  const markedDates = {
+    [today]: { marked: true, dotColor: theme.colors.primary },
+    [temporarySelectedDate]: {
+      selected: true,
+      selectedColor: theme.colors.primary,
+    },
   };
 
   return (
@@ -175,68 +203,76 @@ export default function DateSelector({ selectedDate, setSelectedDate }) {
       >
         <View style={styles.calendarModal}>
           <View style={styles.calendarWrapper}>
-            <Calendar
-              style={{
-                height: "auto",
-                width: "100%",
-                backgroundColor: theme.colors.cardDarkGrayBackgroundColor,
-              }}
-              current={selectedDate.toString()}
-              onDayPress={handleDateChange}
-              hideExtraDays
-              theme={{
-                calendarBackground: theme.colors.cardBackgroundColor,
-                selectedDayBackgroundColor: theme.colors.primary,
-                selectedDayTextColor: theme.colors.cardHeaderTextColor,
-                todayTextColor: theme.colors.cardHeaderTextColor,
-                "stylesheet.calendar.header": {
-                  monthText: {
-                    color: theme.colors.cardHeaderTextColor,
-                    fontSize: 25,
+            <View>
+              <Calendar
+                style={{
+                  minHeight: "65%",
+                  height: "auto",
+                  width: "100%",
+                  backgroundColor: theme.colors.cardDarkGrayBackgroundColor,
+                }}
+                current={selectedDate.toString()}
+                markedDates={markedDates}
+                hideExtraDays
+                theme={{
+                  calendarBackground: theme.colors.cardBackgroundColor,
+                  selectedDayBackgroundColor: theme.colors.primary,
+                  selectedDayTextColor: theme.colors.cardHeaderTextColor,
+                  todayTextColor: theme.colors.cardHeaderTextColor,
+                  "stylesheet.calendar.header": {
+                    monthText: {
+                      color: theme.colors.cardHeaderTextColor,
+                      fontSize: 25,
+                    },
+                    dayHeader: {
+                      color: theme.colors.cardHeaderTextColor,
+                      fontSize: 20,
+                      marginTop: 10,
+                      marginBottom: 10,
+                    },
                   },
-                  dayHeader: {
-                    color: theme.colors.cardHeaderTextColor,
-                    fontSize: 20,
-                    marginTop: 10,
-                    marginBottom: 10,
-                  },
-                },
-              }}
-              dayComponent={({ date, state }) => {
-                const isCurrentDate = date.dateString === selectedDate;
-                return (
-                  <TouchableOpacity
-                    onPress={() =>
-                      handleDateChange({ dateString: date.dateString })
-                    }
-                  >
-                    <View
-                      style={{
-                        height: 50,
-                        width: 50,
-                        alignItems: "center",
-                        justifyContent: "center",
-                        backgroundColor:
-                          state === "selected"
-                            ? theme.colors.primary
-                            : isCurrentDate
-                            ? "#1abc9c"
-                            : "transparent",
-                        borderRadius: 25,
-                      }}
+                }}
+                dayComponent={({ date, state }) => {
+                  const isSelectedDate =
+                    date.dateString === temporarySelectedDate;
+                  const isToday = date.dateString === today;
+
+                  return (
+                    <TouchableOpacity
+                      onPress={() =>
+                        handleDateSelection({ dateString: date.dateString })
+                      }
                     >
-                      <Text
+                      <View
                         style={{
-                          color: theme.colors.cardHeaderTextColor,
+                          height: 45,
+                          width: 45,
+                          alignItems: "center",
+                          justifyContent: "center",
+                          backgroundColor: "transparent",
+                          borderWidth: 1,
+                          borderRadius: 25,
+                          borderColor: isSelectedDate
+                            ? theme.colors.secondary
+                            : isToday
+                            ? theme.colors.primary
+                            : "transparent",
                         }}
                       >
-                        {date.day}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                );
-              }}
-            />
+                        <Text
+                          style={{
+                            color: theme.colors.cardHeaderTextColor,
+                          }}
+                        >
+                          {date.day}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  );
+                }}
+              />
+            </View>
+
             <View
               style={{
                 flexDirection: "row",
@@ -246,13 +282,13 @@ export default function DateSelector({ selectedDate, setSelectedDate }) {
             >
               <TouchableOpacity
                 style={styles.cancelDateButton}
-                onPress={() => setIsCalendarModalVisible(false)}
+                onPress={() => handleCancel()}
               >
                 <Text style={styles.cancelDateButtonText}>Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.cancelDateButton}
-                onPress={() => setIsCalendarModalVisible(false)}
+                onPress={() => handleConfirmDate()}
               >
                 <Text style={styles.cancelDateButtonText}>OK</Text>
               </TouchableOpacity>

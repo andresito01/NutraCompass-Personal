@@ -22,10 +22,12 @@ const dateSelectorStyles = () => {
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
-      backgroundColor: theme.colors.screenBackground,
+      backgroundColor: "rgba(0,0,0,0.9)",
     },
     calendarWrapper: {
       width: "85%",
+      minHeight: "70%",
+      justifyContent: "space-between",
       backgroundColor: theme.colors.screenBackground,
     },
     cancelDateButton: {
