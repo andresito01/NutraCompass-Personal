@@ -68,6 +68,7 @@ export default function CreateCustomMealModal({ isVisible, closeModal }) {
           nutrients: { ...item.nutrients },
           numberOfServings: item.numberOfServings,
           activeMeasure: { ...item.activeMeasure },
+          measures: item.measures,
         };
 
         // Push the new item into the items array of activeCustomMealObject

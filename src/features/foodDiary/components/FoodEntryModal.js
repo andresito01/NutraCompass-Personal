@@ -277,7 +277,7 @@ const FoodEntryModal = React.memo(
               />
               <Card
                 style={{
-                  backgroundColor: "white",
+                  backgroundColor: theme.colors.screenBackground,
                   alignItems: "flex-start",
                 }}
               >

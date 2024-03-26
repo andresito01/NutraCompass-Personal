@@ -36,6 +36,9 @@ const FoodNutrientModal = ({
   isBuildingMeal,
   toggleSnackbar,
 }) => {
+  useEffect(() => {
+    console.log("Active Food Item: " + JSON.stringify(activeFoodItem, null, 1));
+  }, [activeFoodItem]);
   const styles = foodNutrientModalStyles();
   const { theme, mode } = useThemeContext();
 
@@ -328,6 +331,8 @@ const FoodNutrientModal = ({
     // Trigger snackbar if the user is not saving or updating a customMeal
 
     if (foodNutrientModalType === "Edit Entry") {
+      return;
+    } else if (foodNutrientModalType === "Edit Meal Item") {
       return;
     } else if (!(isBuildingMeal && activeFoodItem?.isCustomMeal)) {
       toggleSnackbar();
