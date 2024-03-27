@@ -26,7 +26,7 @@ export default function MyLibraryScreen() {
         }}
       >
         {/** Side Menu Drawer Toggle */}
-        <OpenDrawerToggle />
+        <OpenDrawerToggle icon={"menu"} />
       </View>
       <Text>MyProfileScreen</Text>
     </View>

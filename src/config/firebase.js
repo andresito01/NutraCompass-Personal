@@ -11,12 +11,13 @@ import {
   getReactNativePersistence,
 } from "firebase/auth";
 import { getFirestore, initializeFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 // Import Firebase configuration object
 import Constants from "../../constants.js";
 
 // Initialize Firebase and Firestore
-let app, auth, db;
+let app, auth, db, storage;
 
 try {
   app = initializeApp(Constants.firebaseConfig);
@@ -34,10 +35,11 @@ try {
   }
 
   db = getFirestore(app);
+  storage = getStorage(app);
   // db = initializeFirestore(app, { experimentalAutoDetectLongPolling: true });
 } catch (error) {
   console.error("Firebase initialization error", error);
 }
 
 // Export Firebase auth and Firestore instances
-export { auth, db };
+export { auth, db, storage };

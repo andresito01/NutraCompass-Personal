@@ -103,7 +103,11 @@ const FoodNutrientModal = ({
             ...prevActiveFoodItem,
             nutrients: numberOfServingsNutrientData,
           }));
-        } else if (activeFoodItem?.mealItems && !isBuildingMeal) {
+        } else if (
+          activeFoodItem?.isCustomMeal &&
+          activeFoodItem?.mealItems &&
+          !isBuildingMeal
+        ) {
           // Process meal structure
           const totalNutrients = activeFoodItem.nutrients;
 
@@ -223,7 +227,11 @@ const FoodNutrientModal = ({
   // Function to update the number of servings
   const updateNumberOfServings = async (newNumberOfServings) => {
     // Check if activeFoodItem is a custom meal
-    if (activeFoodItem && activeFoodItem.isCustomMeal) {
+    if (
+      activeFoodItem &&
+      activeFoodItem.isCustomMeal &&
+      activeFoodItem.mealItems
+    ) {
       const servings = parseFloat(newNumberOfServings);
       setNumberOfServings(servings);
 

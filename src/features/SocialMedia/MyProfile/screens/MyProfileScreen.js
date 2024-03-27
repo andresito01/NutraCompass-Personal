@@ -14,11 +14,16 @@ import { useThemeContext } from "../../../../context/ThemeContext.js";
 import OpenDrawerToggle from "../../components/OpenDrawerToggle.js";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import LinearGradientCard from "../../../../components/LinearGradientCard.js";
+import { useUserSettings } from "../../../UserSettings/context/UserSettingsContext.js";
 
 export default function MyProfileScreen() {
   const { theme } = useThemeContext();
   // Move the styles inside the component to access theme
   const styles = getStyles(theme);
+
+  const { getUserProfile } = useUserSettings();
+  const userProfile = getUserProfile();
+  const profilePictureUrl = userProfile.pictureUrl;
 
   const navigation = useNavigation();
 
@@ -150,7 +155,7 @@ export default function MyProfileScreen() {
         style={styles.header}
       >
         <View style={styles.headerContent}>
-          <OpenDrawerToggle />
+          <OpenDrawerToggle icon={"menu"} />
           <TouchableOpacity onPress={() => console.log("Edit profile pressed")}>
             <Icon
               name="pencil"
@@ -164,11 +169,25 @@ export default function MyProfileScreen() {
       <View style={styles.profileInfoContainer}>
         <View style={{ flexDirection: "row" }}>
           <View style={{ flex: 1 }}>
-            <Image
-              style={styles.profilePic}
-              source={require("../../../../../assets/ProfilePicUpdated.jpeg")}
-              alt="Profile Image"
-            />
+            {/* Image component with source set to profileImageUrl */}
+            {profilePictureUrl ? (
+              <Image
+                source={{ uri: profilePictureUrl }}
+                style={styles.profilePic}
+              />
+            ) : (
+              // Default or placeholder image if no profile picture URL is available
+              <View
+                style={{
+                  width: 150,
+                  height: 150,
+                  borderRadius: 75,
+                  backgroundColor: "#cccccc",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              ></View>
+            )}
           </View>
 
           <View style={styles.statsContainer}>
@@ -290,13 +309,22 @@ export default function MyProfileScreen() {
   );
 
   return (
-    <FlatList
-      ListHeaderComponent={ProfileHeaderComponent}
-      data={profile.albums}
-      renderItem={renderAlbum}
-      keyExtractor={(item, index) => index.toString()}
-      style={{ backgroundColor: theme.colors.screenBackground }}
-    />
+    <View
+      style={{
+        height: "100%",
+        width: "100%",
+        paddingTop: "5%",
+        backgroundColor: theme.colors.screenBackground,
+      }}
+    >
+      <FlatList
+        ListHeaderComponent={ProfileHeaderComponent}
+        data={profile.albums}
+        renderItem={renderAlbum}
+        keyExtractor={(item, index) => index.toString()}
+        style={{ backgroundColor: theme.colors.screenBackground }}
+      />
+    </View>
   );
 }
 

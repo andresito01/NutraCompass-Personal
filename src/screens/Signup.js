@@ -226,6 +226,7 @@ function SignUpScreen({ navigation }) {
             inches: value.height.inches,
             centimeters: value.height.centimeters,
           },
+          pictureUrl: "",
         },
         appAppearance: {
           theme: "Default",

@@ -7,8 +7,8 @@ import React, {
 } from "react";
 import { useAuth } from "../../../authentication/context/AuthContext.js";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { db } from "../../../config/firebase.js";
-
+import { db, storage } from "../../../config/firebase.js";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 const UserSettingsContext = createContext();
 
 export function useUserSettings() {
@@ -132,6 +132,31 @@ export function UserSettingsProvider({ children }) {
     }
   };
 
+  // Function to upload profile picture
+  const uploadProfilePicture = async ({ uri }) => {
+    if (!userId || !uri) return null;
+
+    try {
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      // Use a fixed filename for the profile picture, e.g., "profilePic.jpg"
+      const imageRef = ref(storage, `ProfilePictures/${userId}/profilePic.jpg`);
+      await uploadBytes(imageRef, blob);
+      const downloadURL = await getDownloadURL(imageRef);
+
+      // Assuming you have the user's current profile data available
+      const currentProfile = userSettings.profile || {};
+      // Update the profile with the new picture URL
+      const newProfile = { ...currentProfile, pictureUrl: downloadURL };
+      setUserProfile(newProfile);
+
+      return downloadURL;
+    } catch (error) {
+      console.error("Error uploading profile picture:", error);
+      return null; // Handle the error appropriately
+    }
+  };
+
   // Getter methods
   const getUserProfile = () => userSettings?.profile || {};
   const getAppAppearance = () => userSettings?.appAppearance || {};
@@ -209,6 +234,7 @@ export function UserSettingsProvider({ children }) {
       calculateProteinDailyGrams,
       calculateCarbDailyGrams,
       calculateFatDailyGrams,
+      uploadProfilePicture,
     };
   }, [
     userSettings,
@@ -223,6 +249,7 @@ export function UserSettingsProvider({ children }) {
     calculateProteinDailyGrams,
     calculateCarbDailyGrams,
     calculateFatDailyGrams,
+    uploadProfilePicture,
   ]);
 
   return (

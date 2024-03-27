@@ -25,8 +25,6 @@ const DashboardScreen = () => {
   const [pastStepCount, setPastStepCount] = useState(0);
   const [currentStepCount, setCurrentStepCount] = useState(0);
   const navigation = useNavigation();
-
-  console.log("Macro Goals: " + JSON.stringify(macroGoals, null, 1));
   const styles = dashboardScreenStyles();
 
   const subscribeToStepCounter = async () => {
@@ -169,7 +167,7 @@ const DashboardScreen = () => {
       {/** Home Header Container */}
       <View style={styles.header}>
         {/** Side Menu Drawer Toggle */}
-        <OpenDrawerToggle />
+        <OpenDrawerToggle icon={"menu"} />
         <Text
           style={{
             color: theme.colors.primary,

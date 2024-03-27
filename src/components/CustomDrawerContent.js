@@ -1,16 +1,12 @@
 import React from "react";
-import { View, TouchableOpacity, Text, ScrollView, Image } from "react-native";
+import { View, TouchableOpacity, Text, ScrollView } from "react-native";
 import { DrawerContentScrollView } from "@react-navigation/drawer";
 import { useThemeContext } from "../context/ThemeContext.js";
-
+import ProfilePicture from "../features/SocialMedia/components/ProfilePicture.js";
 export const CustomDrawerContent = (props) => {
   const { state, navigation } = props;
   const { theme } = useThemeContext();
-
   const styles = getStyles(theme); // Call getStyles function with the current theme
-
-  // Example profile image URL or use require for a local image
-  const profileImageUrl = "../../assets/ProfilePicUpdated.jpeg";
 
   return (
     <DrawerContentScrollView
@@ -18,14 +14,7 @@ export const CustomDrawerContent = (props) => {
       {...props}
     >
       <View style={styles.profileContainer}>
-        <View style={styles.profilePicContainer}>
-          {/* Image component with source set to profileImageUrl */}
-          <Image
-            source={require(profileImageUrl)}
-            style={styles.profileImage}
-            alt="Profile Image"
-          />
-        </View>
+        <ProfilePicture size={150} />
       </View>
 
       {/* Custom Drawer Navigation Items */}

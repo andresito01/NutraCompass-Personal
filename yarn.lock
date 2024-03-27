@@ -7378,6 +7378,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expo-image-loader@npm:~4.3.0":
+  version: 4.3.0
+  resolution: "expo-image-loader@npm:4.3.0"
+  peerDependencies:
+    expo: "*"
+  checksum: 0440ac80a7b2331cdfd0db88aac0ba2fe61689e6347e2c6bedba6bf3220b95410c724ac9004252486870b582fc36d47d4bff008bba7052dcee2830256950974f
+  languageName: node
+  linkType: hard
+
+"expo-image-picker@npm:~14.3.2":
+  version: 14.3.2
+  resolution: "expo-image-picker@npm:14.3.2"
+  dependencies:
+    expo-image-loader: ~4.3.0
+  peerDependencies:
+    expo: "*"
+  checksum: 301a5e11cdd436717051fdd8b0f943210d281ca94d1417bb2e1b29a8fa02d3bc6f9321c4cac49376b6f3b76e78cecb23e42bc32131fce3d78006a44d64bfba56
+  languageName: node
+  linkType: hard
+
 "expo-keep-awake@npm:~12.3.0":
   version: 12.3.0
   resolution: "expo-keep-awake@npm:12.3.0"
@@ -8095,6 +8115,7 @@ __metadata:
     expo: ~49.0.15
     expo-camera: ~13.4.4
     expo-haptics: ~12.4.0
+    expo-image-picker: ~14.3.2
     expo-linear-gradient: 12.3.0
     expo-sensors: ~12.3.0
     expo-splash-screen: ~0.20.5
