@@ -36,17 +36,6 @@ export default function DateSelector({ selectedDate, setSelectedDate }) {
     setIsCalendarModalVisible(false);
   };
 
-  const handleDateChange = (newDate) => {
-    if (newDate.dateString) {
-      setSelectedDate(newDate.dateString);
-    } else {
-      const dateString = new Date(newDate).toISOString().split("T")[0];
-      setSelectedDate(dateString);
-    }
-    setIsCalendarModalVisible(false);
-    // You might also want to fetch food logs associated with the new date here
-  };
-
   const getCurrentDate = (date) => {
     const options = { year: "numeric", month: "long", day: "numeric" };
     const selectedDateObj = new Date(date);
@@ -54,6 +43,7 @@ export default function DateSelector({ selectedDate, setSelectedDate }) {
     selectedDateObj.setMinutes(selectedDateObj.getMinutes() + timeZoneOffset);
     return selectedDateObj.toLocaleDateString(undefined, options);
   };
+
   const addDay = (date) => {
     const newDate = new Date(date);
     newDate.setDate(newDate.getDate() + 1);
