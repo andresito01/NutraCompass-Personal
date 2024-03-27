@@ -209,7 +209,7 @@ export default function DateSelector({ selectedDate, setSelectedDate }) {
                   minHeight: "65%",
                   height: "auto",
                   width: "100%",
-                  backgroundColor: theme.colors.cardDarkGrayBackgroundColor,
+                  backgroundColor: theme.colors.cardBackgroundColor,
                 }}
                 current={selectedDate.toString()}
                 markedDates={markedDates}
@@ -276,7 +276,7 @@ export default function DateSelector({ selectedDate, setSelectedDate }) {
             <View
               style={{
                 flexDirection: "row",
-                backgroundColor: theme.colors.cardDarkGrayBackgroundColor,
+                backgroundColor: theme.colors.cardBackgroundColor,
                 justifyContent: "flex-end",
               }}
             >
