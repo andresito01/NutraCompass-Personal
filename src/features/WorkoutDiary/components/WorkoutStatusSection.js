@@ -18,7 +18,7 @@ const WorkoutStatusSection = ({
   return (
     <Card style={{ elevation: 4, margin: 10 }}>
       <Card.Content>
-        <Text style={{ fontSize: 18, color: theme.colors.cardHeaderTextColor }}>
+        <Text style={{ fontSize: 18, color: theme.colors.primaryTextColor }}>
           Workout Status
         </Text>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -26,7 +26,7 @@ const WorkoutStatusSection = ({
             style={{
               fontSize: 16,
               flex: 1,
-              color: theme.colors.cardHeaderTextColor,
+              color: theme.colors.primaryTextColor,
             }}
           >
             Did you work out on {selectedDate}?

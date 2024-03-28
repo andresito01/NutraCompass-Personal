@@ -181,12 +181,12 @@ const NoteEditorModal = ({
                   <Feather
                     name="chevron-left"
                     size={24}
-                    color={theme.colors.cardHeaderTextColor}
+                    color={theme.colors.primaryTextColor}
                   />
                   <Text
                     style={{
                       fontSize: 18,
-                      color: theme.colors.cardHeaderTextColor,
+                      color: theme.colors.primaryTextColor,
                     }}
                   >
                     Notes
@@ -195,7 +195,7 @@ const NoteEditorModal = ({
                 <TextInput
                   style={{
                     fontSize: 18,
-                    color: theme.colors.cardHeaderTextColor,
+                    color: theme.colors.primaryTextColor,
                     backgroundColor: theme.colors.cardBackgroundColor,
                     padding: 10,
                     borderRadius: 8,
@@ -227,7 +227,7 @@ const NoteEditorModal = ({
                 style={{
                   flex: 1,
                   minHeight: "73%",
-                  color: theme.colors.cardHeaderTextColor,
+                  color: theme.colors.primaryTextColor,
                   backgroundColor: theme.colors.surface,
                   marginTop: 10,
                   padding: 10,

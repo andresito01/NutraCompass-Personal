@@ -40,7 +40,7 @@ const dailyNutritionGoalsCustomizationModalStyles = () => {
       alignItems: "center",
     },
     label: {
-      color: theme.colors.sectionHeaderTextColor,
+      color: theme.colors.primaryTextColor,
     },
     input: {
       width: "50%",

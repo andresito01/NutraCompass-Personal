@@ -139,7 +139,7 @@ const barcodeScannerStyles = () => {
       backgroundColor: "transparent",
       paddingHorizontal: 10,
       fontSize: 20,
-      color: theme.colors.cardHeaderTextColor, // Text color
+      color: theme.colors.primaryTextColor, // Text color
     },
     manualSearchButton: {
       padding: 10,
@@ -148,7 +148,7 @@ const barcodeScannerStyles = () => {
       marginLeft: 10,
     },
     manualSearchButtonText: {
-      color: theme.colors.cardHeaderTextColor,
+      color: theme.colors.primaryTextColor,
       fontSize: 16,
       fontWeight: "bold",
     },

@@ -169,13 +169,13 @@ const BarcodeScanner = ({ onBarcodeScanned, onClose }) => {
           <FontAwesome
             name="barcode"
             size={20}
-            color={theme.colors.cardHeaderTextColor}
+            color={theme.colors.primaryTextColor}
             style={styles.barcodeIcon}
           />
           <TextInput
             style={styles.manualInput}
             placeholder="Manually Enter Barcode"
-            placeholderTextColor={theme.colors.cardHeaderTextColor}
+            placeholderTextColor={theme.colors.primaryTextColor}
             value={manualBarcode}
             onChangeText={setManualBarcode}
             onFocus={handleTextInputFocus}

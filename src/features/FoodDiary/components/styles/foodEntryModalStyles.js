@@ -31,12 +31,12 @@ const foodEntryModalStyles = () => {
       fontSize: 20,
       fontWeight: "bold",
       marginBottom: 16,
-      color: theme.colors.sectionHeaderTextColor, // Use theme text color
+      color: theme.colors.primaryTextColor, // Use theme text color
     },
     input: {
       borderWidth: 1,
       borderColor: theme.colors.primary, // Use theme primary color for border
-      color: theme.colors.cardHeaderTextColor, // Use theme text color
+      color: theme.colors.primaryTextColor, // Use theme text color
       padding: 10,
       marginBottom: 12,
       width: "100%", // Adjust the width
@@ -51,7 +51,7 @@ const foodEntryModalStyles = () => {
       marginTop: 12,
     },
     modalButtonText: {
-      color: theme.colors.cardHeaderTextColor, // Use theme text color
+      color: theme.colors.primaryTextColor, // Use theme text color
       fontWeight: "bold",
     },
     foodItemContainer: {
@@ -72,7 +72,7 @@ const foodEntryModalStyles = () => {
     },
     foodLabel: {
       fontSize: 16,
-      color: theme.colors.cardHeaderTextColor, // Use theme text color
+      color: theme.colors.primaryTextColor, // Use theme text color
     },
     foodLabelCalories: {
       fontSize: 14,

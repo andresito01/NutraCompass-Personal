@@ -28,7 +28,7 @@ const moreScreenStyles = () => {
       margin: 5,
     },
     text: {
-      color: theme.colors.cardHeaderTextColor,
+      color: theme.colors.primaryTextColor,
       fontSize: 18,
       marginLeft: 12,
     },

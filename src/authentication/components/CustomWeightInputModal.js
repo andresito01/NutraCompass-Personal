@@ -89,7 +89,7 @@ const CustomWeightInputModal = ({
                       onPress={() => handleUnitButtonClick("kg")}
                       style={{
                         flex: 1,
-                        color: theme.colors.cardHeaderTextColor,
+                        color: theme.colors.primaryTextColor,
                         borderTopLeftRadius: 8,
                         borderBottomLeftRadius: 8,
                         borderTopRightRadius: 0,
@@ -106,7 +106,7 @@ const CustomWeightInputModal = ({
                       onPress={() => handleUnitButtonClick("lbs")}
                       style={{
                         flex: 1,
-                        color: theme.colors.cardHeaderTextColor,
+                        color: theme.colors.primaryTextColor,
                         borderTopLeftRadius: 0,
                         borderBottomLeftRadius: 0,
                         borderTopRightRadius: 8,
@@ -128,7 +128,7 @@ const CustomWeightInputModal = ({
                         borderWidth: 1,
                         borderRadius: 8,
                         textAlign: "center",
-                        color: theme.colors.cardHeaderTextColor,
+                        color: theme.colors.primaryTextColor,
                       }}
                       keyboardType="numeric"
                       value={inputValue}
@@ -139,7 +139,7 @@ const CustomWeightInputModal = ({
                     <Text
                       style={{
                         marginLeft: 10,
-                        color: theme.colors.cardHeaderTextColor,
+                        color: theme.colors.primaryTextColor,
                       }}
                     >
                       {selectedUnit}

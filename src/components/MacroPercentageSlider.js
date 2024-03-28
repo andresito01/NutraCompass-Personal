@@ -57,7 +57,7 @@ const MacroPercentageSlider = ({ selectedValues, onSelect, calories }) => {
               style={{
                 fontSize: 20,
                 fontWeight: "bold",
-                color: theme.colors.cardHeaderTextColor,
+                color: theme.colors.primaryTextColor,
               }}
             >
               Protein
@@ -79,7 +79,7 @@ const MacroPercentageSlider = ({ selectedValues, onSelect, calories }) => {
               <Text style={{ color: theme.colors.primary, fontSize: 20 }}>
                 {selectedValues.protein}%
               </Text>
-              <Text style={{ color: theme.colors.cardHeaderTextColor }}>
+              <Text style={{ color: theme.colors.primaryTextColor }}>
                 {proteinDailyGrams} g
               </Text>
             </View>
@@ -99,7 +99,7 @@ const MacroPercentageSlider = ({ selectedValues, onSelect, calories }) => {
               style={{
                 fontSize: 20,
                 fontWeight: "bold",
-                color: theme.colors.cardHeaderTextColor,
+                color: theme.colors.primaryTextColor,
               }}
             >
               Carb
@@ -121,7 +121,7 @@ const MacroPercentageSlider = ({ selectedValues, onSelect, calories }) => {
               <Text style={{ color: theme.colors.primary, fontSize: 20 }}>
                 {selectedValues.carb}%
               </Text>
-              <Text style={{ color: theme.colors.cardHeaderTextColor }}>
+              <Text style={{ color: theme.colors.primaryTextColor }}>
                 {carbDailyGrams} g
               </Text>
             </View>
@@ -141,7 +141,7 @@ const MacroPercentageSlider = ({ selectedValues, onSelect, calories }) => {
               style={{
                 fontSize: 20,
                 fontWeight: "bold",
-                color: theme.colors.cardHeaderTextColor,
+                color: theme.colors.primaryTextColor,
               }}
             >
               Fat
@@ -163,7 +163,7 @@ const MacroPercentageSlider = ({ selectedValues, onSelect, calories }) => {
               <Text style={{ color: theme.colors.primary, fontSize: 20 }}>
                 {selectedValues.fat}%
               </Text>
-              <Text style={{ color: theme.colors.cardHeaderTextColor }}>
+              <Text style={{ color: theme.colors.primaryTextColor }}>
                 {fatDailyGrams} g
               </Text>
             </View>
@@ -182,11 +182,11 @@ const MacroPercentageSlider = ({ selectedValues, onSelect, calories }) => {
         >
           <View>
             <Text
-              style={{ color: theme.colors.cardHeaderTextColor, fontSize: 16 }}
+              style={{ color: theme.colors.primaryTextColor, fontSize: 16 }}
             >
               % Total
             </Text>
-            <Text style={{ color: theme.colors.cardHeaderTextColor }}>
+            <Text style={{ color: theme.colors.primaryTextColor }}>
               Macronutrients must equal 100%
             </Text>
           </View>

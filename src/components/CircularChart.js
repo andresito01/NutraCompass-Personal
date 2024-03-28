@@ -35,7 +35,7 @@ const CircularChart = ({
       {topLabel && (
         <Text
           style={{
-            color: theme.colors.cardHeaderTextColor,
+            color: theme.colors.primaryTextColor,
             textAlign: "center",
             marginTop: 5,
           }}
@@ -65,7 +65,7 @@ const CircularChart = ({
           {/* Text for totalGramsGoal */}
           {/* Adjust the text properties and position as needed */}
           <SvgText
-            fill={theme.colors.cardHeaderTextColor}
+            fill={theme.colors.primaryTextColor}
             fontSize={size / 6}
             fontWeight="bold"
             textAnchor="middle"
@@ -78,7 +78,7 @@ const CircularChart = ({
       {bottomLabel && (
         <Text
           style={{
-            color: theme.colors.cardHeaderTextColor,
+            color: theme.colors.primaryTextColor,
             textAlign: "center",
             marginTop: 5,
           }}

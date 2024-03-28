@@ -84,7 +84,7 @@ export default function ChatScreen({ navigation }) {
           <MaterialCommunityIcons
             name="plus-circle-outline"
             size={24}
-            color={theme.colors.text}
+            color={theme.colors.primaryTextColor}
           />
         </TouchableOpacity>
       </View>

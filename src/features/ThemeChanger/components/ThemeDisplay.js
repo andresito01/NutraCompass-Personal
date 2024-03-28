@@ -58,13 +58,13 @@ const ThemeDisplay = () => {
       borderRadius: theme.dimensions.cardBorderRadius,
     },
     headerText: {
-      color: theme.colors.sectionHeaderTextColor,
+      color: theme.colors.primaryTextColor,
       fontSize: 16,
       fontWeight: "bold",
       marginBottom: 8,
     },
     cardHeaderText: {
-      color: theme.colors.cardHeaderTextColor,
+      color: theme.colors.primaryTextColor,
       fontSize: 16,
       fontWeight: "bold",
       marginBottom: 8,
@@ -91,7 +91,7 @@ const ThemeDisplay = () => {
             style={{
               fontSize: 18,
               alignSelf: "center",
-              color: theme.colors.cardHeaderTextColor,
+              color: theme.colors.primaryTextColor,
             }}
           >
             {theme.name}

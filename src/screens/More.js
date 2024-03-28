@@ -26,7 +26,7 @@ function MoreScreen() {
       <View style={styles.header}>
         <Text
           style={{
-            color: theme.colors.cardHeaderTextColor,
+            color: theme.colors.primaryTextColor,
             alignSelf: "center",
             fontSize: 18,
           }}
@@ -41,7 +41,7 @@ function MoreScreen() {
       >
         <Feather
           name="target"
-          color={theme.colors.cardHeaderTextColor}
+          color={theme.colors.primaryTextColor}
           size={30}
         />
 
@@ -49,7 +49,7 @@ function MoreScreen() {
         <Feather
           style={{ position: "absolute", right: 10 }}
           name="chevron-right"
-          color={theme.colors.cardHeaderTextColor}
+          color={theme.colors.primaryTextColor}
           size={24}
         />
       </Pressable> */}
@@ -61,7 +61,7 @@ function MoreScreen() {
       >
         <Feather
           name="package"
-          color={theme.colors.cardHeaderTextColor}
+          color={theme.colors.primaryTextColor}
           size={30}
         />
 
@@ -69,7 +69,7 @@ function MoreScreen() {
         <Feather
           style={{ position: "absolute", right: 10 }}
           name="chevron-right"
-          color={theme.colors.cardHeaderTextColor}
+          color={theme.colors.primaryTextColor}
           size={24}
         />
       </Pressable>
@@ -79,7 +79,7 @@ function MoreScreen() {
         <FontAwesome
           name={mode === "dark" ? "moon-o" : "sun-o"}
           size={30}
-          color={theme.colors.cardHeaderTextColor}
+          color={theme.colors.primaryTextColor}
         />
 
         <Text style={styles.text}>
@@ -91,7 +91,7 @@ function MoreScreen() {
       <Pressable onPress={handleLogout} style={styles.row}>
         <Feather
           name="log-out"
-          color={theme.colors.cardHeaderTextColor}
+          color={theme.colors.primaryTextColor}
           size={30}
         />
 

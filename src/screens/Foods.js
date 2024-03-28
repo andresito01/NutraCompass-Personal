@@ -61,7 +61,7 @@ export default function FoodsScreen({ navigation }) {
                 style={{
                   fontSize: 28,
                   fontWeight: "500",
-                  color: theme.colors.cardHeaderTextColor,
+                  color: theme.colors.primaryTextColor,
                 }}
               >
                 Foods
@@ -81,7 +81,7 @@ export default function FoodsScreen({ navigation }) {
               >
                 <Feather
                   name="search"
-                  color={theme.colors.cardHeaderTextColor}
+                  color={theme.colors.primaryTextColor}
                   size={28}
                 />
               </TouchableOpacity>
@@ -116,14 +116,14 @@ export default function FoodsScreen({ navigation }) {
                   <View style={{ gap: 5 }}>
                     <Text
                       style={{
-                        color: theme.colors.cardHeaderTextColor,
+                        color: theme.colors.primaryTextColor,
                         fontSize: 18,
                         fontWeight: 600,
                       }}
                     >
                       Custom Meals
                     </Text>
-                    <Text style={{ color: theme.colors.cardHeaderTextColor }}>
+                    <Text style={{ color: theme.colors.primaryTextColor }}>
                       {customMeals.length} Meals
                     </Text>
                   </View>
@@ -141,7 +141,7 @@ export default function FoodsScreen({ navigation }) {
               <View style={{ flex: 1, alignItems: "flex-end" }}>
                 <Feather
                   name="chevron-right"
-                  color={theme.colors.cardHeaderTextColor}
+                  color={theme.colors.primaryTextColor}
                   size={28}
                 />
               </View>

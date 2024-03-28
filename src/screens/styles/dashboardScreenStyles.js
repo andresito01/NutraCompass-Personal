@@ -23,7 +23,7 @@ const dashboardScreenStyles = () => {
       paddingHorizontal: 10,
     },
     text: {
-      color: theme.colors.cardHeaderTextColor,
+      color: theme.colors.primaryTextColor,
       fontSize: 24,
       textAlign: "center",
     },

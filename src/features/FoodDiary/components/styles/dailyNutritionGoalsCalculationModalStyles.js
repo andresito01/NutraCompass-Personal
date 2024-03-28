@@ -26,7 +26,7 @@ const dailyNutritionGoalsCalculationModalStyles = () => {
     title: {
       fontSize: 24,
       fontWeight: "bold",
-      color: theme.colors.sectionHeaderTextColor,
+      color: theme.colors.primaryTextColor,
       marginBottom: 10,
       alignSelf: "center",
     },
@@ -39,12 +39,12 @@ const dailyNutritionGoalsCalculationModalStyles = () => {
     label: {
       fontSize: 18,
       fontWeight: "bold",
-      color: theme.colors.sectionHeaderTextColor,
+      color: theme.colors.primaryTextColor,
       marginBottom: 5,
     },
     answer: {
       fontSize: 16,
-      color: theme.colors.cardHeaderTextColor,
+      color: theme.colors.primaryTextColor,
       marginBottom: 20,
     },
     segmentedButtonContainer: {
@@ -55,10 +55,10 @@ const dailyNutritionGoalsCalculationModalStyles = () => {
       height: 40,
     },
     resultsLabel: {
-      color: theme.colors.cardHeaderTextColor,
+      color: theme.colors.primaryTextColor,
     },
     results: {
-      color: theme.colors.cardHeaderTextColor,
+      color: theme.colors.primaryTextColor,
     },
   });
 };

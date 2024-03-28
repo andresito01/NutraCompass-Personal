@@ -39,7 +39,7 @@ const SelectInput = ({ onPress, selectedValue, placeholder }) => {
 
         <Feather
           name="arrow-right"
-          color={theme.colors.sectionHeaderTextColor}
+          color={theme.colors.primaryTextColor}
           size={18}
         />
       </View>

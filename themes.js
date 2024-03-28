@@ -54,21 +54,21 @@ export const Default = {
     myOwnProperty: true,
     colors: {
       ...DarkTheme.colors,
-      primary: applyTint("#4CAF50", true), // Green color, adjust as needed
-      secondary: applyTint("#2196F3", true), // Blue color, adjust as needed
-      primaryLightOpacity: applyTintWithOpacity("#4CAF50", true, 0.05), // Green color, adjust as needed
-      secondaryLightOpacity: applyTintWithOpacity("#2196F3", true, 0.05), // Blue color, adjust as needed
-      screenBackground: "#1E1E1E", // Matte black/gray background
-      sectionBackgroundColor: applyTint("#333333", true), // Darkened background
-      cardBackgroundColor: "#2C2C2C", // Matte black/gray background
-      sectionBackgroundColorLowOpacity: "rgba(51, 51, 51, 0.5)", // Darkened background with low opacity
-      cardBackgroundColorLowOpacity: "rgba(44, 44, 44, 0.5)", // Darkened background with low opacity
-      cardDarkGrayBackgroundColor: "rgba(30, 30, 30, 0.9)", // Darkened background with higher opacity
-      shadow: "rgba(240, 240, 240, 0.5)", // Light gray shadow
-      sectionBorderColor: applyTint("#555555", true), // Darkened border color
-      cardBorderColor: "#666666", // Matte black/gray border color
-      sectionHeaderTextColor: applyTint("#FFFFFF", true), // White text color
-      cardHeaderTextColor: applyTint("#FFFFFF", true), // White text color
+      primary: "rgba(76, 175, 80, 1)", // Converted from #4CAF50
+      secondary: "rgba(33, 150, 243, 1)", // Converted from #2196F3
+      primaryLightOpacity: "rgba(76, 175, 80, 0.05)", // With custom opacity
+      secondaryLightOpacity: "rgba(33, 150, 243, 0.05)", // With custom opacity
+      screenBackground: "rgba(30, 30, 30, 1)", // Converted from #1E1E1E
+      sectionBackgroundColor: "rgba(51, 51, 51, 1)", // Converted from #333333
+      cardBackgroundColor: "rgba(44, 44, 44, 1)", // Converted from #2C2C2C
+      sectionBackgroundColorLowOpacity: "rgba(51, 51, 51, 0.5)",
+      cardBackgroundColorLowOpacity: "rgba(44, 44, 44, 0.5)",
+      cardDarkGrayBackgroundColor: "rgba(30, 30, 30, 0.9)",
+      shadow: "rgba(240, 240, 240, 0.5)",
+      sectionBorderColor: "rgba(85, 85, 85, 1)", // Converted from #555555
+      cardBorderColor: "rgba(102, 102, 102, 1)", // Converted from #666666
+      primaryTextColor: "rgba(255, 255, 255, 1)", // Converted from #FFFFFF
+      subTextColor: "rgba(176, 176, 176, 1)", // Converted from #B0B0B0
     },
     dimensions: { sectionBorderRadius: 8, cardBorderRadius: 6 },
   },
@@ -89,8 +89,8 @@ export const Default = {
       shadow: "rgba(240, 240, 240, 0.5)", // Light gray shadow
       sectionBorderColor: applyTint("#B0B0B0", false), // Lightened border color
       cardBorderColor: "#CCCCCC", // Matte white border color
-      sectionHeaderTextColor: applyTint("#000000", false), // Black text color
-      cardHeaderTextColor: applyTint("#000000", false), // Black text color
+      primaryTextColor: applyTint("#000000", false), // Black text color
+      subTextColor: "lightgray",
     },
     dimensions: { sectionBorderRadius: 8, cardBorderRadius: 6 },
   },
@@ -117,8 +117,8 @@ export const AllPink = {
       shadow: "rgba( 240, 240, 240, 0.5)",
       sectionBorderColor: applyTint("#DB7093", true),
       cardBorderColor: applyTint("#FF6347", true),
-      sectionHeaderTextColor: applyTint("#FFFFFF", true),
-      cardHeaderTextColor: applyTint("#FFFFFF", true),
+      primaryTextColor: applyTint("#FFFFFF", true),
+      subTextColor: "lightgray",
     },
     dimensions: { sectionBorderRadius: 8, cardBorderRadius: 6 },
   },
@@ -138,8 +138,8 @@ export const AllPink = {
       shadow: "rgba(240, 240, 240, 0.5)",
       sectionBorderColor: applyTint("#DB7093", false),
       cardBorderColor: applyTint("#FF69B4", false),
-      sectionHeaderTextColor: applyTint("#000000", false),
-      cardHeaderTextColor: applyTint("#000000", false),
+      primaryTextColor: applyTint("#000000", false),
+      subTextColor: "lightgray",
     },
     dimensions: { sectionBorderRadius: 8, cardBorderRadius: 6 },
   },
@@ -166,8 +166,8 @@ export const AllPurple = {
       shadow: "rgba( 240, 240, 240, 0.5)",
       sectionBorderColor: applyTint("#4B0082", true),
       cardBorderColor: applyTint("#8B008B", true),
-      sectionHeaderTextColor: applyTint("#FFFFFF", true),
-      cardHeaderTextColor: applyTint("#FFFFFF", true),
+      primaryTextColor: applyTint("#FFFFFF", true),
+      subTextColor: "lightgray",
     },
     dimensions: { sectionBorderRadius: 8, cardBorderRadius: 6 },
   },
@@ -187,8 +187,8 @@ export const AllPurple = {
       shadow: "rgba(240, 240, 240, 0.5)",
       sectionBorderColor: applyTint("#8A2BE2", false),
       cardBorderColor: applyTint("#8B008B", false),
-      sectionHeaderTextColor: applyTint("#000000", false),
-      cardHeaderTextColor: applyTint("#000000", false),
+      primaryTextColor: applyTint("#000000", false),
+      subTextColor: "lightgray",
     },
     dimensions: { sectionBorderRadius: 8, cardBorderRadius: 6 },
   },
@@ -215,8 +215,8 @@ export const AllTeal = {
       shadow: "rgba( 240, 240, 240, 0.5)",
       sectionBorderColor: applyTint("#5F9EA0", true),
       cardBorderColor: applyTint("#4682B4", true),
-      sectionHeaderTextColor: applyTint("#FFFFFF", true),
-      cardHeaderTextColor: applyTint("#FFFFFF", true),
+      primaryTextColor: applyTint("#FFFFFF", true),
+      subTextColor: "lightgray",
     },
     dimensions: { sectionBorderRadius: 8, cardBorderRadius: 6 },
   },
@@ -236,8 +236,8 @@ export const AllTeal = {
       shadow: "rgba(240, 240, 240, 0.5)",
       sectionBorderColor: applyTint("#00CED1", false),
       cardBorderColor: applyTint("#5F9EA0", false),
-      sectionHeaderTextColor: applyTint("#000000", false),
-      cardHeaderTextColor: applyTint("#000000", false),
+      primaryTextColor: applyTint("#000000", false),
+      subTextColor: "lightgray",
     },
     dimensions: { sectionBorderRadius: 8, cardBorderRadius: 6 },
   },
@@ -264,8 +264,8 @@ export const Gold = {
       shadow: "rgba(240, 240, 240, 0.5)",
       sectionBorderColor: "#FFD700", // Gold color
       cardBorderColor: "#FFD700", // Gold color
-      sectionHeaderTextColor: "#FFFFFF", // White color
-      cardHeaderTextColor: applyTint("#FFFFFF", true),
+      primaryTextColor: applyTint("#FFFFFF", true),
+      subTextColor: "lightgray",
     },
     dimensions: { sectionBorderRadius: 8, cardBorderRadius: 6 },
   },
@@ -286,8 +286,8 @@ export const Gold = {
       shadow: "rgba(240, 240, 240, 0.5)",
       sectionBorderColor: applyTint("#FFD700", false),
       cardBorderColor: applyTint("#FFD700", false),
-      sectionHeaderTextColor: "#000000",
-      cardHeaderTextColor: applyTint("#000000", false),
+      primaryTextColor: applyTint("#000000", false),
+      subTextColor: "lightgray",
     },
     dimensions: { sectionBorderRadius: 8, cardBorderRadius: 6 },
   },
@@ -314,8 +314,8 @@ export const Blue = {
       shadow: "rgba( 240, 240, 240, 0.5)",
       sectionBorderColor: applyTint("#3498db", true),
       cardBorderColor: applyTint("#2c3e50", true),
-      sectionHeaderTextColor: applyTint("#FFFFFF", true),
-      cardHeaderTextColor: applyTint("#FFFFFF", true),
+      primaryTextColor: applyTint("#FFFFFF", true),
+      subTextColor: "lightgray",
     },
     dimensions: { sectionBorderRadius: 8, cardBorderRadius: 6 },
   },
@@ -335,8 +335,8 @@ export const Blue = {
       shadow: "rgba(240, 240, 240, 0.5)",
       sectionBorderColor: applyTint("#3498db", false),
       cardBorderColor: applyTint("#2c3e50", false),
-      sectionHeaderTextColor: applyTint("#000000", false),
-      cardHeaderTextColor: applyTint("#000000", false),
+      primaryTextColor: applyTint("#000000", false),
+      subTextColor: "lightgray",
     },
     dimensions: { sectionBorderRadius: 8, cardBorderRadius: 6 },
   },
@@ -363,8 +363,8 @@ export const Green = {
       shadow: "rgba( 240, 240, 240, 0.5)",
       sectionBorderColor: applyTint("#00ff00", true),
       cardBorderColor: applyTint("#2c3e50", true),
-      sectionHeaderTextColor: applyTint("#FFFFFF", true),
-      cardHeaderTextColor: applyTint("#FFFFFF", true),
+      primaryTextColor: applyTint("#FFFFFF", true),
+      subTextColor: "lightgray",
     },
     dimensions: { sectionBorderRadius: 8, cardBorderRadius: 6 },
   },
@@ -384,8 +384,8 @@ export const Green = {
       shadow: "rgba( 240, 240, 240, 0.5)",
       sectionBorderColor: applyTint("#00ff00", false),
       cardBorderColor: applyTint("#2c3e50", false),
-      sectionHeaderTextColor: applyTint("#000000", false),
-      cardHeaderTextColor: applyTint("#000000", false),
+      primaryTextColor: applyTint("#000000", false),
+      subTextColor: "lightgray",
     },
     dimensions: { sectionBorderRadius: 8, cardBorderRadius: 6 },
   },
@@ -410,8 +410,8 @@ export const Red = {
       shadow: "rgba(240, 240, 240, 0.5)",
       sectionBorderColor: applyTint("#FF0000", true),
       cardBorderColor: applyTint("#8B0000", true),
-      sectionHeaderTextColor: applyTint("#FFFFFF", true),
-      cardHeaderTextColor: applyTint("#FFFFFF", true),
+      primaryTextColor: applyTint("#FFFFFF", true),
+      subTextColor: "lightgray",
     },
     dimensions: { sectionBorderRadius: 8, cardBorderRadius: 6 },
   },
@@ -431,8 +431,8 @@ export const Red = {
       shadow: "rgba(240, 240, 240, 0.5)",
       sectionBorderColor: applyTint("#FF0000", false),
       cardBorderColor: applyTint("#8B0000", false),
-      sectionHeaderTextColor: applyTint("#000000", false),
-      cardHeaderTextColor: applyTint("#000000", false),
+      primaryTextColor: applyTint("#000000", false),
+      subTextColor: "lightgray",
     },
     dimensions: { sectionBorderRadius: 8, cardBorderRadius: 6 },
   },
@@ -457,8 +457,8 @@ export const HotPink = {
       shadow: "rgba(240, 240, 240, 0.5)",
       sectionBorderColor: applyTint("#FF1493", true),
       cardBorderColor: applyTint("#C71585", true),
-      sectionHeaderTextColor: applyTint("#FFFFFF", true),
-      cardHeaderTextColor: applyTint("#FFFFFF", true),
+      primaryTextColor: applyTint("#FFFFFF", true),
+      subTextColor: "lightgray",
     },
     dimensions: { sectionBorderRadius: 8, cardBorderRadius: 6 },
   },
@@ -478,8 +478,8 @@ export const HotPink = {
       shadow: "rgba(240, 240, 240, 0.5)",
       sectionBorderColor: applyTint("#FF1493", false),
       cardBorderColor: applyTint("#C71585", false),
-      sectionHeaderTextColor: applyTint("#000000", false),
-      cardHeaderTextColor: applyTint("#000000", false),
+      primaryTextColor: applyTint("#000000", false),
+      subTextColor: "lightgray",
     },
     dimensions: { sectionBorderRadius: 8, cardBorderRadius: 6 },
   },
@@ -504,8 +504,8 @@ export const Orange = {
       shadow: "rgba(240, 240, 240, 0.5)",
       sectionBorderColor: applyTint("#FF4500", true),
       cardBorderColor: applyTint("#8B2500", true),
-      sectionHeaderTextColor: applyTint("#FFFFFF", true),
-      cardHeaderTextColor: applyTint("#FFFFFF", true),
+      primaryTextColor: applyTint("#FFFFFF", true),
+      subTextColor: "lightgray",
     },
     dimensions: { sectionBorderRadius: 8, cardBorderRadius: 6 },
   },
@@ -525,8 +525,8 @@ export const Orange = {
       shadow: "rgba(240, 240, 240, 0.5)",
       sectionBorderColor: applyTint("#FF4500", false),
       cardBorderColor: applyTint("#8B2500", false),
-      sectionHeaderTextColor: applyTint("#000000", false),
-      cardHeaderTextColor: applyTint("#000000", false),
+      primaryTextColor: applyTint("#000000", false),
+      subTextColor: "lightgray",
     },
     dimensions: { sectionBorderRadius: 8, cardBorderRadius: 6 },
   },
@@ -551,8 +551,8 @@ export const Teal = {
       shadow: "rgba(240, 240, 240, 0.5)",
       sectionBorderColor: applyTint("#008080", true),
       cardBorderColor: applyTint("#004040", true),
-      sectionHeaderTextColor: applyTint("#FFFFFF", true),
-      cardHeaderTextColor: applyTint("#FFFFFF", true),
+      primaryTextColor: applyTint("#FFFFFF", true),
+      subTextColor: "lightgray",
     },
     dimensions: { sectionBorderRadius: 8, cardBorderRadius: 6 },
   },
@@ -572,8 +572,8 @@ export const Teal = {
       shadow: "rgba(240, 240, 240, 0.5)",
       sectionBorderColor: applyTint("#008080", false),
       cardBorderColor: applyTint("#004040", false),
-      sectionHeaderTextColor: applyTint("#000000", false),
-      cardHeaderTextColor: applyTint("#000000", false),
+      primaryTextColor: applyTint("#000000", false),
+      subTextColor: "lightgray",
     },
     dimensions: { sectionBorderRadius: 8, cardBorderRadius: 6 },
   },
@@ -598,8 +598,8 @@ export const Silver = {
       shadow: "rgba(240, 240, 240, 0.5)",
       sectionBorderColor: applyTint("#C0C0C0", true),
       cardBorderColor: applyTint("#A9A9A9", true),
-      sectionHeaderTextColor: applyTint("#FFFFFF", true),
-      cardHeaderTextColor: applyTint("#FFFFFF", true),
+      primaryTextColor: applyTint("#FFFFFF", true),
+      subTextColor: "lightgray",
     },
     dimensions: { sectionBorderRadius: 8, cardBorderRadius: 6 },
   },
@@ -619,8 +619,8 @@ export const Silver = {
       shadow: "rgba(240, 240, 240, 0.5)",
       sectionBorderColor: applyTint("#C0C0C0", false),
       cardBorderColor: applyTint("#A9A9A9", false),
-      sectionHeaderTextColor: applyTint("#000000", false),
-      cardHeaderTextColor: applyTint("#000000", false),
+      primaryTextColor: applyTint("#000000", false),
+      subTextColor: "lightgray",
     },
     dimensions: { sectionBorderRadius: 8, cardBorderRadius: 6 },
   },
@@ -645,8 +645,8 @@ export const Purple = {
       shadow: "rgba(240, 240, 240, 0.5)",
       sectionBorderColor: applyTint("#800080", true),
       cardBorderColor: applyTint("#4B0082", true),
-      sectionHeaderTextColor: applyTint("#FFFFFF", true),
-      cardHeaderTextColor: applyTint("#FFFFFF", true),
+      primaryTextColor: applyTint("#FFFFFF", true),
+      subTextColor: "lightgray",
     },
     dimensions: { sectionBorderRadius: 8, cardBorderRadius: 6 },
   },
@@ -666,159 +666,9 @@ export const Purple = {
       shadow: "rgba(240, 240, 240, 0.5)",
       sectionBorderColor: applyTint("#800080", false),
       cardBorderColor: applyTint("#4B0082", false),
-      sectionHeaderTextColor: applyTint("#000000", false),
-      cardHeaderTextColor: applyTint("#000000", false),
+      primaryTextColor: applyTint("#000000", false),
+      subTextColor: "lightgray",
     },
     dimensions: { sectionBorderRadius: 8, cardBorderRadius: 6 },
   },
 };
-
-// Theme6 (Inspired by The Legend of Zelda) (Black Screen Background)
-// export const Theme5 = {
-//   // Specify custom property in nested object
-//   name: "Theme5",
-//   dark: {
-//     ...DarkTheme,
-//     // Specify custom property
-//     myOwnProperty: true,
-//     colors: {
-//       ...DarkTheme.colors,
-//       primary: applyTint("#00AEEF", true),
-//       secondary: applyTint("#00874E", true),
-//       screenBackground: applyTint("#000000", true),
-//       sectionBackgroundColor: applyTint("#00AEEF", true),
-//       cardBackgroundColor: applyTint("#333333", true),
-//       sectionBackgroundColorLowOpacity: "rgba(0, 174, 239, 0.5)",
-//       cardBackgroundColorLowOpacity: "rgba(51, 51, 51, 0.5)",
-//       cardDarkGrayBackgroundColor: "rgba(30, 30, 30, 0.9)",
-//       shadow: "rgba( 240, 240, 240, 0.5)",
-//       sectionBorderColor: applyTint("#00AEEF", true),
-//       // cardBorderColor: applyTint("#00874E", true),
-//       cardBorderColor: applyTint("#F2a900", true),
-//       sectionHeaderTextColor: applyTint("#FFFFFF", true),
-//       cardHeaderTextColor: applyTint("#FFFFFF", true),
-//     },
-//     dimensions: { sectionBorderRadius: 8, cardBorderRadius: 6 },
-//   },
-//   light: {
-//     ...DefaultTheme,
-//     // Specify custom property
-//     myOwnProperty: true,
-//     colors: {
-//       ...DefaultTheme.colors,
-//       primary: applyTint("#00AEEF", false),
-//       secondary: applyTint("#00874E", false),
-//       screenBackground: "#E5E5E5", // Matte white background
-//       sectionBackgroundColor: applyTint("#00AEEF", false),
-//       cardBackgroundColor: applyTint("#CCCCCC", false),
-//       sectionBackgroundColorLowOpacity: "rgba(0, 174, 239, 0.5)",
-//       cardBackgroundColorLowOpacity: "rgba(51, 51, 51, 0.5)",
-//       cardDarkGrayBackgroundColor: "rgba(30, 30, 30, 0.9)",
-//       shadow: "rgba( 240, 240, 240, 0.5)",
-//       sectionBorderColor: applyTint("#00AEEF", false),
-//       cardBorderColor: applyTint("#00874E", false),
-//       sectionHeaderTextColor: applyTint("#000000", false),
-//       cardHeaderTextColor: applyTint("#000000", false),
-//     },
-//     dimensions: { sectionBorderRadius: 8, cardBorderRadius: 6 },
-//   },
-// };
-
-// export const Theme1 = {
-//   // Specify custom property in nested object
-//   name: "Theme1",
-//   dark: {
-//     ...DarkTheme,
-//     // Specify custom property
-//     myOwnProperty: true,
-//     colors: {
-//       ...DarkTheme.colors,
-//       primary: applyTint("#228B22", true),
-//       secondary: applyTint("#32CD32", true),
-//       screenBackground: applyTint("#1E1E1E", true),
-//       sectionBackgroundColor: applyTint("#008000", true),
-//       cardBackgroundColor: applyTint("#006400", true),
-//       sectionBackgroundColorLowOpacity: "rgba(0, 128, 0, 0.5)",
-//       cardBackgroundColorLowOpacity: "rgba(0, 100, 0, 0.5)",
-//       cardDarkGrayBackgroundColor: "rgba(30, 30, 30, 0.9)",
-//       shadow: "rgba(255, 255, 255, 0.5)",
-//       sectionBorderColor: applyTint("#2E8B57", true),
-//       cardBorderColor: applyTint("#3CB371", true),
-//       sectionHeaderTextColor: applyTint("#FFFFFF", true),
-//       cardHeaderTextColor: applyTint("#FFFFFF", true),
-//     },
-//     dimensions: { sectionBorderRadius: 8, cardBorderRadius: 6 },
-//   },
-//   light: {
-//     ...DefaultTheme,
-//     // Specify custom property
-//     myOwnProperty: true,
-//     colors: {
-//       ...DefaultTheme.colors,
-//       primary: applyTint("#32CD32", false),
-//       secondary: applyTint("#ADFF2F", false),
-//       screenBackground: "#E5E5E5", // Matte white backgroundalse),
-//       sectionBackgroundColor: applyTint("#008000", false),
-//       cardBackgroundColor: applyTint("#006400", false),
-//       sectionBackgroundColorLowOpacity: "rgba(0, 128, 0, 0.5)",
-//       cardBackgroundColorLowOpacity: "rgba(0, 100, 0, 0.5)",
-//       cardDarkGrayBackgroundColor: "rgba(30, 30, 30, 0.9)",
-//       shadow: "rgba( 240, 240, 240, 0.5)",
-//       sectionBorderColor: applyTint("#228B22", false),
-//       cardBorderColor: applyTint("#3CB371", false),
-//       sectionHeaderTextColor: applyTint("#000000", false),
-//       cardHeaderTextColor: applyTint("#000000", false),
-//     },
-//     dimensions: { sectionBorderRadius: 8, cardBorderRadius: 6 },
-//   },
-// };
-
-// Theme5 Yellow
-// export const Theme5 = {
-//   // Specify custom property in nested object
-//   name: "Theme5",
-//   dark: {
-//     ...DarkTheme,
-//     // Specify custom property
-//     myOwnProperty: true,
-//     colors: {
-//       ...DarkTheme.colors,
-//       primary: applyTint("#FFD700", true),
-//       secondary: applyTint("#DAA520", true),
-//       screenBackground: applyTint("#1E1E1E", true),
-//       sectionBackgroundColor: applyTint("#B8860B", true),
-//       cardBackgroundColor: applyTint("#CD853F", true),
-//       sectionBackgroundColorLowOpacity: "rgba(184, 134, 11, 0.5)",
-//       cardBackgroundColorLowOpacity: "rgba(205, 133, 63, 0.5)",
-//       cardDarkGrayBackgroundColor: "rgba(30, 30, 30, 0.9)",
-//       shadow: "rgba( 240, 240, 240, 0.5)",
-//       sectionBorderColor: applyTint("#FFA500", true),
-//       cardBorderColor: applyTint("#FF8C00", true),
-//       sectionHeaderTextColor: applyTint("#FFFFFF", true),
-//       cardHeaderTextColor: applyTint("#FFFFFF", true),
-//     },
-//     dimensions: { sectionBorderRadius: 8, cardBorderRadius: 6 },
-//   },
-//   light: {
-//     ...DefaultTheme,
-//     // Specify custom property
-//     myOwnProperty: true,
-//     colors: {
-//       ...DefaultTheme.colors,
-//       primary: applyTint("#DAA520", false),
-//       secondary: applyTint("#FFD700", false),
-//       screenBackground: "#E5E5E5", // Matte white backgroundalse),
-//       sectionBackgroundColor: applyTint("#B8860B", false),
-//       cardBackgroundColor: applyTint("#CD853F", false),
-//       sectionBackgroundColorLowOpacity: "rgba(184, 134, 11, 0.5)",
-//       cardBackgroundColorLowOpacity: "rgba(205, 133, 63, 0.5)",
-//       cardDarkGrayBackgroundColor: "rgba(30, 30, 30, 0.9)",
-//       shadow: "rgba( 240, 240, 240, 0.5)",
-//       sectionBorderColor: applyTint("#FFA500", false),
-//       cardBorderColor: applyTint("#FF8C00", false),
-//       sectionHeaderTextColor: applyTint("#000000", false),
-//       cardHeaderTextColor: applyTint("#000000", false),
-//     },
-//     dimensions: { sectionBorderRadius: 8, cardBorderRadius: 6 },
-//   },
-// };

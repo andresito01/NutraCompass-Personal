@@ -24,12 +24,12 @@ const welcomeScreenStyles = () => {
     appName: {
       fontSize: 28, // Increased font size for app name
       fontWeight: "bold",
-      color: theme.colors.cardHeaderTextColor,
+      color: theme.colors.primaryTextColor,
       marginVertical: 16,
       textAlign: "center",
     },
     description: {
-      color: theme.colors.cardHeaderTextColor,
+      color: theme.colors.primaryTextColor,
       fontSize: 18, // Increased font size for description
       textAlign: "center",
       marginHorizontal: 16,

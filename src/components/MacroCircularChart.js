@@ -35,7 +35,7 @@ const MacroCircularChart = ({
     <View style={{ gap: 5, marginTop: 5 }}>
       <Text
         style={{
-          color: theme.colors.cardHeaderTextColor,
+          color: theme.colors.primaryTextColor,
           textAlign: "center",
         }}
       >
@@ -75,7 +75,7 @@ const MacroCircularChart = ({
           {/* Text for totalGramsGoal */}
           {/* Adjust the text properties and position as needed */}
           <SvgText
-            fill={theme.colors.cardHeaderTextColor}
+            fill={theme.colors.primaryTextColor}
             fontSize={size / 6.5}
             fontWeight="bold"
             textAnchor="middle"
@@ -88,7 +88,7 @@ const MacroCircularChart = ({
           {/* Text for consumedGrams */}
           {/* Adjust the text properties and position as needed */}
           <SvgText
-            fill={theme.colors.cardHeaderTextColor}
+            fill={theme.colors.primaryTextColor}
             fontSize={size / 7}
             textAnchor="middle"
             alignmentBaseline="middle"
@@ -100,7 +100,7 @@ const MacroCircularChart = ({
       </Svg>
       <Text
         style={{
-          color: theme.colors.cardHeaderTextColor,
+          color: theme.colors.primaryTextColor,
           textAlign: "center",
           marginTop: 5,
         }}

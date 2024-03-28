@@ -66,7 +66,7 @@ const getStyles = (theme) => ({
   },
   itemText: {
     fontSize: 16,
-    color: theme.colors.cardHeaderTextColor, // Example usage
+    color: theme.colors.primaryTextColor, // Example usage
   },
   customFeature: { margin: 20 },
 });

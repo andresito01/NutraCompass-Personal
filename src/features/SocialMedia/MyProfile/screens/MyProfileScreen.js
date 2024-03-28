@@ -39,22 +39,22 @@ export default function MyProfileScreen() {
         content: [
           {
             type: "image",
-            url: "https://cimg0.ibsrv.net/cimg/www.fitday.com/693x350_85-1/592/fried-20food_000035757888_Small-108592.jpg",
+            url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWYlk1ebstBgJH613BXKPSsBX81FQHXuLKuQ&usqp=CAU",
             description: "Fried Chicken",
           },
           {
             type: "image",
-            url: "https://cimg0.ibsrv.net/cimg/www.fitday.com/693x350_85-1/592/fried-20food_000035757888_Small-108592.jpg",
+            url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWYlk1ebstBgJH613BXKPSsBX81FQHXuLKuQ&usqp=CAU",
             description: "Fried Chicken",
           },
           {
             type: "image",
-            url: "https://cimg0.ibsrv.net/cimg/www.fitday.com/693x350_85-1/592/fried-20food_000035757888_Small-108592.jpg",
+            url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWYlk1ebstBgJH613BXKPSsBX81FQHXuLKuQ&usqp=CAU",
             description: "Fried Chicken",
           },
           {
             type: "image",
-            url: "https://cimg0.ibsrv.net/cimg/www.fitday.com/693x350_85-1/592/fried-20food_000035757888_Small-108592.jpg",
+            url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWYlk1ebstBgJH613BXKPSsBX81FQHXuLKuQ&usqp=CAU",
             description: "Fried Chicken",
           },
           // Add more posts as needed
@@ -65,20 +65,20 @@ export default function MyProfileScreen() {
         content: [
           {
             type: "image",
-            url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTizIy7CgapCOBKYF9M2K5MGU0Jh5h-VDwbRA&usqp=CAU",
+            url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnTtknLg7Yd1_FVqd24EtoU-294_bfAfLL7w&usqp=CAU",
           },
           {
             type: "image",
-            url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTizIy7CgapCOBKYF9M2K5MGU0Jh5h-VDwbRA&usqp=CAU",
+            url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnTtknLg7Yd1_FVqd24EtoU-294_bfAfLL7w&usqp=CAU",
           },
 
           {
             type: "image",
-            url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTizIy7CgapCOBKYF9M2K5MGU0Jh5h-VDwbRA&usqp=CAU",
+            url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnTtknLg7Yd1_FVqd24EtoU-294_bfAfLL7w&usqp=CAU",
           },
           {
             type: "image",
-            url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTizIy7CgapCOBKYF9M2K5MGU0Jh5h-VDwbRA&usqp=CAU",
+            url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnTtknLg7Yd1_FVqd24EtoU-294_bfAfLL7w&usqp=CAU",
           },
 
           // Add more posts as needed
@@ -89,22 +89,22 @@ export default function MyProfileScreen() {
         content: [
           {
             type: "image",
-            url: "https://cimg0.ibsrv.net/cimg/www.fitday.com/693x350_85-1/592/fried-20food_000035757888_Small-108592.jpg",
+            url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTK63fJ7qP0gwJxWdoSD1GjviqWVRZUzP5vNA&usqp=CAU",
             description: "Fried Chicken",
           },
           {
             type: "image",
-            url: "https://cimg0.ibsrv.net/cimg/www.fitday.com/693x350_85-1/592/fried-20food_000035757888_Small-108592.jpg",
+            url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-3CacM6nf3z7Vzkz6BMkmUZY3CMCjIcrqqQ&usqp=CAU",
             description: "Fried Chicken",
           },
           {
             type: "image",
-            url: "https://cimg0.ibsrv.net/cimg/www.fitday.com/693x350_85-1/592/fried-20food_000035757888_Small-108592.jpg",
+            url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvkMKTHIYiDAecApW6E16DIyP6ZC5pAoikww&usqp=CAU",
             description: "Fried Chicken",
           },
           {
             type: "image",
-            url: "https://cimg0.ibsrv.net/cimg/www.fitday.com/693x350_85-1/592/fried-20food_000035757888_Small-108592.jpg",
+            url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-3CacM6nf3z7Vzkz6BMkmUZY3CMCjIcrqqQ&usqp=CAU",
             description: "Fried Chicken",
           },
           // Add more posts as needed
@@ -115,22 +115,22 @@ export default function MyProfileScreen() {
         content: [
           {
             type: "image",
-            url: "https://cimg0.ibsrv.net/cimg/www.fitday.com/693x350_85-1/592/fried-20food_000035757888_Small-108592.jpg",
+            url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmJN96kyLivPRmetRosFIYgy5tbEFaxI4shg&usqp=CAU",
             description: "Fried Chicken",
           },
           {
             type: "image",
-            url: "https://cimg0.ibsrv.net/cimg/www.fitday.com/693x350_85-1/592/fried-20food_000035757888_Small-108592.jpg",
+            url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmJN96kyLivPRmetRosFIYgy5tbEFaxI4shg&usqp=CAU",
             description: "Fried Chicken",
           },
           {
             type: "image",
-            url: "https://cimg0.ibsrv.net/cimg/www.fitday.com/693x350_85-1/592/fried-20food_000035757888_Small-108592.jpg",
+            url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmJN96kyLivPRmetRosFIYgy5tbEFaxI4shg&usqp=CAU",
             description: "Fried Chicken",
           },
           {
             type: "image",
-            url: "https://cimg0.ibsrv.net/cimg/www.fitday.com/693x350_85-1/592/fried-20food_000035757888_Small-108592.jpg",
+            url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmJN96kyLivPRmetRosFIYgy5tbEFaxI4shg&usqp=CAU",
             description: "Fried Chicken",
           },
           // Add more posts as needed
@@ -160,7 +160,7 @@ export default function MyProfileScreen() {
             <Icon
               name="pencil"
               size={24}
-              color={theme.colors.cardHeaderTextColor}
+              color={theme.colors.primaryTextColor}
             />
           </TouchableOpacity>
         </View>
@@ -226,7 +226,7 @@ export default function MyProfileScreen() {
               <Icon
                 name="account-plus"
                 size={24}
-                color={theme.colors.cardHeaderTextColor}
+                color={theme.colors.primaryTextColor}
               />
               <Text style={styles.buttonText}>Add Friend</Text>
             </TouchableOpacity>
@@ -242,7 +242,7 @@ export default function MyProfileScreen() {
               <Icon
                 name="scan-helper"
                 size={24}
-                color={theme.colors.cardHeaderTextColor}
+                color={theme.colors.primaryTextColor}
               />
               <Text style={styles.buttonText}>Share Me</Text>
             </TouchableOpacity>
@@ -361,7 +361,7 @@ const getStyles = (theme) =>
     fullName: {
       fontSize: 20,
       fontWeight: "bold",
-      color: theme.colors.cardHeaderTextColor,
+      color: theme.colors.primaryTextColor,
     },
     username: {
       fontSize: 14,
@@ -370,7 +370,7 @@ const getStyles = (theme) =>
     },
     bio: {
       textAlign: "left",
-      color: theme.colors.cardHeaderTextColor,
+      color: theme.colors.primaryTextColor,
     },
     statsContainer: {
       flex: 1,
@@ -383,7 +383,7 @@ const getStyles = (theme) =>
       alignItems: "center",
       marginHorizontal: 10,
       fontSize: 16,
-      color: theme.colors.cardHeaderTextColor,
+      color: theme.colors.primaryTextColor,
     },
     postsContainer: {
       flexDirection: "row",
@@ -413,7 +413,7 @@ const getStyles = (theme) =>
     },
     buttonText: {
       marginLeft: 5,
-      color: theme.colors.cardHeaderTextColor, // Use text color from your theme
+      color: theme.colors.primaryTextColor, // Use text color from your theme
       fontSize: 16,
     },
     albumContainer: {

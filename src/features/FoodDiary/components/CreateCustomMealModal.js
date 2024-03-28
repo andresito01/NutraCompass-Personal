@@ -234,7 +234,7 @@ export default function CreateCustomMealModal({ isVisible, closeModal }) {
                 >
                   <Feather
                     name="x"
-                    color={theme.colors.cardHeaderTextColor}
+                    color={theme.colors.primaryTextColor}
                     size={28}
                   />
                 </TouchableOpacity>
@@ -243,7 +243,7 @@ export default function CreateCustomMealModal({ isVisible, closeModal }) {
                   style={{
                     fontSize: 28,
                     fontWeight: "500",
-                    color: theme.colors.cardHeaderTextColor,
+                    color: theme.colors.primaryTextColor,
                   }}
                 >
                   Create Meal
@@ -272,7 +272,7 @@ export default function CreateCustomMealModal({ isVisible, closeModal }) {
             style={{
               fontSize: 18,
               fontWeight: "500",
-              color: theme.colors.cardHeaderTextColor,
+              color: theme.colors.primaryTextColor,
               paddingTop: 15,
               paddingBottom: 10,
             }}
@@ -324,7 +324,7 @@ export default function CreateCustomMealModal({ isVisible, closeModal }) {
                     <Text
                       style={{
                         fontSize: 16,
-                        color: theme.colors.cardHeaderTextColor,
+                        color: theme.colors.primaryTextColor,
                       }}
                     >
                       {item.foodLabel}
@@ -332,7 +332,7 @@ export default function CreateCustomMealModal({ isVisible, closeModal }) {
                     <Text
                       style={{
                         fontSize: 14,
-                        color: theme.colors.cardHeaderTextColor,
+                        color: theme.colors.primaryTextColor,
                       }}
                     >
                       {Math.round(item.nutrients.ENERC_KCAL.quantity)} cal,{" "}
@@ -352,7 +352,7 @@ export default function CreateCustomMealModal({ isVisible, closeModal }) {
                       style={{ padding: 10 }}
                       name="x"
                       size={18}
-                      color={theme.colors.cardHeaderTextColor}
+                      color={theme.colors.primaryTextColor}
                     />
                   </TouchableOpacity>
                 </TouchableOpacity>

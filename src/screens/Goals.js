@@ -33,7 +33,7 @@ const GoalsScreen = () => {
         >
           <Feather
             name="arrow-left"
-            color={theme.colors.cardHeaderTextColor}
+            color={theme.colors.primaryTextColor}
             size={28}
           />
         </TouchableOpacity>

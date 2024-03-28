@@ -24,14 +24,10 @@ const CustomExerciseCard = ({ exercise }) => {
             justifyContent: "space-between",
           }}
         >
-          <Text
-            style={{ fontSize: 16, color: theme.colors.cardHeaderTextColor }}
-          >
+          <Text style={{ fontSize: 16, color: theme.colors.primaryTextColor }}>
             {exercise.name}
           </Text>
-          <Text
-            style={{ fontSize: 12, color: theme.colors.cardHeaderTextColor }}
-          >
+          <Text style={{ fontSize: 12, color: theme.colors.primaryTextColor }}>
             {exercise.dateCreated}
           </Text>
         </View>

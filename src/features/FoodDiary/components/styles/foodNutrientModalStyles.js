@@ -18,14 +18,14 @@ const foodNutrientModalStyles = () => {
       paddingBottom: 10,
     },
     title: {
-      color: theme.colors.sectionHeaderTextColor,
+      color: theme.colors.primaryTextColor,
     },
     sectionContainer: {
       padding: 16,
       backgroundColor: theme.colors.surface,
     },
     foodItemName: {
-      color: theme.colors.cardHeaderTextColor,
+      color: theme.colors.primaryTextColor,
       fontSize: 20,
       fontWeight: "bold",
       marginBottom: 8,
@@ -39,7 +39,7 @@ const foodNutrientModalStyles = () => {
       alignItems: "center",
     },
     inputLabel: {
-      color: theme.colors.cardHeaderTextColor,
+      color: theme.colors.primaryTextColor,
       fontSize: 16,
       marginRight: 16,
       flex: 1,
@@ -72,11 +72,11 @@ const foodNutrientModalStyles = () => {
     macroNutrientValue: {
       fontSize: 16,
       fontWeight: "bold",
-      color: theme.colors.cardHeaderTextColor,
+      color: theme.colors.primaryTextColor,
     },
     macroNutrientLabel: {
       fontSize: 12,
-      color: theme.colors.cardHeaderTextColor,
+      color: theme.colors.primaryTextColor,
     },
     progressContainer: {
       flexDirection: "row",
@@ -91,15 +91,15 @@ const foodNutrientModalStyles = () => {
       justifyContent: "center",
     },
     percentOfDailyGoalsSectionHeaderText: {
-      color: theme.colors.cardHeaderTextColor,
+      color: theme.colors.primaryTextColor,
     },
     nutritionFactsLabel: {
       fontSize: 16,
-      color: theme.colors.cardHeaderTextColor,
+      color: theme.colors.primaryTextColor,
     },
     nutritionFactsIndentLabel: {
       fontSize: 15,
-      color: theme.colors.cardHeaderTextColor,
+      color: theme.colors.primaryTextColor,
       paddingLeft: 15,
     },
     nutritionalFactsLabelContainer: {
@@ -114,19 +114,19 @@ const foodNutrientModalStyles = () => {
     },
     nutritionFactsValue: {
       fontSize: 15,
-      color: theme.colors.cardHeaderTextColor,
+      color: theme.colors.primaryTextColor,
     },
     nutritionFactsIndentValue: {
       fontSize: 14,
-      color: theme.colors.cardHeaderTextColor,
+      color: theme.colors.primaryTextColor,
     },
     nutritionFactsDailyValue: {
       fontSize: 15,
-      color: theme.colors.cardHeaderTextColor,
+      color: theme.colors.primaryTextColor,
     },
     nutritionFactsIndentDailyValue: {
       fontSize: 14,
-      color: theme.colors.cardHeaderTextColor,
+      color: theme.colors.primaryTextColor,
     },
     nutritionFactsRow: {
       flexDirection: "row",
@@ -146,7 +146,7 @@ const foodNutrientModalStyles = () => {
     nutritionFactsSectionHeader: {
       fontSize: 18,
       fontWeight: "bold",
-      color: theme.colors.cardHeaderTextColor,
+      color: theme.colors.primaryTextColor,
     },
   });
 };

@@ -93,8 +93,8 @@ const ThemeSelector = ({ renderStructure }) => {
                 alignSelf: "center",
                 color:
                   mode === "dark"
-                    ? theme.dark.colors.cardHeaderTextColor
-                    : theme.light.colors.cardHeaderTextColor,
+                    ? theme.dark.colors.primaryTextColor
+                    : theme.light.colors.primaryTextColor,
               }}
             >
               {theme.name}

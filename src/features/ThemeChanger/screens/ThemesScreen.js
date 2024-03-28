@@ -40,14 +40,12 @@ const ThemeScreen = () => {
         <TouchableOpacity onPress={navigateToMore}>
           <Feather
             name="chevron-left"
-            color={theme.colors.sectionHeaderTextColor}
+            color={theme.colors.primaryTextColor}
             size={28}
           />
         </TouchableOpacity>
 
-        <Text
-          style={{ color: theme.colors.sectionHeaderTextColor, fontSize: 18 }}
-        >
+        <Text style={{ color: theme.colors.primaryTextColor, fontSize: 18 }}>
           Theme Palette
         </Text>
 
@@ -56,7 +54,7 @@ const ThemeScreen = () => {
           <FontAwesome
             name={mode === "dark" ? "moon-o" : "sun-o"}
             size={28}
-            color={theme.colors.cardHeaderTextColor}
+            color={theme.colors.primaryTextColor}
           />
         </TouchableOpacity>
       </View>
@@ -72,7 +70,7 @@ const ThemeScreen = () => {
         <Text
           style={{
             fontSize: 18,
-            color: theme.colors.cardHeaderTextColor,
+            color: theme.colors.primaryTextColor,
             alignSelf: "center",
           }}
         >

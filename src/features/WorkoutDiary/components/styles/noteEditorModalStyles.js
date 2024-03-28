@@ -26,7 +26,7 @@ const noteEditorModalStyles = () => {
       paddingHorizontal: 10,
     },
     headerTitle: {
-      color: theme.colors.cardHeaderTextColor,
+      color: theme.colors.primaryTextColor,
       fontSize: 20,
     },
   });

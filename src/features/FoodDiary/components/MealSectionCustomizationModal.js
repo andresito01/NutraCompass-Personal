@@ -239,7 +239,7 @@ const MealSectionCustomizationModal = ({ isVisible, closeModal }) => {
             >
               <Feather
                 name="chevron-left"
-                color={theme.colors.cardHeaderTextColor}
+                color={theme.colors.primaryTextColor}
                 size={38}
               />
             </TouchableOpacity>

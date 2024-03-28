@@ -238,7 +238,7 @@ export default function FoodDiaryScreen() {
         },
       }}
     >
-      <Text style={{ color: theme.colors.cardHeaderTextColor }}>{text}</Text>
+      <Text style={{ color: theme.colors.primaryTextColor }}>{text}</Text>
       <Entypo name={iconName} size={24} color={iconColor} />
     </MenuOption>
   );
@@ -260,7 +260,7 @@ export default function FoodDiaryScreen() {
         },
       }}
     >
-      <Text style={{ color: theme.colors.cardHeaderTextColor }}>{text}</Text>
+      <Text style={{ color: theme.colors.primaryTextColor }}>{text}</Text>
       <Entypo name={iconName} size={24} color={iconColor} />
     </MenuOption>
   );
@@ -277,7 +277,7 @@ export default function FoodDiaryScreen() {
         },
       }}
     >
-      <Text style={{ color: theme.colors.cardHeaderTextColor }}>{text}</Text>
+      <Text style={{ color: theme.colors.primaryTextColor }}>{text}</Text>
       <Entypo name={iconName} size={24} color={iconColor} />
     </MenuOption>
   );
@@ -299,7 +299,7 @@ export default function FoodDiaryScreen() {
         },
       }}
     >
-      <Text style={{ color: theme.colors.cardHeaderTextColor }}>{text}</Text>
+      <Text style={{ color: theme.colors.primaryTextColor }}>{text}</Text>
       <Entypo name={iconName} size={24} color={iconColor} />
     </MenuOption>
   );
@@ -316,7 +316,7 @@ export default function FoodDiaryScreen() {
         },
       }}
     >
-      <Text style={{ color: theme.colors.cardHeaderTextColor }}>{text}</Text>
+      <Text style={{ color: theme.colors.primaryTextColor }}>{text}</Text>
       <Entypo name={iconName} size={24} color={iconColor} />
     </MenuOption>
   );
@@ -333,7 +333,7 @@ export default function FoodDiaryScreen() {
           <Entypo
             name="dots-three-horizontal"
             size={24}
-            color={theme.colors.cardHeaderTextColor}
+            color={theme.colors.primaryTextColor}
           />
         </MenuTrigger>
         <MenuOptions

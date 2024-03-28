@@ -16,7 +16,7 @@ const dateSelectorStyles = () => {
       paddingLeft: 10,
       fontSize: 18,
       fontWeight: "bold",
-      color: theme.colors.sectionHeaderTextColor,
+      color: theme.colors.primaryTextColor,
     },
     calendarModal: {
       flex: 1,
@@ -34,7 +34,7 @@ const dateSelectorStyles = () => {
       padding: 15,
     },
     cancelDateButtonText: {
-      color: theme.colors.cardHeaderTextColor,
+      color: theme.colors.primaryTextColor,
       textAlign: "center",
     },
     calendarModalButton: {
@@ -55,7 +55,7 @@ const dateSelectorStyles = () => {
     dateInfo: {
       alignSelf: "center",
       fontWeight: "bold",
-      color: theme.colors.sectionHeaderTextColor,
+      color: theme.colors.primaryTextColor,
     },
   });
 };

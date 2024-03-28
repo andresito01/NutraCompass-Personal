@@ -89,7 +89,7 @@ const NotesScreen = () => {
         <Card key={index} style={styles.noteCard}>
           <Card.Title title={note.title} />
           <Card.Content>
-            <Text style={{ color: theme.colors.cardHeaderTextColor }}>
+            <Text style={{ color: theme.colors.primaryTextColor }}>
               {note.content}
             </Text>
           </Card.Content>

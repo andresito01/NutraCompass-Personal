@@ -35,7 +35,7 @@ const CustomHeightPickerModal = ({
         key={value}
         label={value.toString()}
         value={value.toString()}
-        color={theme.colors.cardHeaderTextColor}
+        color={theme.colors.primaryTextColor}
       />
     ));
   };
@@ -46,7 +46,7 @@ const CustomHeightPickerModal = ({
         key={value}
         label={value.toString()}
         value={value.toString()}
-        color={theme.colors.cardHeaderTextColor}
+        color={theme.colors.primaryTextColor}
       />
     ));
   };
@@ -57,7 +57,7 @@ const CustomHeightPickerModal = ({
         key={value}
         label={value.toString()}
         value={value.toString()}
-        color={theme.colors.cardHeaderTextColor}
+        color={theme.colors.primaryTextColor}
       />
     ));
   };
@@ -131,12 +131,12 @@ const CustomHeightPickerModal = ({
                 <Picker.Item
                   label="cm"
                   value="cm"
-                  color={theme.colors.cardHeaderTextColor}
+                  color={theme.colors.primaryTextColor}
                 />
                 <Picker.Item
                   label="in"
                   value="in"
-                  color={theme.colors.cardHeaderTextColor}
+                  color={theme.colors.primaryTextColor}
                 />
               </Picker>
             </View>

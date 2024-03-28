@@ -258,7 +258,7 @@ const FoodEntryModal = React.memo(
                 }}
               >
                 <Appbar.BackAction
-                  color={theme.colors.cardHeaderTextColor}
+                  color={theme.colors.primaryTextColor}
                   onPress={handleCloseModal}
                 />
                 <Appbar.Content title="Add Food" />
@@ -267,7 +267,7 @@ const FoodEntryModal = React.memo(
             <View style={styles.modalContent}>
               <Searchbar
                 placeholder="Search for a food"
-                placeholderTextColor={theme.colors.cardHeaderTextColor}
+                placeholderTextColor={theme.colors.primaryTextColor}
                 value={searchTerm}
                 onChangeText={setSearchTerm}
                 onIconPress={handleFoodSearch}
@@ -351,7 +351,7 @@ const FoodEntryModal = React.memo(
                             ? "check"
                             : "plus"
                         }
-                        color={theme.colors.cardHeaderTextColor}
+                        color={theme.colors.primaryTextColor}
                         size={24}
                         onPress={() => {
                           handleSelectItem(item); // Select the current item
@@ -382,7 +382,7 @@ const FoodEntryModal = React.memo(
                 style={{
                   fontSize: 16,
                   alignSelf: "center",
-                  color: theme.colors.cardHeaderTextColor,
+                  color: theme.colors.primaryTextColor,
                 }}
               >
                 Food Logged!

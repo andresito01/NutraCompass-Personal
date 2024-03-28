@@ -74,7 +74,7 @@ const CaloriesAndWaterProgressSection = ({
 
                   {/* <Feather
                     name="minus"
-                    color={theme.colors.cardHeaderTextColor}
+                    color={theme.colors.primaryTextColor}
                     size={20}
                   /> */}
                 </View>
@@ -98,7 +98,7 @@ const CaloriesAndWaterProgressSection = ({
 
                   {/* <Feather
                     name="plus"
-                    color={theme.colors.cardHeaderTextColor}
+                    color={theme.colors.primaryTextColor}
                     size={20}
                   /> */}
                 </View>
@@ -169,7 +169,7 @@ const CaloriesAndWaterProgressSection = ({
               width={3}
               height={screenWidth * 0.2}
             />
-            {/* <Text style={{ color: theme.colors.cardHeaderTextColor }}>H2O</Text> */}
+            {/* <Text style={{ color: theme.colors.primaryTextColor }}>H2O</Text> */}
           </View>
         </Card.Content>
       </Card>

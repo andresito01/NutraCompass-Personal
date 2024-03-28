@@ -355,7 +355,7 @@ const DailyNutritionGoalsCalculationModal = ({ isVisible, closeModal }) => {
           >
             <Feather
               name="chevron-left"
-              color={theme.colors.sectionHeaderTextColor}
+              color={theme.colors.primaryTextColor}
               size={38}
             />
           </TouchableOpacity>
@@ -375,7 +375,7 @@ const DailyNutritionGoalsCalculationModal = ({ isVisible, closeModal }) => {
                   <Text
                     style={{
                       fontWeight: "500",
-                      color: theme.colors.cardHeaderTextColor,
+                      color: theme.colors.primaryTextColor,
                     }}
                   >
                     Keep in mind that this is a general estimate.{" "}
@@ -657,7 +657,7 @@ const DailyNutritionGoalsCalculationModal = ({ isVisible, closeModal }) => {
                           >
                             <Text
                               style={{
-                                color: theme.colors.cardHeaderTextColor,
+                                color: theme.colors.primaryTextColor,
                                 fontSize: 18,
                                 fontWeight: "bold",
                               }}
@@ -672,16 +672,16 @@ const DailyNutritionGoalsCalculationModal = ({ isVisible, closeModal }) => {
                       theme={{
                         backgroundColor: theme.colors.surface,
                         calendarBackground: theme.colors.surface,
-                        textSectionTitleColor: theme.colors.cardHeaderTextColor,
+                        textSectionTitleColor: theme.colors.primaryTextColor,
                         selectedDayBackgroundColor: theme.colors.primary,
-                        selectedDayTextColor: theme.colors.cardHeaderTextColor,
-                        todayTextColor: theme.colors.cardHeaderTextColor,
-                        dayTextColor: theme.colors.cardHeaderTextColor,
+                        selectedDayTextColor: theme.colors.primaryTextColor,
+                        todayTextColor: theme.colors.primaryTextColor,
+                        dayTextColor: theme.colors.primaryTextColor,
                         textDisabledColor: "gray",
                         dotColor: theme.colors.primary,
-                        selectedDotColor: theme.colors.cardHeaderTextColor,
+                        selectedDotColor: theme.colors.primaryTextColor,
                         arrowColor: theme.colors.secondary,
-                        monthTextColor: theme.colors.cardHeaderTextColor,
+                        monthTextColor: theme.colors.primaryTextColor,
                         indicatorColor: "red",
                       }}
                       markedDates={{
@@ -761,7 +761,7 @@ const DailyNutritionGoalsCalculationModal = ({ isVisible, closeModal }) => {
                 style={{
                   fontSize: 16,
                   alignSelf: "center",
-                  color: theme.colors.cardHeaderTextColor,
+                  color: theme.colors.primaryTextColor,
                 }}
               >
                 {snackbarMessage}

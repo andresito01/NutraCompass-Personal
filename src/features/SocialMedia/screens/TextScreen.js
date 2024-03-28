@@ -36,7 +36,11 @@ const TextScreen = ({ route, navigation }) => {
           onPress={() => navigation.goBack()}
           style={styles.backButton}
         >
-          <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
+          <Ionicons
+            name="arrow-back"
+            size={24}
+            color={theme.colors.primaryTextColor}
+          />
         </TouchableOpacity>
 
         <View style={styles.headerContent}>

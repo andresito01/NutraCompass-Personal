@@ -42,14 +42,10 @@ const ExerciseCard = ({ exercise }) => {
             justifyContent: "space-between",
           }}
         >
-          <Text
-            style={{ fontSize: 16, color: theme.colors.cardHeaderTextColor }}
-          >
+          <Text style={{ fontSize: 16, color: theme.colors.primaryTextColor }}>
             Exercise:
           </Text>
-          <Text
-            style={{ fontSize: 16, color: theme.colors.cardHeaderTextColor }}
-          >
+          <Text style={{ fontSize: 16, color: theme.colors.primaryTextColor }}>
             Select
           </Text>
         </View>
@@ -70,22 +66,22 @@ const ExerciseCard = ({ exercise }) => {
             }}
           >
             <Text
-              style={{ fontSize: 12, color: theme.colors.cardHeaderTextColor }}
+              style={{ fontSize: 12, color: theme.colors.primaryTextColor }}
             >
               Primary Muscle:
             </Text>
             <Text
-              style={{ fontSize: 12, color: theme.colors.cardHeaderTextColor }}
+              style={{ fontSize: 12, color: theme.colors.primaryTextColor }}
             >
               Secondary Muscles:
             </Text>
             <Text
-              style={{ fontSize: 12, color: theme.colors.cardHeaderTextColor }}
+              style={{ fontSize: 12, color: theme.colors.primaryTextColor }}
             >
               Equipment Required:
             </Text>
             <Text
-              style={{ fontSize: 12, color: theme.colors.cardHeaderTextColor }}
+              style={{ fontSize: 12, color: theme.colors.primaryTextColor }}
             >
               Instructions:
             </Text>
@@ -140,7 +136,7 @@ const ExerciseSection = ({ bodyPart, exercises }) => {
           style={{
             fontSize: 16,
             margin: 10,
-            color: theme.colors.cardHeaderTextColor,
+            color: theme.colors.primaryTextColor,
           }}
         >
           {bodyPart.toUpperCase()}

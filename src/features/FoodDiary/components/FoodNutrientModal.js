@@ -519,7 +519,7 @@ const FoodNutrientModal = ({
           <Circle r={radius - 5} fill={theme.colors.surface} />
 
           <SvgText
-            fill={theme.colors.cardHeaderTextColor}
+            fill={theme.colors.primaryTextColor}
             fontSize="16"
             fontWeight="bold"
             textAnchor="middle"
@@ -529,7 +529,7 @@ const FoodNutrientModal = ({
             {Math.round(calories)}
           </SvgText>
           <SvgText
-            fill={theme.colors.cardHeaderTextColor}
+            fill={theme.colors.primaryTextColor}
             fontSize="12"
             textAnchor="middle"
             alignmentBaseline="middle"
@@ -565,7 +565,7 @@ const FoodNutrientModal = ({
         totalDailyUnit={
           activeFoodItem?.nutrients?.[nutrientKey]?.totalDaily?.unit
         }
-        color={theme.colors.cardHeaderTextColor}
+        color={theme.colors.primaryTextColor}
       />
     ));
   };
@@ -590,7 +590,7 @@ const FoodNutrientModal = ({
         totalDailyUnit={
           activeFoodItem?.nutrients?.vitamins?.[nutrientKey]?.totalDaily?.unit
         }
-        color={theme.colors.cardHeaderTextColor}
+        color={theme.colors.primaryTextColor}
       />
     ));
   };
@@ -615,7 +615,7 @@ const FoodNutrientModal = ({
         totalDailyUnit={
           activeFoodItem?.nutrients?.minerals?.[nutrientKey]?.totalDaily?.unit
         }
-        color={theme.colors.cardHeaderTextColor}
+        color={theme.colors.primaryTextColor}
       />
     ));
   };
@@ -651,7 +651,7 @@ const FoodNutrientModal = ({
               icon="chevron-left"
               size={32}
               onPress={handleCloseModal}
-              color={theme.colors.cardHeaderTextColor}
+              color={theme.colors.primaryTextColor}
             />
             <Appbar.Content
               title={foodNutrientModalType}
@@ -823,7 +823,7 @@ const FoodNutrientModal = ({
                       <Text
                         style={{
                           fontSize: 12,
-                          color: theme.colors.cardHeaderTextColor,
+                          color: theme.colors.primaryTextColor,
                         }}
                       >
                         {Math.round(caloriesPercentageOfGoal * 100)}%
@@ -832,7 +832,7 @@ const FoodNutrientModal = ({
                         style={{
                           fontSize: 12,
                           fontWeight: "bold",
-                          color: theme.colors.cardHeaderTextColor,
+                          color: theme.colors.primaryTextColor,
                         }}
                       >
                         Calories
@@ -852,7 +852,7 @@ const FoodNutrientModal = ({
                       <Text
                         style={{
                           fontSize: 12,
-                          color: theme.colors.cardHeaderTextColor,
+                          color: theme.colors.primaryTextColor,
                         }}
                       >
                         {Math.round(carbsPercentageOfGoal * 100)}%
@@ -861,7 +861,7 @@ const FoodNutrientModal = ({
                         style={{
                           fontSize: 12,
                           fontWeight: "bold",
-                          color: theme.colors.cardHeaderTextColor,
+                          color: theme.colors.primaryTextColor,
                         }}
                       >
                         Carbs
@@ -881,7 +881,7 @@ const FoodNutrientModal = ({
                       <Text
                         style={{
                           fontSize: 12,
-                          color: theme.colors.cardHeaderTextColor,
+                          color: theme.colors.primaryTextColor,
                         }}
                       >
                         {Math.round(proteinPercentageOfGoal * 100)}%
@@ -890,7 +890,7 @@ const FoodNutrientModal = ({
                         style={{
                           fontSize: 12,
                           fontWeight: "bold",
-                          color: theme.colors.cardHeaderTextColor,
+                          color: theme.colors.primaryTextColor,
                         }}
                       >
                         Protein
@@ -910,7 +910,7 @@ const FoodNutrientModal = ({
                       <Text
                         style={{
                           fontSize: 12,
-                          color: theme.colors.cardHeaderTextColor,
+                          color: theme.colors.primaryTextColor,
                         }}
                       >
                         {Math.round(fatPercentageOfGoal * 100)}%
@@ -919,7 +919,7 @@ const FoodNutrientModal = ({
                         style={{
                           fontSize: 12,
                           fontWeight: "bold",
-                          color: theme.colors.cardHeaderTextColor,
+                          color: theme.colors.primaryTextColor,
                         }}
                       >
                         Fat
@@ -972,7 +972,7 @@ const FoodNutrientModal = ({
                     <Text
                       style={{
                         fontSize: 14,
-                        color: theme.colors.cardHeaderTextColor,
+                        color: theme.colors.primaryTextColor,
                         alignSelf: "flex-end",
                         marginBottom: 10,
                         paddingHorizontal: 16,
@@ -1146,7 +1146,7 @@ const FoodNutrientModal = ({
                             style={{
                               flex: 2,
                               fontSize: 16,
-                              color: theme.colors.cardHeaderTextColor,
+                              color: theme.colors.primaryTextColor,
                             }}
                           >
                             {item.foodLabel}
@@ -1155,7 +1155,7 @@ const FoodNutrientModal = ({
                             <Text
                               style={{
                                 fontSize: 14,
-                                color: theme.colors.cardHeaderTextColor,
+                                color: theme.colors.primaryTextColor,
                               }}
                             >
                               {Math.round(item.nutrients.ENERC_KCAL.quantity)}{" "}
@@ -1164,7 +1164,7 @@ const FoodNutrientModal = ({
                             <Text
                               style={{
                                 fontSize: 14,
-                                color: theme.colors.cardHeaderTextColor,
+                                color: theme.colors.primaryTextColor,
                               }}
                             >
                               {Math.round(item.activeMeasure.weight)}{" "}
@@ -1204,7 +1204,7 @@ const FoodNutrientModal = ({
                 >
                   <Text
                     style={{
-                      color: theme.colors.cardHeaderTextColor,
+                      color: theme.colors.primaryTextColor,
                       fontSize: 20,
                     }}
                   >
@@ -1212,7 +1212,7 @@ const FoodNutrientModal = ({
                   </Text>
                   <IconButton
                     icon="close"
-                    iconColor={theme.colors.cardHeaderTextColor}
+                    iconColor={theme.colors.primaryTextColor}
                     size={26}
                     onPress={toggleSelectServing}
                   />
@@ -1248,7 +1248,7 @@ const FoodNutrientModal = ({
                             >
                               <Text
                                 style={{
-                                  color: theme.colors.cardHeaderTextColor,
+                                  color: theme.colors.primaryTextColor,
                                   fontSize: 20,
                                 }}
                               >
@@ -1258,7 +1258,7 @@ const FoodNutrientModal = ({
                             <View style={{ flex: 2 }}>
                               <Text
                                 style={{
-                                  color: theme.colors.cardHeaderTextColor,
+                                  color: theme.colors.primaryTextColor,
                                   fontSize: 20,
                                 }}
                               >
@@ -1314,7 +1314,7 @@ const FoodNutrientModal = ({
                 >
                   <Text
                     style={{
-                      color: theme.colors.cardHeaderTextColor,
+                      color: theme.colors.primaryTextColor,
                       fontSize: 20,
                     }}
                   >
@@ -1322,7 +1322,7 @@ const FoodNutrientModal = ({
                   </Text>
                   <IconButton
                     icon="close"
-                    iconColor={theme.colors.cardHeaderTextColor}
+                    iconColor={theme.colors.primaryTextColor}
                     size={26}
                     onPress={toggleSelectMeal}
                   />
@@ -1352,7 +1352,7 @@ const FoodNutrientModal = ({
                             <View style={{ flex: 2 }}>
                               <Text
                                 style={{
-                                  color: theme.colors.cardHeaderTextColor,
+                                  color: theme.colors.primaryTextColor,
                                   fontSize: 20,
                                 }}
                               >
@@ -1461,7 +1461,7 @@ const ServingSizeRow = ({
         }}
         onPress={toggleSelectServing}
       >
-        <Text style={{ color: theme.colors.cardHeaderTextColor }}>
+        <Text style={{ color: theme.colors.primaryTextColor }}>
           {Math.round(parseFloat(selectedServing?.weight))}g{" "}
           {selectedServing?.label}
         </Text>
@@ -1526,7 +1526,7 @@ const MealRow = ({
         }}
         onPress={toggleSelectMeal}
       >
-        <Text style={{ color: theme.colors.cardHeaderTextColor }}>
+        <Text style={{ color: theme.colors.primaryTextColor }}>
           {selectedMealOption?.name}
         </Text>
       </TouchableOpacity>

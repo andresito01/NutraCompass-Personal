@@ -136,7 +136,7 @@ export default function AccountDetailsSection({
               <Text
                 style={{
                   fontSize: 14,
-                  color: theme.colors.cardHeaderTextColor,
+                  color: theme.colors.primaryTextColor,
                   textAlign: "center",
                 }}
               >

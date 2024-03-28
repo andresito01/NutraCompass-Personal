@@ -114,7 +114,7 @@ const WorkoutDiaryScreen = () => {
               mode="elevated"
               onPress={() => setFabButtonValue(fab.value)}
             />
-            <Text style={{ color: theme.colors.cardHeaderTextColor }}>
+            <Text style={{ color: theme.colors.primaryTextColor }}>
               {fab.label}
             </Text>
           </View>
@@ -211,7 +211,7 @@ const WorkoutDiaryScreen = () => {
                 <Text
                   style={{
                     fontSize: 16,
-                    color: theme.colors.cardHeaderTextColor,
+                    color: theme.colors.primaryTextColor,
                     alignSelf: "center",
                   }}
                 >
@@ -239,7 +239,7 @@ const WorkoutDiaryScreen = () => {
                 <Text
                   style={{
                     fontSize: 16,
-                    color: theme.colors.cardHeaderTextColor,
+                    color: theme.colors.primaryTextColor,
                     alignSelf: "center",
                   }}
                 >

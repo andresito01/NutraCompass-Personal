@@ -138,7 +138,7 @@ export default function BodyTypeSection({ value, setValue, onNext }) {
                     style={{
                       textAlign: "center",
                       fontSize: 14,
-                      color: theme.colors.cardHeaderTextColor,
+                      color: theme.colors.primaryTextColor,
                     }}
                   >
                     {bodyType.description}

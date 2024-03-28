@@ -109,7 +109,7 @@ const BottomSheet = ({ isVisible, toggleBottomSheet, children }) => {
               >
                 <Text
                   style={{
-                    color: theme.colors.cardHeaderTextColor,
+                    color: theme.colors.primaryTextColor,
                     fontSize: 16,
                     paddingVertical: 5,
                   }}
@@ -121,7 +121,7 @@ const BottomSheet = ({ isVisible, toggleBottomSheet, children }) => {
               <Text
                 style={{
                   fontSize: 20,
-                  color: theme.colors.cardHeaderTextColor,
+                  color: theme.colors.primaryTextColor,
                   alignSelf: "center",
                   minWidth: 120,
                 }}

@@ -43,7 +43,7 @@ const foodDiaryScreenStyles = () => {
       paddingLeft: 10,
       fontSize: 18,
       fontWeight: "bold",
-      color: theme.colors.sectionHeaderTextColor,
+      color: theme.colors.primaryTextColor,
     },
     calendarModal: {
       flex: 1,
@@ -59,7 +59,7 @@ const foodDiaryScreenStyles = () => {
       padding: 15,
     },
     cancelDateButtonText: {
-      color: theme.colors.cardHeaderTextColor,
+      color: theme.colors.primaryTextColor,
       textAlign: "center",
     },
     calendarModalButton: {
@@ -69,12 +69,12 @@ const foodDiaryScreenStyles = () => {
     totalDayCalories: {
       fontSize: 16,
       paddingTop: 12, // Increase padding for better spacing
-      color: theme.colors.cardHeaderTextColor,
+      color: theme.colors.primaryTextColor,
     },
     totalDayCaloriesProgressSectionText: {
       fontSize: 14,
       paddingTop: 12, // Increase padding for better spacing
-      color: theme.colors.cardHeaderTextColor,
+      color: theme.colors.primaryTextColor,
     },
     section: {
       marginBottom: 12, // Reduce marginBottom for smaller sections
@@ -126,7 +126,7 @@ const foodDiaryScreenStyles = () => {
     sectionTitle: {
       fontSize: 16, // Reduce fontSize for the section title
       fontWeight: "bold",
-      color: theme.colors.cardHeaderTextColor,
+      color: theme.colors.primaryTextColor,
     },
     footerButton: {
       alignSelf: "flex-start",
@@ -135,13 +135,13 @@ const foodDiaryScreenStyles = () => {
     },
     totalMealSectionCalories: {
       fontSize: 18,
-      color: theme.colors.sectionHeaderTextColor,
+      color: theme.colors.primaryTextColor,
     },
     dateInfo: {
       alignSelf: "center",
       marginTop: 4, // Reduce marginTop for date info
       fontWeight: "bold",
-      color: theme.colors.sectionHeaderTextColor,
+      color: theme.colors.primaryTextColor,
     },
     sliderSectionContainer: {
       marginVertical: 20,

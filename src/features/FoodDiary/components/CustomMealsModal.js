@@ -72,14 +72,14 @@ export default function CustomMealsModal({ navigation }) {
         borderRadius: 10,
       }}
     >
-      <Text style={{ fontSize: 18, color: theme.colors.cardHeaderTextColor }}>
+      <Text style={{ fontSize: 18, color: theme.colors.primaryTextColor }}>
         {item.foodLabel}
       </Text>
 
       <View style={{ alignItems: "flex-end", gap: 16 }}>
         <Feather
           name="chevron-right"
-          color={theme.colors.cardHeaderTextColor}
+          color={theme.colors.primaryTextColor}
           size={24}
         />
         <Button
@@ -151,7 +151,7 @@ export default function CustomMealsModal({ navigation }) {
               >
                 <Feather
                   name="chevron-left"
-                  color={theme.colors.cardHeaderTextColor}
+                  color={theme.colors.primaryTextColor}
                   size={28}
                 />
               </TouchableOpacity>
@@ -160,7 +160,7 @@ export default function CustomMealsModal({ navigation }) {
                 style={{
                   fontSize: 28,
                   fontWeight: "500",
-                  color: theme.colors.cardHeaderTextColor,
+                  color: theme.colors.primaryTextColor,
                 }}
               >
                 Custom Meals

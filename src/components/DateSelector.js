@@ -140,7 +140,7 @@ export default function DateSelector({ selectedDate, setSelectedDate }) {
               <Feather
                 name="chevron-left"
                 size={28}
-                color={theme.colors.cardHeaderTextColor}
+                color={theme.colors.primaryTextColor}
               />
             </TouchableOpacity>
             <View
@@ -155,7 +155,7 @@ export default function DateSelector({ selectedDate, setSelectedDate }) {
                   <Feather
                     name="calendar"
                     size={24}
-                    color={theme.colors.cardHeaderTextColor}
+                    color={theme.colors.primaryTextColor}
                   />
                   <Text style={styles.date}>
                     {getCurrentDate(selectedDate)}
@@ -178,7 +178,7 @@ export default function DateSelector({ selectedDate, setSelectedDate }) {
               <Feather
                 name="chevron-right"
                 size={28}
-                color={theme.colors.cardHeaderTextColor}
+                color={theme.colors.primaryTextColor}
               />
             </TouchableOpacity>
           </View>
@@ -207,15 +207,15 @@ export default function DateSelector({ selectedDate, setSelectedDate }) {
                 theme={{
                   calendarBackground: theme.colors.cardBackgroundColor,
                   selectedDayBackgroundColor: theme.colors.primary,
-                  selectedDayTextColor: theme.colors.cardHeaderTextColor,
-                  todayTextColor: theme.colors.cardHeaderTextColor,
+                  selectedDayTextColor: theme.colors.primaryTextColor,
+                  todayTextColor: theme.colors.primaryTextColor,
                   "stylesheet.calendar.header": {
                     monthText: {
-                      color: theme.colors.cardHeaderTextColor,
+                      color: theme.colors.primaryTextColor,
                       fontSize: 25,
                     },
                     dayHeader: {
-                      color: theme.colors.cardHeaderTextColor,
+                      color: theme.colors.primaryTextColor,
                       fontSize: 20,
                       marginTop: 10,
                       marginBottom: 10,
@@ -251,7 +251,7 @@ export default function DateSelector({ selectedDate, setSelectedDate }) {
                       >
                         <Text
                           style={{
-                            color: theme.colors.cardHeaderTextColor,
+                            color: theme.colors.primaryTextColor,
                           }}
                         >
                           {date.day}

@@ -16,11 +16,7 @@ export default function OpenDrawerToggle({ icon }) {
     <View>
       {/** Side Menu Drawer Toggle */}
       <TouchableOpacity onPress={openDrawer} style={{ gap: 8, paddingLeft: 5 }}>
-        <Feather
-          name={icon}
-          color={theme.colors.cardHeaderTextColor}
-          size={34}
-        />
+        <Feather name={icon} color={theme.colors.primaryTextColor} size={34} />
       </TouchableOpacity>
     </View>
   );

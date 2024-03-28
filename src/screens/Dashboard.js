@@ -192,7 +192,7 @@ const DashboardScreen = () => {
           >
             <Feather
               name="message-circle"
-              color={theme.colors.cardHeaderTextColor}
+              color={theme.colors.primaryTextColor}
               size={34}
             />
           </TouchableOpacity>
@@ -203,7 +203,7 @@ const DashboardScreen = () => {
                 borderWidth: 1,
                 borderRadius: 30,
                 padding: 12,
-                borderColor: theme.colors.cardHeaderTextColor,
+                borderColor: theme.colors.primaryTextColor,
               }}
             />
           </TouchableOpacity>
@@ -244,13 +244,13 @@ const DashboardScreen = () => {
                 <Feather
                   name="calendar"
                   size={22}
-                  color={theme.colors.cardHeaderTextColor}
+                  color={theme.colors.primaryTextColor}
                 />
               </View>
               <View>
                 <Text
                   style={{
-                    color: theme.colors.cardHeaderTextColor,
+                    color: theme.colors.primaryTextColor,
                     fontSize: 14,
                     fontWeight: "600",
                   }}
@@ -273,7 +273,7 @@ const DashboardScreen = () => {
         >
           <Text
             style={{
-              color: theme.colors.cardHeaderTextColor,
+              color: theme.colors.primaryTextColor,
               fontSize: 18,
               fontWeight: "600",
             }}
@@ -312,7 +312,7 @@ const DashboardScreen = () => {
                   <Text
                     style={{
                       fontSize: 14,
-                      color: theme.colors.cardHeaderTextColor,
+                      color: theme.colors.primaryTextColor,
                     }}
                   >
                     Goal
@@ -320,7 +320,7 @@ const DashboardScreen = () => {
                   <Text
                     style={{
                       fontSize: 14,
-                      color: theme.colors.cardHeaderTextColor,
+                      color: theme.colors.primaryTextColor,
                     }}
                   >
                     Food
@@ -328,7 +328,7 @@ const DashboardScreen = () => {
                   <Text
                     style={{
                       fontSize: 14,
-                      color: theme.colors.cardHeaderTextColor,
+                      color: theme.colors.primaryTextColor,
                     }}
                   >
                     Exercise
@@ -344,7 +344,7 @@ const DashboardScreen = () => {
                     style={{
                       fontSize: 16,
                       fontWeight: "500",
-                      color: theme.colors.cardHeaderTextColor,
+                      color: theme.colors.primaryTextColor,
                       textAlign: "center",
                     }}
                   >
@@ -354,7 +354,7 @@ const DashboardScreen = () => {
                     style={{
                       fontSize: 16,
                       fontWeight: "500",
-                      color: theme.colors.cardHeaderTextColor,
+                      color: theme.colors.primaryTextColor,
                       textAlign: "center",
                     }}
                   >
@@ -364,7 +364,7 @@ const DashboardScreen = () => {
                     style={{
                       fontSize: 16,
                       fontWeight: "500",
-                      color: theme.colors.cardHeaderTextColor,
+                      color: theme.colors.primaryTextColor,
                       textAlign: "center",
                     }}
                   >
@@ -374,7 +374,7 @@ const DashboardScreen = () => {
                     style={{
                       fontSize: 16,
                       fontWeight: "500",
-                      color: theme.colors.cardHeaderTextColor,
+                      color: theme.colors.primaryTextColor,
                       textAlign: "center",
                     }}
                   >
@@ -384,7 +384,7 @@ const DashboardScreen = () => {
                     style={{
                       fontSize: 16,
                       fontWeight: "500",
-                      color: theme.colors.cardHeaderTextColor,
+                      color: theme.colors.primaryTextColor,
                       textAlign: "center",
                     }}
                   >
@@ -436,7 +436,7 @@ const DashboardScreen = () => {
                   >
                     <Text
                       style={{
-                        color: theme.colors.cardHeaderTextColor,
+                        color: theme.colors.primaryTextColor,
                         fontSize: 18,
                         fontWeight: "600",
                       }}
@@ -446,7 +446,7 @@ const DashboardScreen = () => {
                     <Icon source="flag-variant" color={"orange"} size={14} />
                     <Text
                       style={{
-                        color: theme.colors.cardHeaderTextColor,
+                        color: theme.colors.primaryTextColor,
                         fontSize: 12,
                         fontWeight: "600",
                       }}
@@ -457,7 +457,7 @@ const DashboardScreen = () => {
 
                   <Text
                     style={{
-                      color: theme.colors.cardHeaderTextColor,
+                      color: theme.colors.primaryTextColor,
                       fontSize: 18,
                       fontWeight: "600",
                     }}
@@ -486,7 +486,7 @@ const DashboardScreen = () => {
                   >
                     <Text
                       style={{
-                        color: theme.colors.cardHeaderTextColor,
+                        color: theme.colors.primaryTextColor,
                         fontSize: 18,
                         fontWeight: "600",
                       }}
@@ -496,7 +496,7 @@ const DashboardScreen = () => {
                     <Icon source="flag-variant" color={"orange"} size={14} />
                     <Text
                       style={{
-                        color: theme.colors.cardHeaderTextColor,
+                        color: theme.colors.primaryTextColor,
                         fontSize: 12,
                         fontWeight: "600",
                       }}
@@ -507,7 +507,7 @@ const DashboardScreen = () => {
 
                   <Text
                     style={{
-                      color: theme.colors.cardHeaderTextColor,
+                      color: theme.colors.primaryTextColor,
                       fontSize: 18,
                       fontWeight: "600",
                     }}

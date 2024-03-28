@@ -102,7 +102,7 @@ export default function SetAGoalSection({ value, setValue, onNext }) {
                         fontSize: 18,
                         color:
                           goal === "Weight Goal"
-                            ? theme.colors.cardHeaderTextColor
+                            ? theme.colors.primaryTextColor
                             : "rgba(236, 236, 236, 0.6)",
                       }}
                     >
@@ -113,7 +113,7 @@ export default function SetAGoalSection({ value, setValue, onNext }) {
                         fontSize: 16,
                         color:
                           goal === "Weight Goal"
-                            ? theme.colors.cardHeaderTextColor
+                            ? theme.colors.primaryTextColor
                             : "rgba(236, 236, 236, 0.6)",
                       }}
                     >
@@ -173,7 +173,7 @@ export default function SetAGoalSection({ value, setValue, onNext }) {
                         fontSize: 18,
                         color:
                           goal === "Custom Energy Target"
-                            ? theme.colors.cardHeaderTextColor
+                            ? theme.colors.primaryTextColor
                             : "rgba(236, 236, 236, 0.6)",
                         textAlign: "center",
                       }}
@@ -193,10 +193,10 @@ export default function SetAGoalSection({ value, setValue, onNext }) {
                         style={{
                           alignSelf: "center",
                           height: 40,
-                          color: theme.colors.cardHeaderTextColor,
+                          color: theme.colors.primaryTextColor,
                           borderColor:
                             goal === "Custom Energy Target"
-                              ? theme.colors.cardHeaderTextColor
+                              ? theme.colors.primaryTextColor
                               : "rgba(236, 236, 236, 0.6)",
                           backgroundColor: "transparent",
                           borderWidth: 1,
@@ -217,7 +217,7 @@ export default function SetAGoalSection({ value, setValue, onNext }) {
                           fontSize: 18,
                           color:
                             goal === "Custom Energy Target"
-                              ? theme.colors.cardHeaderTextColor
+                              ? theme.colors.primaryTextColor
                               : "rgba(236, 236, 236, 0.6)",
                           textAlign: "center",
                           fontWeight: "400",

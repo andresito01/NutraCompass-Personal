@@ -17,7 +17,7 @@ const createExerciseFormStyles = () => {
     bottom: { flex: 1 },
     label: {
       fontSize: 16,
-      color: theme.colors.cardHeaderTextColor,
+      color: theme.colors.primaryTextColor,
       marginBottom: 5,
     },
     requiredLabel: {
@@ -27,7 +27,7 @@ const createExerciseFormStyles = () => {
     input: {
       width: "100%",
       marginBottom: 5,
-      color: theme.colors.cardHeaderTextColor,
+      color: theme.colors.primaryTextColor,
       backgroundColor: theme.colors.cardBackgroundColor,
     },
     button: {

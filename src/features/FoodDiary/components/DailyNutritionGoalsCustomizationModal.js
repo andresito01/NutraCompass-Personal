@@ -181,7 +181,7 @@ const DailyNutritionGoalsCustomizationModal = ({ isVisible, closeModal }) => {
           >
             <Feather
               name="chevron-left"
-              color={theme.colors.sectionHeaderTextColor}
+              color={theme.colors.primaryTextColor}
               size={38}
             />
           </TouchableOpacity>
@@ -398,7 +398,7 @@ const DailyNutritionGoalsCustomizationModal = ({ isVisible, closeModal }) => {
             style={{
               fontSize: 16,
               alignSelf: "center",
-              color: theme.colors.cardHeaderTextColor,
+              color: theme.colors.primaryTextColor,
             }}
           >
             {snackbarMessage}

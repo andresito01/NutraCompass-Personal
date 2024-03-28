@@ -35,12 +35,12 @@ const swipeableFoodEntryItemStyles = () => {
       padding: 10,
     },
     entryFoodNameText: {
-      color: theme.colors.cardHeaderTextColor,
+      color: theme.colors.primaryTextColor,
       fontSize: 16,
       fontWeight: "bold",
     },
     entryCaloriesText: {
-      color: theme.colors.cardHeaderTextColor,
+      color: theme.colors.primaryTextColor,
       fontSize: 16,
     },
     rightButtonContainer: {

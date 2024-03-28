@@ -49,7 +49,7 @@ const mealSectionCustomizationModalStyles = () => {
       elevation: 6,
     },
     sectionIdText: {
-      color: theme.colors.sectionHeaderTextColor,
+      color: theme.colors.primaryTextColor,
       fontSize: 18,
     },
     sectionInputText: {
